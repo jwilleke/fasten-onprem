@@ -18,7 +18,7 @@
 >
 > Fasten Connect is our fully-managed, enterprise-grade API platform designed for organizations who need seamless, scalable access to patient-authorized medical records (e.g., for clinical trials, patient recruitment, or research). If you're looking for business support, SLAs, and out-of-the-box integrations, [click here to learn more about Fasten Connect](https://www.fastenhealth.com/).
 >
-> While we welcome contributions and discussion here, **this open-source repo does not include any of the hosted infrastructure, support services, or commercial features available through Fasten Connect**.
+> While we welcome contributions and discussion here, **this open-source repo does not include any of the hosted infrastructure, support services, or commercial features available through Fasten Connect**. Fasten Onprem is no longer able to import data from healthcare providers directly. You can only use this application to manually enter data, or upload FHIR Bundles that have been exported though other means.
 
 <p align="center">
   <br/>
