@@ -1,7 +1,7 @@
-# jwilleke/fasten-onprem — Roadmap
+# YourPHR — Roadmap
 
-Fork of [fastenhealth/fasten-onprem](https://github.com/fastenhealth/fasten-onprem) (GPL v3).
-Goal: complete self-hosted PHR with working display for non-US-Core FHIR data and live provider sync via a personal OAuth relay.
+Standalone, community-maintained continuation of [Fasten OnPrem](https://github.com/fastenhealth/fasten-onprem) (GPL v3, attribution retained). Project home: [yourphr.org](https://yourphr.org).
+Goal: a complete self-hosted PHR with working display for non-US-Core FHIR data and live provider sync via a personal OAuth relay.
 
 ---
 

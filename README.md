@@ -1,45 +1,29 @@
 <p align="center">
-  <a href="https://github.com/fastenhealth/fasten-onprem">
-  <img width="400" alt="fasten_view" src="frontend/src/assets/banner/banner.png">
+  <a href="https://github.com/jwilleke/yourphr">
+  <img width="400" alt="YourPHR" src="frontend/src/assets/banner/banner.png">
   </a>
 </p>
 
-# Fasten - On Premise/Self-Hosted
+# YourPHR — Self-Hosted Personal Health Record
 
-[![CI](https://github.com/jwilleke/fasten-onprem/actions/workflows/ci.yaml/badge.svg)](https://github.com/jwilleke/fasten-onprem/actions/workflows/ci.yaml)
-[![Discord Join](https://img.shields.io/discord/1023634406935642223?style=flat-square&logo=discord)](https://discord.gg/Bykz6BAN8p)
-[![Request Providers](https://img.shields.io/static/v1?label=request+providers&message=form&color=orange&style=flat-square)](https://forms.gle/4oU8372y4KyM8DbdA)
-[![Join Newsletter](https://img.shields.io/static/v1?label=join&message=mailing+list&color=blue&style=flat-square)](https://forms.gle/SNsYX9BNMXB6TuTw6)
+[![CI](https://github.com/jwilleke/yourphr/actions/workflows/ci.yaml/badge.svg)](https://github.com/jwilleke/yourphr/actions/workflows/ci.yaml)
 
-**Fasten lets you create a secure, private personal health record that never leaves your hands**
+**YourPHR lets you create a secure, private personal health record that never leaves your hands** — self-hosted, open source, and yours. Project home: [yourphr.org](https://yourphr.org)
 
 > [!NOTE]
-> **This is a personal fork of [fastenhealth/fasten-onprem](https://github.com/fastenhealth/fasten-onprem)** maintained by [@jwilleke](https://github.com/jwilleke).
+> **YourPHR is a standalone, community-maintained continuation of [Fasten OnPrem](https://github.com/fastenhealth/fasten-onprem)**, carried forward by [@jwilleke](https://github.com/jwilleke) after upstream development stalled.
 >
-> All original work is by **Jason Kulatunga ([@AnalogJ](https://github.com/AnalogJ))** and **Alex Szilagyi ([@alexszilagyi](https://github.com/alexszilagyi))** under the [GNU GPL v3 license](LICENSE.md). This fork is also GPL v3.
+> The original work is by **Jason Kulatunga ([@AnalogJ](https://github.com/AnalogJ))** and **Alex Szilagyi ([@alexszilagyi](https://github.com/alexszilagyi))** under the [GNU GPL v3 license](LICENSE.md). YourPHR remains GPL v3 and retains full attribution.
 >
-> **Purpose of this fork:** improve display compatibility with non-US-Core FHIR R4 exports (specifically Veradigm/FollowMyHealth patient portal data). Changes may be submitted upstream where appropriate.
->
-> For the official project, documentation, and community support, see [fastenhealth/fasten-onprem](https://github.com/fastenhealth/fasten-onprem).
+> **Focus:** a free, self-hosted Personal Health Record anyone can run — including improved display support for non-US-Core FHIR R4 exports (e.g. Veradigm/FollowMyHealth). See [`docs/Roadmap.md`](docs/Roadmap.md).
 
 > [!IMPORTANT]  
-> **This repository contains the open-source, self-hosted [Personal Health Record](https://en.wikipedia.org/wiki/Personal_health_record) app. It is maintained by the community and is not the same product as [Fasten Connect](https://www.fastenhealth.com/). Fasten OnPrem is a PHR to manage and view patient's medical data, it does not integrate with EHRs directly.**
+> **YourPHR is an open-source, self-hosted [Personal Health Record](https://en.wikipedia.org/wiki/Personal_health_record) app** for managing and viewing your own medical data. It does not integrate with EHRs directly — you import FHIR R4 bundles exported from patient portals, or enter data manually.
 >
-> Fasten Connect is our fully-managed, enterprise-grade API platform designed for organizations who need seamless, scalable access to patient-authorized medical records (e.g., for clinical trials, patient recruitment, or research). If you're looking for business support, SLAs, and out-of-the-box **integrations with over 50,000+ healthcare insitutions**, [click here to learn more about Fasten Connect](https://www.fastenhealth.com/).
->
-> While we welcome contributions and discussion here, **this open-source repo does not include any of the hosted infrastructure, support services, or commercial features available through Fasten Connect**. Fasten Onprem is not able to import data from healthcare providers directly. You can only use this application to manually enter data, or upload FHIR Bundles that have been exported though other means.
+> YourPHR is **not affiliated with** Fasten Health, Inc. or its commercial *Fasten Connect* product.
 
 <p align="center">
-  <br/>
-  <br/>
-  <a target="_blank" href="https://forms.gle/SNsYX9BNMXB6TuTw6">
-    <img height="44px" alt="newsletter" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/newsletter.png" />
-  </a>
-  <a target="_blank" href="https://docs.fastenhealth.com">
-    <img height="44px" alt="documentation" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/documentation.png" />
-  </a>
-  <br/>
-  <br/>
+  <a target="_blank" href="https://yourphr.org"><strong>yourphr.org</strong></a>
 </p>
 
 <p align="center">
@@ -66,7 +50,7 @@ I wanted a single (private) location to store our medical records, and I just co
 
 So, I built it.
 
-**Fasten is an open-source, self-hosted, personal/family electronic medical record viewer**
+**YourPHR is an open-source, self-hosted, personal/family electronic medical record viewer.** It continues the original project's vision (described above by its original author) as a community-maintained, standalone app.
 
 # Features
 

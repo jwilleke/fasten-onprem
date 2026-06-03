@@ -4,9 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Fasten OnPrem is a self-hosted personal/family electronic medical record viewer. It imports FHIR R4 bundles (manual upload or, in the original project, provider sync) and displays them. A **Go backend** (Gin + GORM, SQLite) serves a JSON API and the compiled **Angular 14 frontend**.
+**YourPHR** is a self-hosted personal/family electronic medical record viewer — a community continuation of Fasten OnPrem. It imports FHIR R4 bundles (manual upload or, in the original project, provider sync) and displays them. A **Go backend** (Gin + GORM, SQLite) serves a JSON API and the compiled **Angular 14 frontend**.
 
-**This is a personal fork** of `fastenhealth/fasten-onprem` (original by Jason Kulatunga / @AnalogJ, GPL v3). The fork's purpose: improve display compatibility with **non-US-Core FHIR R4 exports**, specifically Veradigm/FollowMyHealth patient portal data. See `docs/Roadmap.md` for the current focus and `README.md` for the fork notice. When fixing display issues, prefer fallbacks for missing US-Core fields (e.g. `class.code` when `type[]` is absent) rather than assuming strict US-Core conformance.
+**YourPHR is a standalone, community-maintained continuation** of `fastenhealth/fasten-onprem` (original by Jason Kulatunga / @AnalogJ and Alex Szilagyi, GPL v3 — attribution retained). It carries the project forward after upstream stalled and is going standalone (see EPIC #2). Near-term focus: improve display compatibility with **non-US-Core FHIR R4 exports**, specifically Veradigm/FollowMyHealth patient portal data. See `docs/Roadmap.md` and `README.md`. When fixing display issues, prefer fallbacks for missing US-Core fields (e.g. `class.code` when `type[]` is absent) rather than assuming strict US-Core conformance.
+
+> **Note on identifiers:** The product is being rebranded to **YourPHR**, but the Go **module path stays `github.com/fastenhealth/fasten-onprem`** (internal identifier; renaming it is pure churn — see EPIC #2). Likewise, do not rename technical identifiers tied to upstream (`fasten-sources`, `FastenLighthouseEnvSandbox`, `FastenDisplayModel`). Only user-facing product strings become "YourPHR".
 
 ## ⚠️ NEVER commit personal health data or unencrypted secrets
 

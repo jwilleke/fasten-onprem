@@ -1,7 +1,9 @@
-name: Docker (jwilleke fork)
+name: Docker (YourPHR)
 # Replaces upstream docker.yaml which depends on depot.dev (paid service).
 # Builds linux/amd64 only — sufficient for deby (x86_64 k3s node).
-# Pushes to ghcr.io/jwilleke/fasten-onprem:main on every push to main.
+# Pushes to ghcr.io/<owner>/<repo>:main on every push to main. The image name
+# follows ${{ github.repository }}, so it becomes ghcr.io/jwilleke/yourphr once
+# the repo is renamed (see issue #3). Update the Flux ImageRepository to match.
 
 on:
   push:
@@ -46,9 +48,9 @@ jobs:
             type=raw,value=main,enable=${{ github.ref_name == 'main' }}
             type=raw,value=main-${{ github.run_number }},enable=${{ github.ref_name == 'main' }}
           labels: |
-            org.opencontainers.image.title=Fasten Health (jwilleke fork)
-            org.opencontainers.image.description=Fork of fastenhealth/fasten-onprem — non-US-Core FHIR compatibility improvements
-            org.opencontainers.image.source=https://github.com/jwilleke/fasten-onprem
+            org.opencontainers.image.title=YourPHR
+            org.opencontainers.image.description=YourPHR — self-hosted Personal Health Record (community continuation of Fasten OnPrem)
+            org.opencontainers.image.source=https://github.com/jwilleke/yourphr
             org.opencontainers.image.revision=${{ github.sha }}
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
