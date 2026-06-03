@@ -86,3 +86,4 @@ frontend/documentation.json
 certs/
 
 /private-jims/
+.DS_Store
