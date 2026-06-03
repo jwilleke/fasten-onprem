@@ -17,16 +17,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      # development.yaml uploads two artifacts: `backend-coverage` and `frontend-coverage`.
+      # Download all of them; each lands under coverage-artifacts/<artifact-name>/.
       - name: Download coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage
+          path: coverage-artifacts
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
         with:
-          files: ${{ github.workspace }}/backend-coverage.txt,${{ github.workspace }}/lcov.info
+          files: coverage-artifacts/backend-coverage/backend-coverage.txt,coverage-artifacts/frontend-coverage/lcov.info
           flags: unittests
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }} # required
+          # Non-blocking in jwilleke fork: CODECOV_TOKEN may be unset, and a failed upload
+          # must not fail CI. Set the secret and flip this to true to enforce uploads.
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
   # storybook: disabled in jwilleke fork — requires upstream Chromatic token

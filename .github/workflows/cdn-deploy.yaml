@@ -1,9 +1,11 @@
 name: CDN-Deploy
-# Disabled in jwilleke fork — upstream CDN deployment only.
+# NEUTRALIZED in jwilleke fork — this deploys logo assets to upstream's `fastenhealth/cdn`
+# repo using an upstream-only SSH secret. Kept for upstream parity/reference.
+#
+# Previously this file had a duplicate `on: workflow_dispatch:` key (invalid YAML), which
+# made GitHub register a failed check on every push. It is now valid, manual-only, and the
+# job is gated to the upstream repository so it can never run (or fail) on this fork.
 on:
-  workflow_dispatch:
-    paths:
-      - 'frontend/src/assets/sources/**'
   workflow_dispatch:
     inputs:
       logLevel:
@@ -18,9 +20,10 @@ env:
   SSH_DEPLOY_KEY: ${{ secrets.FASTENHEALTH_CDN_SSH_DEPLOY_KEY }}
 jobs:
   sync:
+    if: ${{ github.repository == 'fastenhealth/fasten-onprem' }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Pushes to another repository
       uses: cpina/github-action-push-to-another-repository@main
       with:

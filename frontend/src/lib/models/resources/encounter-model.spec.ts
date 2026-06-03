@@ -31,7 +31,9 @@ describe('EncounterModel', () => {
       expected.period_start = '2015-01-17T16:00:00Z'
       expected.has_participant = true
       expected.location_display = 'Client\'s home'
-      // encounterType: string | undefined
+      // example2.json has no encounter-level `type`, so the model synthesises a display-only
+      // encounter_type from the location (Veradigm/FollowMyHealth non-US-Core fallback).
+      expected.encounter_type = [{ text: 'Client\'s home', coding: [] }] as any
       expected.resource_class =  'home health'
       expected.resource_status = 'finished'
       expected.participant = [

@@ -1,14 +1,15 @@
 name: Cloud-Deploy
-# Disabled in jwilleke fork — upstream cloud deployment only.
+# NEUTRALIZED in jwilleke fork — deploys the frontend to upstream's AWS S3 bucket
+# (app-sandbox.fastenhealth.com) using an upstream IAM role. The `release: published`
+# auto-trigger has been removed so it no longer fires (and fails) on releases, and the
+# job is gated to the upstream repository. Kept for reference.
 on:
   workflow_dispatch:
-#    # Publish semver tags as releases.
-  release:
-    types: [published]
 
 jobs:
   deploy:
     name: deploy
+    if: ${{ github.repository == 'fastenhealth/fasten-onprem' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write

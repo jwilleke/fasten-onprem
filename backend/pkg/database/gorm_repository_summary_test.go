@@ -102,8 +102,12 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	
 	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
 	require.NoError(suite.T(), err)
+	// The open-source file-import stub upserts each top-level bundle entry exactly once,
+	// so TotalResources == len(UpdatedResources). (Upstream's commercial client reported
+	// 80 UpdatedResources for this bundle because it also expanded nested `contained`
+	// resources; the stub does not. See fasten-sources-stub/clients/factory/factory.go.)
 	require.Equal(suite.T(), 72, summary.TotalResources)
-	require.Equal(suite.T(), 80, len(summary.UpdatedResources))
+	require.Equal(suite.T(), 72, len(summary.UpdatedResources))
 
 	//test
 	ipsData, err := dbRepo.GetInternationalPatientSummaryExport(authContext)

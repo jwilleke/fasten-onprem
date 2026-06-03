@@ -1,5 +1,9 @@
 name: Release
-# This workflow is triggered manually
+# This workflow is triggered manually.
+# NEUTRALIZED in jwilleke fork — it relies on upstream's `packagr` GitHub App secrets
+# (PACKAGR_APP_ID / PACKAGR_APP_PRIVATE_KEY) which do not exist on this fork. The job is
+# gated to the upstream repository so a manual run on the fork no-ops instead of failing.
+# Kept for reference until a fork release process is defined.
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +20,7 @@ on:
 jobs:
   release:
     name: Create Release Commit
+    if: ${{ github.repository == 'fastenhealth/fasten-onprem' }}
     runs-on: ubuntu-latest
     container: ghcr.io/packagrio/packagr:latest-golang
     env:
