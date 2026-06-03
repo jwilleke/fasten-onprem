@@ -123,11 +123,16 @@ func extractResources(data []byte) ([]json.RawMessage, error) {
 	// json.Valid returns false for multi-line NDJSON (multiple root objects).
 	if json.Valid(trimmed) {
 		var bundle struct {
-			ResourceType string `json:"resourceType"`
+			ResourceType string          `json:"resourceType"`
+			Contained    []json.RawMessage `json:"contained"`
 			Entry        []struct {
 				FullURL  string          `json:"fullUrl"`
 				Resource json.RawMessage `json:"resource"`
 			} `json:"entry"`
+		}
+		if err := json.Unmarshal(trimmed, &bundle); err == nil && bundle.ResourceType == "List" {
+			// FHIR List with contained resources (used by CreateRelatedResources handler)
+			return bundle.Contained, nil
 		}
 		if err := json.Unmarshal(trimmed, &bundle); err == nil && bundle.ResourceType == "Bundle" {
 			// Build fullUrl → "ResourceType/id" lookup for resolving urn:uuid: references.
