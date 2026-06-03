@@ -50,6 +50,11 @@ type DatabaseRepository interface {
 	UpsertRawResource(ctx context.Context, sourceCredential SourceCredential, rawResource RawResourceFhir) (bool, error)
 }
 
+// ResourceInterface is implemented by FHIR resource types that carry a type+id reference.
+type ResourceInterface interface {
+	ResourceRef() (string, *string)
+}
+
 // SourceClient is the interface for provider sync clients (all methods are stubs).
 type SourceClient interface {
 	SyncAll(db DatabaseRepository) (UpsertSummary, error)

@@ -24,6 +24,10 @@ const (
 
 	FastenLighthouseEnvTypeSandbox    FastenLighthouseEnvType = "sandbox"
 	FastenLighthouseEnvTypeProduction FastenLighthouseEnvType = "production"
+
+	// Aliases used by test files
+	FastenLighthouseEnvSandbox    = FastenLighthouseEnvTypeSandbox
+	FastenLighthouseEnvProduction = FastenLighthouseEnvTypeProduction
 )
 
 // ParseReferenceUri parses a fastenhealth URN into (sourceId, resourceType, resourceId).
