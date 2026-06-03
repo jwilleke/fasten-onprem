@@ -1,7 +1,7 @@
 name: Cloud-Deploy
+# Disabled in jwilleke fork — upstream cloud deployment only.
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
 #    # Publish semver tags as releases.
   release:
     types: [published]

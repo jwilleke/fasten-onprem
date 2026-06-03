@@ -12,7 +12,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 concurrency:
-  group: ${{ github.ref }}
+  group: docker-jwilleke-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

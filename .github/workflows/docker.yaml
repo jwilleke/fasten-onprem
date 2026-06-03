@@ -1,8 +1,8 @@
 name: Docker
+# Disabled in jwilleke fork — requires depot.dev credentials (upstream only).
+# Use docker-jwilleke.yaml instead.
 on:
-  push:
-    branches: [ main, beta ]
-    # Publish semver tags as releases.
+  workflow_dispatch:
   release:
     types: [published]
 
