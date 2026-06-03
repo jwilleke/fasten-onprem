@@ -84,3 +84,4 @@ fasten.db-wal
 frontend/documentation.json
 
 certs/
+.DS_Store
