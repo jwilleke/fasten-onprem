@@ -1,8 +1,6 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.23.0
-
-toolchain go1.24.2
+go 1.25.0
 
 // fasten-sources was made private (see fastenhealth/fasten-onprem#629). Use local stub.
 replace github.com/fastenhealth/fasten-sources => ./fasten-sources-stub
@@ -38,7 +36,7 @@ require (
 	github.com/urfave/cli/v2 v2.11.2
 	golang.org/x/crypto v0.17.0
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
-	golang.org/x/mod v0.17.0
+	golang.org/x/mod v0.33.0
 	golang.org/x/net v0.17.0
 	gorm.io/datatypes v1.0.7
 	gorm.io/driver/sqlite v1.5.4
@@ -68,7 +66,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
-	golang.org/x/image v0.18.0 // indirect
+	golang.org/x/image v0.38.0 // indirect
 )
 
 require (
@@ -128,7 +126,7 @@ require (
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/term v0.15.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
