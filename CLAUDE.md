@@ -83,6 +83,13 @@ Standard Angular 14 module layout:
 - `pages/`, `components/`, `widgets/` — UI; `models/` — typed view models (the `patient-access-brands/` subdir is tygo-generated, don't edit).
 - Backend `/api/secure/events/stream` is a Server-Sent Events endpoint (used for sync/job progress).
 
+## Deployment
+
+- **Project site:** `https://yourphr.org` — the public landing/docs site, served by **GitHub Pages** from this repo's `gh-pages` branch (CNAME=yourphr.org). It is *not* the app.
+- **Running instance:** the app is deployed (internal/LAN, behind Authentik forward-auth) at **`yourphr.nerdsbythehour.com`**.
+- **Delivery:** GitOps via **Flux** in the separate repo `jwilleke/mj-infra-flux` (`apps/production/fasten/`). On push to `main`, `.github/workflows/docker-jwilleke.yaml` builds and pushes **`ghcr.io/jwilleke/yourphr`** (tags `:main` and `:main-<run_number>`); Flux image-automation picks the latest `main-<N>` tag and updates the deployment. The k8s app/namespace are still named `fasten`.
+- The image name follows `${{ github.repository }}`, so it tracks the repo name automatically.
+
 ## Conventions
 
 - When changing a Go struct that tygo exports, or `search-parameters.json`, re-run `make generate-backend` and commit the regenerated files — never hand-edit `fhir_*.go` or the generated TS models.
