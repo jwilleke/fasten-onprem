@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/jwilleke/yourphr">
-  <img width="400" alt="YourPHR" src="frontend/src/assets/banner/banner.png">
+  <img width="400" alt="YourPHR" src="frontend/src/assets/logo/yourphr-logo.svg">
   </a>
 </p>
 

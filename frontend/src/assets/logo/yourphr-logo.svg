@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" role="img" aria-label="YourPHR">
+  <title>YourPHR</title>
+  <style>
+    /* "Your" adapts to the viewer's theme (works inline and as an &lt;img&gt;); "PHR" stays accent. */
+    .word { fill: #1f2328; }
+    @media (prefers-color-scheme: dark) { .word { fill: #e6edf3; } }
+  </style>
+  <!-- mark: rounded square with a medical cross -->
+  <rect x="2" y="10" width="44" height="44" rx="10" fill="#4f9cf9"/>
+  <path d="M24 20 V44 M12 32 H36" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+  <!-- wordmark -->
+  <text x="56" y="43" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="34" font-weight="800" letter-spacing="-1">
+    <tspan class="word">Your</tspan><tspan fill="#4f9cf9">PHR</tspan>
+  </text>
+</svg>
