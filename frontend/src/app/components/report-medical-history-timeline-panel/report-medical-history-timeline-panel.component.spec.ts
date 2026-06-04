@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-history-timeline-panel.component';
-import {MomentModule} from 'ngx-moment';
+import {CommonModule} from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -11,7 +11,7 @@ describe('ReportMedicalHistoryTimelinePanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ MomentModule, RouterTestingModule, NgbDropdownModule ],
+      imports: [ CommonModule, RouterTestingModule, NgbDropdownModule ],
       declarations: [ ReportMedicalHistoryTimelinePanelComponent ],
     })
     .compileComponents();

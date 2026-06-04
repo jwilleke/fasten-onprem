@@ -10,7 +10,6 @@ import { MedicalSourcesCardComponent } from './medical-sources-card/medical-sour
 import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medical-sources-category-lookup.pipe';
 import { MedicalSourcesConnectedComponent } from './medical-sources-connected/medical-sources-connected.component';
 import { MedicalSourcesFilterComponent } from './medical-sources-filter/medical-sources-filter.component';
-import { MomentModule } from 'ngx-moment';
 import { NgChartsModule } from 'ng2-charts';
 import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
 import { ReportHeaderComponent } from './report-header/report-header.component';
@@ -49,7 +48,6 @@ import { FormRequestHealthSystemComponent } from './form-request-health-system/f
     NgbNavModule,
     FormsModule,
     ReactiveFormsModule,
-    MomentModule,
     NgChartsModule,
     HighlightModule,
     PipesModule,

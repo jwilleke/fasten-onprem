@@ -33,16 +33,16 @@
                           <img imageFallback style="max-height:30px" [src]="'assets/sources/'+(backgroundJob?.data?.brand_id + '.png')" [alt]="backgroundJob?.data?.brand_id" class="img-fluid">
                         </td>
                         <td>{{backgroundJob.job_type}}</td>
-                        <td container="body" [ngbTooltip]="backgroundJob.created_at | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.created_at | amDateFormat:'LL'}}</td>
+                        <td container="body" [ngbTooltip]="backgroundJob.created_at | date:'yyyy-MM-dd HH:mm'">{{backgroundJob.created_at | date:'longDate'}}</td>
                         <td><label class="badge badge-pill" [ngClass]="{
                                       'badge-secondary': backgroundJob.job_status == 'STATUS_READY',
                                      'badge-success': backgroundJob.job_status == 'STATUS_DONE',
                                      'badge-warning': backgroundJob.job_status == 'STATUS_LOCKED',
                                      'badge-danger': backgroundJob.job_status == 'STATUS_FAILED'
                         }">{{backgroundJob.job_status}}</label></td>
-                        <td container="body" [ngbTooltip]="backgroundJob.locked_time | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.locked_time | amTimeAgo}}</td>
+                        <td container="body" [ngbTooltip]="backgroundJob.locked_time | date:'yyyy-MM-dd HH:mm'">{{backgroundJob.locked_time | timeAgo}}</td>
                         <td container="body">
-                          <span *ngIf="backgroundJob.done_time" [ngbTooltip]="backgroundJob.done_time | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.done_time | amTimeAgo}}</span>
+                          <span *ngIf="backgroundJob.done_time" [ngbTooltip]="backgroundJob.done_time | date:'yyyy-MM-dd HH:mm'">{{backgroundJob.done_time | timeAgo}}</span>
                         </td>
                         <td>
                           <button (click)="openModal(content, backgroundJob)" class="btn btn-outline-indigo btn-with-icon btn-rounded"><i class="fa fa-info-circle"></i> Details</button>
@@ -65,7 +65,7 @@
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h4 class="modal-title">[{{selectedBackgroundJob.job_type}}] {{selectedBackgroundJob.created_at | amDateFormat:'YYYY-MM-DD HH:mm'}}</h4>
+    <h4 class="modal-title">[{{selectedBackgroundJob.job_type}}] {{selectedBackgroundJob.created_at | date:'yyyy-MM-dd HH:mm'}}</h4>
     <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')"><span aria-hidden="true">×</span></button>
   </div>
   <div class="modal-body">
@@ -79,10 +79,10 @@
                         }">{{selectedBackgroundJob.job_status}}</label></div>
 
       <div class="col-6"><strong>Last Updated</strong></div>
-      <div class="col-6">{{selectedBackgroundJob.locked_time | amDateFormat:'YYYY-MM-DD HH:mm'}}</div>
+      <div class="col-6">{{selectedBackgroundJob.locked_time | date:'yyyy-MM-dd HH:mm'}}</div>
 
       <div class="col-6"><strong>Completed At</strong></div>
-      <div class="col-6">{{selectedBackgroundJob.done_time | amDateFormat:'YYYY-MM-DD HH:mm'}}</div>
+      <div class="col-6">{{selectedBackgroundJob.done_time | date:'yyyy-MM-dd HH:mm'}}</div>
     </div>
 
     <pre><code  [highlight]="selectedBackgroundJob.data | json"></code></pre>

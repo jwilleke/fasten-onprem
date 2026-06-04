@@ -53,7 +53,7 @@
               <div><img imageFallback style="max-width:50px;" src="assets/sources/{{backgroundJob.data?.brand_id}}.png" alt=""></div>
               <div class="media-body">
                 <p><strong>{{backgroundJob.data?.source_type}}</strong> added {{backgroundJob.data?.checkpoint_data?.summary?.UpdatedResources?.length}} new records</p>
-                <span>{{backgroundJob.done_time | amDateFormat:'MMM DD hh:mma'}}</span>
+                <span>{{backgroundJob.done_time | date:'MMM dd hh:mma'}}</span>
               </div><!-- media-body -->
             </a><!-- media -->
           </div><!-- az-notification-list -->

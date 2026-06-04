@@ -10,9 +10,11 @@ import { HumanNamePipe } from './human-name.pipe';
 import { ReferenceUriPipe } from './reference-uri.pipe';
 import { FastenDisplayModelPipe } from './fasten-display-model.pipe';
 import { SafeHtmlPipe } from './safe-html.pipe';
+import { TimeAgoPipe } from './time-ago.pipe';
 
 @NgModule({
   declarations: [
+    TimeAgoPipe,
 
     FhirPathPipe,
     FilterPipe,
@@ -27,6 +29,7 @@ import { SafeHtmlPipe } from './safe-html.pipe';
 
   ],
   exports: [
+    TimeAgoPipe,
     FhirPathPipe,
     FilterPipe,
     ShortDomainPipe,
