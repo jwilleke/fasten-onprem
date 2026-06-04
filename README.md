@@ -246,7 +246,7 @@ This allows for a more complex example:
 
 # FAQ's
 
-See [FAQs](https://docs.fastenhealth.com/faqs.html) for common questions (& answers) regarding YourPHR
+Have a question? Search [existing issues](https://github.com/jwilleke/yourphr/issues) or open a new one. (A project FAQ will live at [yourphr.org](https://yourphr.org) as YourPHR grows.)
 
 # Support
 
@@ -264,8 +264,6 @@ Work your magic and then submit a pull request. We love pull requests!
 
 If you find the documentation lacking, help us out and update this README.md. If you don't have the time to work on YourPHR, but found something we should know about, please submit an issue.
 
-This project is tested with BrowserStack.
-
 # Versioning
 
 We use SemVer for versioning. For the versions available, see the tags on this repository.
@@ -278,11 +276,3 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 # Licenses
 
 [![GitHub license](https://img.shields.io/github/license/jwilleke/yourphr?style=flat-square)](https://github.com/jwilleke/yourphr/blob/main/LICENSE.md)
-
-# Fundraising & Sponsorships
-
-We'd like to thank the following Corporate Sponsors:
-
-<a href="https://depot.dev/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/depot.png" height="100px" /></a>
-<a style="padding-left:5px" href="https://www.macminivault.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/macminivault.png" height="100px" /></a>
-<a style="padding-left:5px" href="https://www.browserstack.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/browserstack.png" height="100px" /></a>
