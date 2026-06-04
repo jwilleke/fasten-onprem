@@ -29,9 +29,9 @@ import { AddressModel } from 'src/lib/models/datatypes/address-model';
     styleUrls: ['./medical-record-wizard-edit-practitioner.component.scss']
 })
 export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
-  @Input() debugMode: boolean = false;
+  @Input() debugMode = false;
   @Input() practitioner: PractitionerModel;
-  loading: boolean = false
+  loading = false
 
   //create tab options
   practitionerForm: FormGroup
@@ -50,14 +50,14 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
       data: new FormControl(null, Validators.required),
     })
     this.practitionerTypeaheadForm.valueChanges.subscribe(form => {
-      let val = form.data
+      const val = form.data
       if (val == null) {
         //reset the dependant fields (user cleared the text box)
         this.practitionerForm.get('profession').setValue(null)
         this.practitionerForm.get('identifier').setValue(null);
         this.practitionerForm.get('phone').setValue(null);
         this.practitionerForm.get('fax').setValue(null);
-        let addressGroup = this.practitionerForm.get('address')
+        const addressGroup = this.practitionerForm.get('address')
         addressGroup.get('line1').setValue(null)
         addressGroup.get('line2').setValue(null)
         addressGroup.get('city').setValue(null)
@@ -82,7 +82,7 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
       }
 
       if (val.provider_address) {
-        let addressGroup = this.practitionerForm.get('address')
+        const addressGroup = this.practitionerForm.get('address')
         addressGroup.get('line1').setValue(val.provider_address.line1)
         addressGroup.get('line2').setValue(val.provider_address.line2)
         addressGroup.get('city').setValue(val.provider_address.city)
@@ -126,7 +126,7 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
 
     this.practitionerForm.get('profession').setValue(practitioner.qualification?.[0].display)
 
-    let addressGroup = this.practitionerForm.get('address')
+    const addressGroup = this.practitionerForm.get('address')
     addressGroup.get('line1').setValue(practitioner.address?.[0].line?.[0])
     addressGroup.get('line2').setValue(practitioner.address?.[0].line?.[1])
     addressGroup.get('city').setValue(practitioner.address?.[0].city)
@@ -134,17 +134,17 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
     addressGroup.get('zip').setValue(practitioner.address?.[0].postalCode)
     addressGroup.get('country').setValue(practitioner.address?.[0].country)
 
-    let practitionerPhone = practitioner.telecom.find((telecom) => telecom.system == 'phone')
+    const practitionerPhone = practitioner.telecom.find((telecom) => telecom.system == 'phone')
     if (practitionerPhone) {
       this.practitionerForm.get('phone').setValue(practitionerPhone.value)
     }
 
-    let practitionerFax = practitioner.telecom.find((telecom) => telecom.system == 'fax')
+    const practitionerFax = practitioner.telecom.find((telecom) => telecom.system == 'fax')
     if (practitionerFax) {
       this.practitionerForm.get('fax').setValue(practitionerFax.value)
     }
 
-    let practitionerEmail = practitioner.telecom.find((telecom) => telecom.system == 'email')
+    const practitionerEmail = practitioner.telecom.find((telecom) => telecom.system == 'email')
     if (practitionerEmail) {
       this.practitionerForm.get('email').setValue(practitionerEmail.value)
     }
@@ -155,9 +155,9 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
   }
 
   submit() {
-    let practitioner = this.practitioner
+    const practitioner = this.practitioner
 
-    let address = new AddressModel(null)
+    const address = new AddressModel(null)
     address.city = this.practitionerForm.get('address').get('city').value
     address.line = []
     if (this.practitionerForm.get('address').get('line1').value) {
@@ -176,12 +176,12 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
     }
     
     if (this.practitionerForm.get('phone').value) {
-      let phone = {
+      const phone = {
         system: 'phone',
         value: this.practitionerForm.get('phone').value,
         use: 'work'
       }
-      let existingPhoneIndex = practitioner.telecom.findIndex((telecom) => telecom.system == 'phone')
+      const existingPhoneIndex = practitioner.telecom.findIndex((telecom) => telecom.system == 'phone')
       if (existingPhoneIndex != -1) {
         practitioner.telecom[existingPhoneIndex] = phone
       } else {
@@ -189,12 +189,12 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
       }
     }
     if (this.practitionerForm.get('fax').value) {
-      let fax = {
+      const fax = {
         system: 'fax',
         value: this.practitionerForm.get('fax').value,
         use: 'work'
       }
-      let existingFaxIndex = practitioner.telecom.findIndex((telecom) => telecom.system == 'fax')
+      const existingFaxIndex = practitioner.telecom.findIndex((telecom) => telecom.system == 'fax')
       if (existingFaxIndex != -1) {
         practitioner.telecom[existingFaxIndex] = fax
       } else {
@@ -202,12 +202,12 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
       }
     }
     if (this.practitionerForm.get('email').value) {
-      let email = {
+      const email = {
         system: 'email',
         value: this.practitionerForm.get('email').value,
         use: 'work'
       }
-      let existingEmailIndex = practitioner.telecom.findIndex((telecom) => telecom.system == 'email')
+      const existingEmailIndex = practitioner.telecom.findIndex((telecom) => telecom.system == 'email')
       if (existingEmailIndex != -1) {
         practitioner.telecom[existingEmailIndex] = email
       } else {
@@ -220,7 +220,7 @@ export class MedicalRecordWizardEditPractitionerComponent implements OnInit {
     }
     if (this.practitionerForm.get('name').value) {
       practitioner.sort_title = this.practitionerForm.get('name').value
-      let nameParts = parseFullName(this.practitionerForm.get('name').value)
+      const nameParts = parseFullName(this.practitionerForm.get('name').value)
       practitioner.name = [{
         givenName: nameParts.first,
         familyName: nameParts.last,

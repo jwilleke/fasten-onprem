@@ -18,8 +18,8 @@ import {BinaryComponent} from '../binary/binary.component';
 })
 export class MediaComponent implements OnInit, FhirCardComponentInterface{
   @Input() displayModel: MediaModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
   tableData: TableRowItem[] = []
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}

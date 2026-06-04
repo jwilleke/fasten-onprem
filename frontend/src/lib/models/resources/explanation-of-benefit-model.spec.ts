@@ -84,7 +84,7 @@ describe('ExplanationOfBenefitModel', () => {
     //   expect(new ExplanationOfBenefitModel(example3Fixture)).toEqual(expected);
     // });
     it('should parse example4.json', () => {
-      let expected = new ExplanationOfBenefitModel({})
+      const expected = new ExplanationOfBenefitModel({})
 
       expected.disposition = 'Claim settled as per contract.'
       expected.created = '2014-08-16'

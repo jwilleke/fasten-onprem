@@ -31,11 +31,7 @@ export interface WizardFhirResourceWrapper<T extends OrganizationModel | Practit
   action: 'find'|'create'
 }
 
-interface ResourceStorage {
-  [resourceType: string]: {
-    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport | Binary | Observation | Reference
-  }
-}
+type ResourceStorage = Record<string, Record<string, Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport | Binary | Observation | Reference>>;
 
 export function GenerateR4ResourceLookup(resourceCreate: MedicalRecordWizardFormCreate): ResourceStorage {
   let resourceStorage: ResourceStorage = {}
@@ -44,7 +40,7 @@ export function GenerateR4ResourceLookup(resourceCreate: MedicalRecordWizardForm
 
   resourceStorage = resourceCreateEncounterToR4Encounter(resourceStorage, resourceCreate.encounter)
 
-  for (let attachment of resourceCreate.attachments) {
+  for (const attachment of resourceCreate.attachments) {
     if (attachment.file_type == 'application/dicom' ||
       attachment.category.id == '18726-0' || //Radiology studies (set)
       attachment.category.id == '27897-8' || //	Neuromuscular electrophysiology studies (set)
@@ -58,23 +54,23 @@ export function GenerateR4ResourceLookup(resourceCreate: MedicalRecordWizardForm
     }
   }
 
-  for (let organization of resourceCreate.organizations) {
+  for (const organization of resourceCreate.organizations) {
     resourceStorage = resourceCreateOrganizationToR4Organization(resourceStorage, organization)
   }
-  for (let practitioner of resourceCreate.practitioners) {
+  for (const practitioner of resourceCreate.practitioners) {
     resourceStorage = resourceCreatePractitionerToR4Practitioner(resourceStorage, practitioner)
   }
-  for (let medication of resourceCreate.medications) {
+  for (const medication of resourceCreate.medications) {
     resourceStorage = resourceCreateMedicationToR4MedicationRequest(resourceStorage, medication)
   }
-  for (let procedure of resourceCreate.procedures) {
+  for (const procedure of resourceCreate.procedures) {
     resourceStorage = resourceCreateProcedureToR4Procedure(resourceStorage, procedure)
   }
 
 
   //DocumentReference  -> (Optional) Binary
   //DiagnosticReport -> Media
-  for (let labresult of resourceCreate.labresults) {
+  for (const labresult of resourceCreate.labresults) {
     resourceStorage = resourceCreateLabResultsToR4DiagnosticReports(resourceStorage, labresult)
   }
   //ImagingStudy
@@ -93,7 +89,7 @@ function resourceCreateEncounterToR4Encounter(resourceStorage: ResourceStorage, 
   console.warn("resourceEncounter", resourceEncounter)
 
   if (resourceEncounter.action == 'create') {
-    let createdResourceEncounter = {
+    const createdResourceEncounter = {
       resourceType: 'Encounter',
       id: resourceEncounter.data.source_resource_id,
       serviceType: resourceEncounter.data.code,
@@ -117,7 +113,7 @@ function resourceCreateEncounterToR4Encounter(resourceStorage: ResourceStorage, 
     } as Encounter
     resourceStorage['Encounter'][createdResourceEncounter.id] = createdResourceEncounter
   } else {
-    let foundResourceEncounter = {
+    const foundResourceEncounter = {
       type: 'Encounter',
       reference: generateReferenceUriFromResourceOrReference(resourceEncounter.data),
     }
@@ -175,15 +171,15 @@ function resourceCreateEncounterToR4Encounter(resourceStorage: ResourceStorage, 
 function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, resourceCreateProcedure: ResourceCreateProcedure): ResourceStorage {
   resourceStorage['Procedure'] = resourceStorage['Procedure'] || {}
 
-  let note = []
+  const note = []
   if (resourceCreateProcedure.comment) {
     note.push({
       text: resourceCreateProcedure.comment,
     })
   }
 
-  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
-  let procedureResource = {
+  const encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+  const procedureResource = {
     status: "completed",
     resourceType: 'Procedure',
     id: uuidV4(),
@@ -221,7 +217,7 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
 function resourceCreateOrganizationToR4Organization(resourceStorage: ResourceStorage, resourceOrganization: WizardFhirResourceWrapper<OrganizationModel>): ResourceStorage {
   resourceStorage['Organization'] = resourceStorage['Organization'] || {}
   if (resourceOrganization.action == 'create') {
-    let organizationResource = {
+    const organizationResource = {
       resourceType: 'Organization',
       id: resourceOrganization.data.source_resource_id,
       name: resourceOrganization.data.name,
@@ -234,7 +230,7 @@ function resourceCreateOrganizationToR4Organization(resourceStorage: ResourceSto
 
     resourceStorage['Organization'][organizationResource.id] = organizationResource
   } else {
-    let foundResourceOrganization = {
+    const foundResourceOrganization = {
       type: 'Organization',
       reference: generateReferenceUriFromResourceOrReference(resourceOrganization.data),
     }
@@ -263,7 +259,7 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
       })
     }
 
-    let practitionerResource = {
+    const practitionerResource = {
       resourceType: 'Practitioner',
       id: resourcePractitioner.data.source_resource_id,
       name: humanName,
@@ -283,7 +279,7 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
 
     resourceStorage['Practitioner'][practitionerResource.id] = practitionerResource
   } else {
-    let foundResourcePractitioner = {
+    const foundResourcePractitioner = {
       type: 'Practitioner',
       reference: generateReferenceUriFromResourceOrReference(resourcePractitioner.data),
     }
@@ -296,9 +292,9 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
 function resourceCreateMedicationToR4MedicationRequest(resourceStorage: ResourceStorage, resourceCreateMedication: ResourceCreateMedication): ResourceStorage {
   resourceStorage['MedicationRequest'] = resourceStorage['MedicationRequest'] || {}
 
-  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+  const encounterResource = findEncounter(resourceStorage) as Encounter | Reference
 
-  let medicationRequestResource = {
+  const medicationRequestResource = {
     id: uuidV4(),
     resourceType: 'MedicationRequest',
     status: resourceCreateMedication.status,
@@ -339,10 +335,10 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
 }
 
 function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
-  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+  const encounterResource = findEncounter(resourceStorage) as Encounter | Reference
 
   resourceStorage['Binary'] = resourceStorage['Binary'] || {}
-  let binaryResource = {
+  const binaryResource = {
     id: uuidV4(),
     resourceType: 'Binary',
     contentType: resourceAttachment.file_type,
@@ -352,7 +348,7 @@ function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorag
 
   resourceStorage['DocumentReference'] = resourceStorage['DocumentReference'] || {}
 
-  let documentReferenceResource = {
+  const documentReferenceResource = {
     id: resourceAttachment.id,
     resourceType: 'DocumentReference',
     status: 'current',
@@ -386,10 +382,10 @@ function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorag
 }
 
 function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
-  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+  const encounterResource = findEncounter(resourceStorage) as Encounter | Reference
 
   resourceStorage['Binary'] = resourceStorage['Binary'] || {}
-  let binaryResource = {
+  const binaryResource = {
     id: uuidV4(),
     resourceType: 'Binary',
     contentType: resourceAttachment.file_type,
@@ -399,7 +395,7 @@ function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage
 
   resourceStorage['Media'] = resourceStorage['Media'] || {}
 
-  let mediaResource = {
+  const mediaResource = {
     id: uuidV4(),
     resourceType: 'Media',
     status: 'completed',
@@ -416,7 +412,7 @@ function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage
   resourceStorage['Media'][mediaResource.id] = mediaResource
 
   resourceStorage['DiagnosticReport'] = resourceStorage['DiagnosticReport'] || {}
-  let diagnosticReportResource = {
+  const diagnosticReportResource = {
     id: resourceAttachment.id,
     resourceType: 'DiagnosticReport',
     status: 'final',
@@ -444,11 +440,11 @@ function resourceCreateLabResultsToR4DiagnosticReports(resourceStorage: Resource
 
     if (entry.resource.resourceType === 'Observation') {
       resourceStorage['Observation'] = resourceStorage['Observation'] || {}
-      let resource = entry.resource as Observation
+      const resource = entry.resource as Observation
       resourceStorage['Observation'][resource.id] = resource
     } else if (entry.resource.resourceType === 'DiagnosticReport') {
       resourceStorage['DiagnosticReport'] = resourceStorage['DiagnosticReport'] || {}
-      let resource = entry.resource as DiagnosticReport
+      const resource = entry.resource as DiagnosticReport
       resourceStorage['DiagnosticReport'][resource.id] = resource
     } else {
       console.log('Unknown resource type: ', entry.resource.resourceType)
@@ -459,7 +455,7 @@ function resourceCreateLabResultsToR4DiagnosticReports(resourceStorage: Resource
 
 
 function findEncounter(resourceStorage: ResourceStorage): Encounter | Reference {
-  let [encounterId] = Object.keys(resourceStorage['Encounter'])
+  const [encounterId] = Object.keys(resourceStorage['Encounter'])
   return resourceStorage['Encounter'][encounterId] as Encounter | Reference
 }
 
@@ -502,7 +498,7 @@ export function PractitionerToR4Practitioner(practitioner: PractitionerModel): P
     })
   }
 
-  let practitionerResource = {
+  const practitionerResource = {
     resourceType: 'Practitioner',
     id: practitioner.source_resource_id,
     name: humanName,

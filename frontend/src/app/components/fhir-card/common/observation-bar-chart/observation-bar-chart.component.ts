@@ -112,10 +112,10 @@ export class ObservationBarChartComponent implements OnInit {
       return;
     }
 
-    let currentValues = []
-    let referenceRanges = []
+    const currentValues = []
+    const referenceRanges = []
 
-    for(let observation of this.observations) {
+    for(const observation of this.observations) {
       referenceRanges.push(this.extractReferenceRange(observation));
       this.barChartData[0]['dataLabels'].push(observation.reference_range.display());
 
@@ -125,7 +125,7 @@ export class ObservationBarChartComponent implements OnInit {
       this.barChartLabels.push(this.formatDate(observation.effective_date))
     }
 
-    let xAxisMax = Math.max(Math.max(...currentValues.flat()), Math.max(...referenceRanges.flat())) * 1.3;
+    const xAxisMax = Math.max(Math.max(...currentValues.flat()), Math.max(...referenceRanges.flat())) * 1.3;
     this.barChartOptions.scales['x']['max'] = xAxisMax
 
     // @ts-ignore
@@ -137,13 +137,13 @@ export class ObservationBarChartComponent implements OnInit {
   }
 
   private extractReferenceRange(observation: ObservationModel): [number, number] {
-    let refRange = observation.reference_range;
+    const refRange = observation.reference_range;
 
     return [refRange.low_value || 0, refRange.high_value || 0]
   }
 
   private extractCurrentValue(observation: ObservationModel): [any, any] {
-    let valueObject = observation.value_model.valueObject();
+    const valueObject = observation.value_model.valueObject();
 
     if (valueObject.range) {
       return [valueObject.range.low, valueObject.range.high];

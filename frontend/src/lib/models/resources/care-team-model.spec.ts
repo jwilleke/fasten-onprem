@@ -13,7 +13,7 @@ describe('CareTeamModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new CareTeamModel({})
+      const expected = new CareTeamModel({})
       expected.name = "Peter James Charlmers Care Plan for Inpatient Encounter"
       expected.status = "active"
       // expected.periodStart

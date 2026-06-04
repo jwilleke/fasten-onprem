@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
@@ -10,13 +10,13 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./setup-encryption-key.component.scss'],
     standalone: false
 })
-export class SetupEncryptionKeyComponent implements OnInit {
+export class SetupEncryptionKeyComponent implements OnInit, OnDestroy {
   encryptionKeyForm: FormGroup;
   isProcessing = false;
   error = false;
   isValidated = false;
-  statusMessage: string = '';
-  countdown: number = 5;
+  statusMessage = '';
+  countdown = 5;
   private countdownInterval: any;
   private formSubscription: Subscription;
 

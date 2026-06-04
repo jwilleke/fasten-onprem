@@ -36,16 +36,16 @@ export class SourceListItem {
     standalone: false
 })
 export class MedicalSourcesComponent implements OnInit {
-  loading: boolean = false
+  loading = false
 
   environment_name = environment.environment_name
 
   uploadedFile: File[] = []
-  uploadErrorMsg: string = ""
-  dragActive: boolean = false
+  uploadErrorMsg = ""
+  dragActive = false
 
   searchTermUpdate = new BehaviorSubject<string>("");
-  status: { [name: string]: undefined | "token" | "authorize" } = {}
+  status: Record<string, undefined | "token" | "authorize"> = {}
 
   //aggregation/filter data & limits
   globalLimits: {
@@ -142,7 +142,7 @@ export class MedicalSourcesComponent implements OnInit {
         sourceMetadata.brand_id = brandId
         sourceMetadata.portal_id = portalId
 
-        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata)
+        const authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata)
 
         // redirect to lighthouse with uri's (or open a new window in desktop mode)
         this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
@@ -193,10 +193,10 @@ export class MedicalSourcesComponent implements OnInit {
 
     if(processingFile.type == "text/xml"){
 
-      let shouldConvert = await this.showCcdaWarningModal()
+      const shouldConvert = await this.showCcdaWarningModal()
       if(shouldConvert){
         try {
-          let convertedFile = await this.platformApi.convertCcdaToFhir(processingFile).toPromise()
+          const convertedFile = await this.platformApi.convertCcdaToFhir(processingFile).toPromise()
           processingFile = convertedFile
         } catch(err){
           console.error(err)

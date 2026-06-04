@@ -18,9 +18,9 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 })
 export class OrganizationComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: OrganizationModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
-  @Input() isEditable: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
+  @Input() isEditable = false
 
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
   @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
@@ -31,7 +31,7 @@ export class OrganizationComponent implements OnInit, FhirCardEditableComponentI
 
   ngOnInit(): void {
 
-    for(let idCoding of (this.displayModel?.identifier || [])){
+    for(const idCoding of (this.displayModel?.identifier || [])){
       this.tableData.push({
         label: `Identifier (${idCoding.system})`,
         data: idCoding.display || idCoding.value,
@@ -39,8 +39,8 @@ export class OrganizationComponent implements OnInit, FhirCardEditableComponentI
       })
     }
 
-    for(let address of (this.displayModel?.addresses || [])){
-      let addressParts = []
+    for(const address of (this.displayModel?.addresses || [])){
+      const addressParts = []
       if(address.line){
         addressParts.push(address.line.join(' '))
       }

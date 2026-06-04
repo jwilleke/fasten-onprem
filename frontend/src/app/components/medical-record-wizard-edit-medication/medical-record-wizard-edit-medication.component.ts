@@ -27,15 +27,15 @@ import { MedicationRequestModel } from 'src/lib/models/resources/medication-requ
     styleUrls: ['./medical-record-wizard-edit-medication.component.scss']
 })
 export class MedicalRecordWizardEditMedicationComponent implements OnInit {
-  @Input() debugMode: boolean = false;
+  @Input() debugMode = false;
   @Input() medication: MedicationModel;
   @Input() medicationRequest: MedicationRequestModel;
   @Input() practitioners: PractitionerModel[];
-  loading: boolean = false
+  loading = false
 
   medicationForm: FormGroup
 
-  totalEncounters: number = 0
+  totalEncounters = 0
   constructor(
     public activeModal: NgbActiveModal,
   ) { }
@@ -76,7 +76,7 @@ export class MedicalRecordWizardEditMedicationComponent implements OnInit {
 
     this.medicationForm.get("started").setValue(this.convertToNgbDateStruct(medicationRequest.created))
 
-    let practitioner = this.practitioners.find((practitioner) => medicationRequest.requester.reference == `Practitioner/${practitioner.source_resource_id}`)
+    const practitioner = this.practitioners.find((practitioner) => medicationRequest.requester.reference == `Practitioner/${practitioner.source_resource_id}`)
     this.medicationForm.get("requester").setValue(practitioner)
   }
 
@@ -85,21 +85,21 @@ export class MedicalRecordWizardEditMedicationComponent implements OnInit {
   }
 
   submit() {
-    let medication = this.medication
+    const medication = this.medication
     medication.code = this.medicationForm.get("data").value
     if (medication.code?.text) {
       medication.sort_title = medication.code.text
       medication.title = medication.code.text
     }
     
-    let medicationRequest = this.medicationRequest
+    const medicationRequest = this.medicationRequest
 
     medicationRequest.status = this.medicationForm.get("status").value
 
-    let startedDate = this.medicationForm.get("started").value
+    const startedDate = this.medicationForm.get("started").value
     medicationRequest.created = (new Date(startedDate.year, startedDate.month - 1, startedDate.day)).toISOString()
 
-    let practitioner = this.medicationForm.get("requester").value
+    const practitioner = this.medicationForm.get("requester").value
     medicationRequest.requester.reference = `Practitioner/${practitioner.source_resource_id}`
 
     if (this.medicationForm.get("dosage").value) {

@@ -25,15 +25,15 @@ import {EncounterModel} from '../../../lib/models/resources/encounter-model';
     styleUrls: ['./medical-record-wizard-edit-encounter.component.scss']
 })
 export class MedicalRecordWizardEditEncounterComponent implements OnInit {
-  @Input() debugMode: boolean = false;
+  @Input() debugMode = false;
   @Input() encounter: EncounterModel;
-  loading: boolean = false
+  loading = false
 
   //create tab options
   encounterForm: FormGroup //ResourceCreateEncounter
 
   //find tab options
-  totalEncounters: number = 0
+  totalEncounters = 0
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
@@ -65,16 +65,16 @@ export class MedicalRecordWizardEditEncounterComponent implements OnInit {
   }
 
   submit() {
-    let encounter = this.encounter
+    const encounter = this.encounter
     encounter.code = this.encounterForm.get('code').value
     encounter.sort_title = encounter.code.text
 
     if(this.encounterForm.get('period_start').value){
-      let period_start = this.encounterForm.get('period_start').value
+      const period_start = this.encounterForm.get('period_start').value
       encounter.period_start = (new Date(period_start.year, period_start.month-1, period_start.day)).toISOString()
     }
     if(this.encounterForm.get('period_end').value){
-      let period_end = this.encounterForm.get('period_end').value
+      const period_end = this.encounterForm.get('period_end').value
       encounter.period_end = (new Date(period_end.year, period_end.month-1, period_end.day)).toISOString()
     }
 

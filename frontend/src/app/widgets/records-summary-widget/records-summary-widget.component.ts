@@ -12,7 +12,7 @@ class GroupedSummary {
   imageName: string
   resourceTypes: string[]
   includedResourceTypes: string[] = []
-  count: number = 0
+  count = 0
 }
 
 
@@ -171,10 +171,10 @@ export class RecordsSummaryWidgetComponent extends DashboardWidgetComponent impl
 
     this.fastenApi.getSummary().subscribe((summary: Summary) => {
         this.summary = summary
-        for (let resourceTypeCount of summary.resource_type_counts) {
+        for (const resourceTypeCount of summary.resource_type_counts) {
           let foundGroup = false
-          for (let groupKey in this.groupLookup) {
-            let group = this.groupLookup[groupKey]
+          for (const groupKey in this.groupLookup) {
+            const group = this.groupLookup[groupKey]
             if (group.resourceTypes.indexOf(resourceTypeCount.resource_type) > -1) {
               foundGroup = true
               this.groupLookup[groupKey].count += resourceTypeCount.count

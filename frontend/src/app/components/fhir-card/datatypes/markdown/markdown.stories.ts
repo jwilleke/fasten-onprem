@@ -34,7 +34,7 @@ export default meta;
 type Story = StoryObj<MarkdownComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
-let aiDisplayModel1 =  new BinaryModel(R4Example1Json, fhirVersions.R4)
+const aiDisplayModel1 =  new BinaryModel(R4Example1Json, fhirVersions.R4)
 aiDisplayModel1.source_id = '123-456-789'
 aiDisplayModel1.source_resource_id = '123-456-789'
 export const R4Example1: Story = {

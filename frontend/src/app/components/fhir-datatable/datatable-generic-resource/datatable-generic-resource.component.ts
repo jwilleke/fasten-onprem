@@ -31,7 +31,7 @@ export class GenericColumnDefn {
 }
 
 class PageInfo {
-  offset: number = 0 //this is the current page number. 0 is the first page. Matches the ng-datatable structure
+  offset = 0 //this is the current page number. 0 is the first page. Matches the ng-datatable structure
 }
 
 @Component({
@@ -100,12 +100,12 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
 
   renderList(resourceList: ResourceFhir[]){
     this.columns = this.columnDefinitions.map((defn) => {
-      let column = {name: defn.title, prop: defn.title.replace(/[^A-Z0-9]/ig, "_"), sortable: false}
+      const column = {name: defn.title, prop: defn.title.replace(/[^A-Z0-9]/ig, "_"), sortable: false}
       return column
     })
 
     this.rows = resourceList.map((resource) => {
-      let row = {
+      const row = {
         resource: resource,
         source_id: resource.source_id,
         source_resource_type: resource.source_resource_type,
@@ -114,8 +114,8 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
 
       this.columnDefinitions.forEach((defn) => {
         try{
-          let resourceProp = defn.getter(resource.resource_raw)
-          let resourceFormatted = defn.format ? FORMATTERS[defn.format](resourceProp) : resourceProp
+          const resourceProp = defn.getter(resource.resource_raw)
+          const resourceFormatted = defn.format ? FORMATTERS[defn.format](resourceProp) : resourceProp
           row[defn.title.replace(/[^A-Z0-9]/ig, "_")] = resourceFormatted
         }catch (e){
           //ignore
@@ -138,7 +138,7 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
   // if the row is in the disabled list, it should not be selectable
   selectCheck(): (any) => boolean {
     return function(row) {
-      let canSelect = this.disabledResourceIds.indexOf(row.source_resource_id) === -1
+      const canSelect = this.disabledResourceIds.indexOf(row.source_resource_id) === -1
       if(!canSelect){
         console.warn(`Row id '${row.source_resource_id}' is disabled, cannot select`)
       }

@@ -27,8 +27,8 @@ class RelatedNode {
 export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   @Input() conditions: ResourceFhir[] = []
-  resourceLookup: {[name: string]: ResourceFhir} = {}
-  compositionTitle: string = ""
+  resourceLookup: Record<string, ResourceFhir> = {}
+  compositionTitle = ""
 
   nodes = [
     // {
@@ -55,7 +55,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     // }
   ];
 
-  selectedResources:{ [id:string]: ResourceFhir} = {}
+  selectedResources:Record<string, ResourceFhir> = {}
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
@@ -67,7 +67,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
 
   onResourceCheckboxClick($event, node: RelatedNode){
-    let key = `${node.source_id}/${node.source_resource_type}/${node.source_resource_id}`
+    const key = `${node.source_id}/${node.source_resource_type}/${node.source_resource_id}`
     if($event.target.checked){
       this.selectedResources[key] = node.resource
       if(!this.compositionTitle){
@@ -81,8 +81,8 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   onMergeResourcesClick() {
 
-    let resources: ResourceFhir[] = []
-    for(let key in this.selectedResources){
+    const resources: ResourceFhir[] = []
+    for(const key in this.selectedResources){
       resources.push(this.selectedResources[key])
     }
 
@@ -94,11 +94,11 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
 
   generateNodes(resouceFhirList: ResourceFhir[]): RelatedNode[] {
-    let relatedNodes = resouceFhirList.map((resourceFhir) => { return this.recGenerateNode(resourceFhir) })
-    for(let relatedNode of relatedNodes){
+    const relatedNodes = resouceFhirList.map((resourceFhir) => { return this.recGenerateNode(resourceFhir) })
+    for(const relatedNode of relatedNodes){
       if(relatedNode.source_id  == 'UNASSIGNED' && relatedNode.source_resource_type == 'Condition' && relatedNode.source_resource_id == 'UNASSIGNED'){
         //this is a placeholder for the Unassigned resources. This resource cannot be merged, but all child resources can be, so lets set them to true
-        for(let unassignedEncounters of relatedNode.children){
+        for(const unassignedEncounters of relatedNode.children){
           unassignedEncounters.show_checkbox = true
         }
       } else {
@@ -110,7 +110,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   }
 
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
-    let relatedNode = {
+    const relatedNode = {
       show_checkbox: false,
       expanded: false,
       source_id: resourceFhir.source_id,

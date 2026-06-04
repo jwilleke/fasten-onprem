@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastNotification, ToastType } from 'src/app/models/fasten/toast';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
@@ -10,7 +10,7 @@ import { ToastService } from 'src/app/services/toast.service';
     styleUrls: ['./get-encryption-key-wizard.component.scss'],
     standalone: false
 })
-export class GetEncryptionKeyWizardComponent implements OnInit {
+export class GetEncryptionKeyWizardComponent implements OnInit, OnDestroy {
   gridImages: string[] = [
     "f8f9ce28-d79b-4b54-9f7d-3f0aaba88c2c.png",
     "89bb6993-b806-49a2-84e2-6e70705c504a.png",
@@ -104,7 +104,7 @@ export class GetEncryptionKeyWizardComponent implements OnInit {
   acknowledged = false;
   showEncryptionKey = false;
   settingUpKey = false;
-  countdown: number = 5;
+  countdown = 5;
   private countdownInterval: any;
 
   constructor(

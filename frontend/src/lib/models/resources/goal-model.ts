@@ -37,7 +37,7 @@ export class GoalModel extends FastenDisplayModel {
     this.status = _.get(fhirResource, 'status', '');
     this.has_status = _.has(fhirResource, 'status');
     this.start_date = _.get(fhirResource, 'startDate');
-    let category = _.get(fhirResource, 'category');
+    const category = _.get(fhirResource, 'category');
     if(category){
       this.category = category.map((cat:any) => new CodableConceptModel(cat))
     }

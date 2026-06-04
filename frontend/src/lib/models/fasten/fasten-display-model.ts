@@ -8,7 +8,7 @@ export class FastenDisplayModel {
   sort_title: string | undefined
   sort_date: Date | undefined
 
-  related_resources: {[ modelResourceType: string]: FastenDisplayModel[]} = {}
+  related_resources: Record<string, FastenDisplayModel[]> = {}
 
   constructor(options?: FastenOptions) {}
 }

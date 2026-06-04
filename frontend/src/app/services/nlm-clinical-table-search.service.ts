@@ -50,7 +50,7 @@ export class NlmClinicalTableSearchService {
 
   //https://clinicaltables.nlm.nih.gov/api/conditions/v3/search?terms=xxx
   searchCondition(searchTerm: string): Observable<NlmSearchResults[]> {
-    let queryParams = {
+    const queryParams = {
       'terms':searchTerm,
       'df':'key_id,consumer_name,info_link_data,icd10cm_codes',
     }
@@ -58,7 +58,7 @@ export class NlmClinicalTableSearchService {
       `${this.nlm_clinical_table_search_endpoint}/conditions/v3/search`, {params: queryParams}
     ).pipe(
         map((response) => {
-          let results =  response[3].map((item: any):NlmSearchResults => {
+          const results =  response[3].map((item: any):NlmSearchResults => {
             return {
               id: item[0],
               text: item[1],
@@ -79,15 +79,15 @@ export class NlmClinicalTableSearchService {
 
   //https://clinicaltables.nlm.nih.gov/api/rxterms/v3/search?ef=SXDG_RXCUI,DISPLAY_NAME&terms=xxx
   searchMedication(searchTerm: string): Observable<NlmSearchResults[]> {
-    let queryParams = {
+    const queryParams = {
       'ef': 'SXDG_RXCUI,DISPLAY_NAME',
       'terms':searchTerm
     }
     return this._httpClient.get<any>(`${this.nlm_clinical_table_search_endpoint}/rxterms/v3/search`, {params: queryParams})
       .pipe(
         map((response) => {
-          let results: NlmSearchResults[] = []
-          for(let ndx in response[2]['SXDG_RXCUI']){
+          const results: NlmSearchResults[] = []
+          for(const ndx in response[2]['SXDG_RXCUI']){
             results.push({
               id: response[2]['SXDG_RXCUI'][ndx], //code response can be a comma sep list (string) of multiple codes
               text: response[2]['DISPLAY_NAME'][ndx],
@@ -108,7 +108,7 @@ export class NlmClinicalTableSearchService {
   //see https://lhcforms.nlm.nih.gov/phr.json
   //see http://hl7.org/fhir/R4/valueset-medicationrequest-status-reason.html
   searchMedicationWhyStopped(searchTerm: string): Observable<NlmSearchResults[]> {
-    let searchOptions: NlmSearchResults[] = [
+    const searchOptions: NlmSearchResults[] = [
       {"id": "STP-1", "text": "Finished the prescription"},
       {"id": "STP-2", "text": "Dose change", identifier: [{system: 'http://terminology.hl7.org/CodeSystem/medicationrequest-status-reason', code: 'drughigh'}]},
       {"id": "STP-3", "text": "Problem gone", },
@@ -121,13 +121,13 @@ export class NlmClinicalTableSearchService {
       {"id": "STP-10","text": "I don't know"},
       {"id": "STP-11","text": "Pregnant", identifier: [{system: 'http://terminology.hl7.org/CodeSystem/medicationrequest-status-reason', code: 'preg'}]}
     ]
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
   //see https://lhcforms.nlm.nih.gov/phr.json
   searchAllergy(searchTerm: string): Observable<NlmSearchResults[]> {
-    let searchOptions: NlmSearchResults[] = [
+    const searchOptions: NlmSearchResults[] = [
       {"id": "food", "text": "Food allergies"},
       {"id": "FOOD-2", "text": "Chocolate",
         "parentAnswerCode": "food",
@@ -539,13 +539,13 @@ export class NlmClinicalTableSearchService {
         "link": "http://www.nlm.nih.gov/medlineplus/drugreactions.html"}
     ]
 
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
   //see https://lhcforms.nlm.nih.gov/phr.json
   searchAllergyReaction(searchTerm: string): Observable<NlmSearchResults[]> {
-    let searchOptions:NlmSearchResults[] = [
+    const searchOptions:NlmSearchResults[] = [
       {"id": "AL-REACT-19", "text": "Anaphylaxis"},
       {"id": "AL-REACT-1", "text": "Stomach cramps and/or pain"},
       {"id": "AL-REACT-5", "text": "Diarrhea and/or vomiting"},
@@ -562,12 +562,12 @@ export class NlmClinicalTableSearchService {
       {"id": "AL-REACT-25", "text": "Rapid pulse"},
       {"id": "AL-REACT-8", "text": "Headache"}
     ]
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
   //see https://lhcforms.nlm.nih.gov/phr.json
   searchVaccine(searchTerm: string): Observable<NlmSearchResults[]> {
-    let searchOptions:NlmSearchResults[] = [
+    const searchOptions:NlmSearchResults[] = [
       {"id": "adolescentAdult", "text": "Adolescent/Adult"},
       {"id": "118", "text": "Cervarix (Human papilloma virus - bivalent)",
         "parentAnswerCode": "adolescentAdult"},
@@ -659,13 +659,13 @@ export class NlmClinicalTableSearchService {
       {"id": "75", "text": "Vaccinia (smallpox)",
         "parentAnswerCode": "uncommon"}
     ]
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
   //https://clinicaltables.nlm.nih.gov/api/procedures/v3/search?terms=xxx
   searchProcedure(searchTerm: string): Observable<NlmSearchResults[]> {
-    let queryParams = {
+    const queryParams = {
       'terms':searchTerm,
       'df':'key_id,consumer_name,info_link_data,term_icd9_code'
     }
@@ -691,7 +691,7 @@ export class NlmClinicalTableSearchService {
 
   //https://lforms-service.nlm.nih.gov/api/loinc_items/v3/search?type=form&available=true&terms=Diabetes
   searchLabPanels(searchTerm: string): Observable<NlmSearchResults[]> {
-    let queryParams = {
+    const queryParams = {
       'type':'form',
       'available':'true',
       'terms':searchTerm
@@ -716,7 +716,7 @@ export class NlmClinicalTableSearchService {
   }
 
   searchLabPanelQuestionnaire(panelLoincCode: string): Observable<LabresultsQuestionnaire> {
-    let queryParams = {
+    const queryParams = {
       'loinc_num': panelLoincCode,
     }
     return this._httpClient.get<any>(`https://lforms-service.nlm.nih.gov/loinc_form_definitions`, {params: queryParams})
@@ -732,7 +732,7 @@ export class NlmClinicalTableSearchService {
   // ideally we'd use http://www.hl7.org/fhir/valueset-performer-role.html
   // but the LHC api returns NUCC codes, not the SNOMED codes, which would be confusing.
   searchMedicalContactIndividualProfession(searchTerm: string): Observable<NlmSearchResults[]> {
-    let searchOptions: NlmSearchResults[] = [
+    const searchOptions: NlmSearchResults[] = [
       {
         id: "207K00000X",
         identifier: [{
@@ -1022,12 +1022,12 @@ export class NlmClinicalTableSearchService {
         text: "Urology Physician"
       }
     ]
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
   searchMedicalContactIndividual(searchTerm: string): Observable<NlmSearchResults[]> {
-    let queryParams = {
+    const queryParams = {
       'terms':searchTerm,
       'df':'NPI,name.full,provider_type,addr_practice,licenses.taxonomy.code'
     }
@@ -1037,7 +1037,7 @@ export class NlmClinicalTableSearchService {
       .pipe(
         map((response) => {
           return response[3].map((item):NlmSearchResults => {
-            let addr_practice = JSON.parse(item[3])
+            const addr_practice = JSON.parse(item[3])
             return {
               id: item[0],
               identifier: [{
@@ -1082,7 +1082,7 @@ export class NlmClinicalTableSearchService {
 
   // see http://terminology.hl7.org/CodeSystem/organization-type'
   searchMedicalContactOrganization(searchTerm: string): Observable<NlmSearchResults[]> {
-    let queryParams = {
+    const queryParams = {
       'terms':searchTerm,
       'df':'NPI,name.full,provider_type,addr_practice,licenses.taxonomy.code'
     }
@@ -1093,7 +1093,7 @@ export class NlmClinicalTableSearchService {
         map((response) => {
 
           return response[3].map((item):NlmSearchResults => {
-            let addr_practice = JSON.parse(item[3])
+            const addr_practice = JSON.parse(item[3])
             return {
               id: item[0],
               identifier: [{
@@ -1136,7 +1136,7 @@ export class NlmClinicalTableSearchService {
   }
 
   searchMedicalContactOrganizationType(searchTerm: string): Observable<NlmSearchResults[]> {
-    let searchOptions: NlmSearchResults[] = [
+    const searchOptions: NlmSearchResults[] = [
       {
         id: "261Q00000X",
         identifier: [{
@@ -1237,7 +1237,7 @@ export class NlmClinicalTableSearchService {
         text: "Insurance Company"
       }
     ]
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
@@ -1245,7 +1245,7 @@ export class NlmClinicalTableSearchService {
   searchCountries(searchTerm: string): Observable<NlmSearchResults[]> {
 
     //https://tx.fhir.org/r4/ValueSet/$expand?_format=json&filter=Canada&url=http://hl7.org/fhir/ValueSet/iso3166-1-2
-    let queryParams = {
+    const queryParams = {
       '_format': 'json',
       'filter':searchTerm,
       'url': 'http://hl7.org/fhir/ValueSet/iso3166-1-2'
@@ -1267,7 +1267,7 @@ export class NlmClinicalTableSearchService {
   }
 
   searchWikipediaType(searchTerm: string): Observable<NlmSearchResults[]> {
-    let queryParams = {
+    const queryParams = {
       'action': 'opensearch',
       'format': 'json',
       'origin': '*',
@@ -1283,7 +1283,7 @@ export class NlmClinicalTableSearchService {
 
 
   searchAttachmentFileType(searchTerm: string): Observable<NlmSearchResults[]> {
-    let searchOptions: NlmSearchResults[] = [
+    const searchOptions: NlmSearchResults[] = [
       {
         id: "application/json",
         text: "Document - JSON"
@@ -1318,7 +1318,7 @@ export class NlmClinicalTableSearchService {
       },
 
     ]
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
@@ -1327,7 +1327,7 @@ export class NlmClinicalTableSearchService {
 
 
     //https://tx.fhir.org/r4/ValueSet/$expand?_format=json&filter=Referral&url=http://hl7.org/fhir/ValueSet/document-classcodes
-    let queryParams = {
+    const queryParams = {
       '_format': 'json',
       'filter':searchTerm,
       'url': 'http://hl7.org/fhir/ValueSet/document-classcodes'
@@ -1528,7 +1528,7 @@ export class NlmClinicalTableSearchService {
   //manually created for patient understanding
   searchEncounterClassification(searchTerm: string): Observable<NlmSearchResults[]> {
 
-    let searchOptions: NlmSearchResults[] = [
+    const searchOptions: NlmSearchResults[] = [
       {
         id: "AMB",
         identifier: [{
@@ -1584,7 +1584,7 @@ export class NlmClinicalTableSearchService {
         text: "Virtual/Telemedicine Appointment"
       }
     ]
-    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    const result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
@@ -1592,7 +1592,7 @@ export class NlmClinicalTableSearchService {
   searchEncounterServiceType(searchTerm: string): Observable<NlmSearchResults[]> {
 
     //https://tx.fhir.org/r4/ValueSet/$expand?_format=json&filter=Referral&url=http://hl7.org/fhir/ValueSet/service-type&incomplete-ok=true
-    let queryParams = {
+    const queryParams = {
       '_format': 'json',
       'filter':searchTerm,
       'url': 'http://hl7.org/fhir/ValueSet/service-type',

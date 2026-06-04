@@ -25,7 +25,7 @@ describe('ShortDomainPipe', () => {
     ];
 
     //test
-    for(let urltest of urls) {
+    for(const urltest of urls) {
       expect(pipe.transform(urltest.test)).toBe(urltest.result, `testing "${urltest.test}". Expecting ${pipe.transform(urltest.test)} to be ${urltest.result}`);
     }
 

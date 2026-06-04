@@ -23,17 +23,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   backgroundJobs: BackgroundJob[] = []
 
   newSupportRequest: SupportRequest = null
-  loading: boolean = false
-  errorMsg: string = ""
-  submitSuccess: boolean = false
+  loading = false
+  errorMsg = ""
+  submitSuccess = false
 
   routerSubscription: Subscription = null
   isDarkModeSubscription: Subscription = null
 
   is_environment_desktop: boolean = environment.environment_desktop
 
-  isAdmin: boolean = false;
-  isDarkMode: boolean = false;
+  isAdmin = false;
+  isDarkMode = false;
 
   constructor(
     private authService: AuthService,
@@ -106,7 +106,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   resetSupportRequestForm() {
     this.submitSuccess = false
-    let newSupportRequest = new SupportRequest()
+    const newSupportRequest = new SupportRequest()
     newSupportRequest.dist_type = environment.environment_desktop ? 'desktop' : 'docker'
     newSupportRequest.flavor = environment.environment_name
     newSupportRequest.version = versionInfo.version

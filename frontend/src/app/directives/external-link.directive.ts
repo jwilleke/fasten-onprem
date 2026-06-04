@@ -39,7 +39,7 @@ export class ExternalLinkDirective {
   onClick(event: MouseEvent) {
     event.preventDefault();
 
-    let url: string = (<any> event.currentTarget).getAttribute("href") || (<any> event.target).getAttribute("href");
+    const url: string = (event.currentTarget as any).getAttribute("href") || (event.target as any).getAttribute("href");
 
     OpenExternalLink(url, environment.environment_desktop)
   }

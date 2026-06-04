@@ -17,7 +17,7 @@ export function GetEndpointAbsolutePath(currentUrl: {pathname: string, protocol:
 
     if(currentUrl.pathname.includes('/web')){
       // probably running locally, and *may* include a subpath
-      let subPath = currentUrl.pathname.split('/web').slice(0, 1)[0]
+      const subPath = currentUrl.pathname.split('/web').slice(0, 1)[0]
       if(subPath != "/"){
         //subpath, so we need to update the absolutePath with the subpath before adding the relative path to the end
         absolutePath = subPath + relativePath

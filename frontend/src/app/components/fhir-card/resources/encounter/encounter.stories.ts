@@ -41,7 +41,7 @@ export default meta;
 type Story = StoryObj<EncounterComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
-let encounterDisplayModel1 =  new EncounterModel(R4Example1Json, fhirVersions.R4)
+const encounterDisplayModel1 =  new EncounterModel(R4Example1Json, fhirVersions.R4)
 encounterDisplayModel1.source_id = '123-456-789'
 encounterDisplayModel1.source_resource_id = '123-456-789'
 export const R4Example1: Story = {
@@ -50,7 +50,7 @@ export const R4Example1: Story = {
   }
 };
 
-let encounterDisplayModel2 =  new EncounterModel(R4Example2Json, fhirVersions.R4)
+const encounterDisplayModel2 =  new EncounterModel(R4Example2Json, fhirVersions.R4)
 encounterDisplayModel2.source_id = '123-456-789'
 encounterDisplayModel2.source_resource_id = '123-456-789'
 export const R4Example2: Story = {
@@ -59,7 +59,7 @@ export const R4Example2: Story = {
   }
 };
 
-let encounterDisplayModel3 =  new EncounterModel(R4Example3Json, fhirVersions.R4)
+const encounterDisplayModel3 =  new EncounterModel(R4Example3Json, fhirVersions.R4)
 encounterDisplayModel3.source_id = '123-456-789'
 encounterDisplayModel3.source_resource_id = '123-456-789'
 export const R4Example3: Story = {

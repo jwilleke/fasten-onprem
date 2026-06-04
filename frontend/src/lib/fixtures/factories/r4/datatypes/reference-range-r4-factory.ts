@@ -8,7 +8,7 @@ class ReferenceRangeR4Factory extends Factory<{}> {
   }
 
   high(params?: {}) {
-    let p = params || {}
+    const p = params || {}
     return this.params({
       text: null,
       high: {
@@ -21,7 +21,7 @@ class ReferenceRangeR4Factory extends Factory<{}> {
   }
 
   low(params?: {}) {
-    let p = params || {}
+    const p = params || {}
     return this.params({
       text: null,
       low: {

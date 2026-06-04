@@ -23,11 +23,11 @@ interface ContactDataItem {
 })
 export class PractitionerViewComponent implements OnInit {
   practitioner: Practitioner | null = null;
-  practitionerId: string = '';
-  isLoading: boolean = true;
-  loadError: string = '';
-  isStarred: boolean = false;
-  deleteLoading: boolean = false;
+  practitionerId = '';
+  isLoading = true;
+  loadError = '';
+  isStarred = false;
+  deleteLoading = false;
   contactData: ContactDataItem[] = [];
 
   constructor(

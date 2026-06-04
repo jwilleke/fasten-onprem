@@ -13,8 +13,8 @@ export class FhirPathPipe implements PipeTransform {
       return null
     }
 
-    for(let pathQuery of pathQueryWithFallback){
-      let result = evaluate(resourceFhir.resource_raw, pathQuery).join(", ")
+    for(const pathQuery of pathQueryWithFallback){
+      const result = evaluate(resourceFhir.resource_raw, pathQuery).join(", ")
       if(result){
         return result
       }

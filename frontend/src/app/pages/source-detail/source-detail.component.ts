@@ -12,14 +12,14 @@ import {getPath} from '../../components/fhir-datatable/datatable-generic-resourc
     standalone: false
 })
 export class SourceDetailComponent implements OnInit {
-  loading: boolean = false
+  loading = false
 
   selectedSource: Source = null
   selectedPatient: ResourceFhir = null
   selectedResourceType: string = null
-  selectedTotalElements: number = 0
+  selectedTotalElements = 0
 
-  resourceTypeCounts: { [name: string]: number } = {}
+  resourceTypeCounts: Record<string, number> = {}
 
   constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) {
     //check if the current Source was sent over using the router state storage:
@@ -35,7 +35,7 @@ export class SourceDetailComponent implements OnInit {
       this.loading = false
       this.selectedSource = sourceSummary.source;
       this.selectedPatient = sourceSummary.patient;
-      for(let resourceTypeCount of sourceSummary.resource_type_counts){
+      for(const resourceTypeCount of sourceSummary.resource_type_counts){
         this.resourceTypeCounts[resourceTypeCount.resource_type] = resourceTypeCount.count
       }
     }, error => {
@@ -74,13 +74,13 @@ export class SourceDetailComponent implements OnInit {
   }
   getPatientAge(){
     // Can return NaN or a valid integer
-    var msInYear = 365 * 24 * 60 * 60 * 1000;
-    var patientDOB = this.getPatientDOB();
+    const msInYear = 365 * 24 * 60 * 60 * 1000;
+    let patientDOB = this.getPatientDOB();
     if (patientDOB == null) { return NaN; }
     if (typeof patientDOB === 'string') {
       patientDOB = Date.parse(patientDOB);
     }
-    var age = Date.now() - patientDOB;
+    const age = Date.now() - patientDOB;
     return Math.floor(age / msInYear);
   }
   getPatientPhone(){

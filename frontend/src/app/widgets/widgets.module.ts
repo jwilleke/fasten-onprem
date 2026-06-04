@@ -50,7 +50,7 @@ export class WidgetsModule { }
 
 //when adding widgets to this list, you must also register the widget id in
 // frontend/src/app/models/widget/dashboard-widget-config.ts
-export function WidgetComponents():  Type<Object>[] {
+export function WidgetComponents():  Type<object>[] {
   return [
     ComplexLineWidgetComponent,
     DonutChartWidgetComponent,

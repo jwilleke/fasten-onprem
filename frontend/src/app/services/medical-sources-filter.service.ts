@@ -13,7 +13,7 @@ export class MedicalSourcesFilter {
   //secondary search terms/facets (changes here should restart pagination)
   platformTypes: string[] = [];
   categories: string[] = [];
-  showHidden: boolean = false;
+  showHidden = false;
 
   //pagination - this is the current page (changes here should be ignored)
   searchAfter: string | string[] = '';
@@ -56,9 +56,9 @@ export class MedicalSourcesFilterService {
       //see https://stackoverflow.com/questions/44898010/form-control-valuechanges-gives-the-previous-value
       .pipe(startWith(null), pairwise())
       .subscribe(pairParams => {
-        let prevParams = this.toMedicalSourcesFilter(pairParams[0])
-        let nextParams = this.toMedicalSourcesFilter(pairParams[1])
-        let changed = [];
+        const prevParams = this.toMedicalSourcesFilter(pairParams[0])
+        const nextParams = this.toMedicalSourcesFilter(pairParams[1])
+        const changed = [];
 
         //check if primary has changed
         if(!_.isEqual(prevParams.query, nextParams.query)){
@@ -103,15 +103,15 @@ export class MedicalSourcesFilterService {
       })
   }
 
-  resetPrimary(emit: boolean = false){
+  resetPrimary(emit = false){
     this.filterForm.get('query').reset(undefined, {emitEvent: emit});
   }
-  resetSecondary(emit: boolean = false){
+  resetSecondary(emit = false){
     this.filterForm.get('platformTypes').reset(undefined, {emitEvent: emit});
     this.filterForm.get('categories').reset(undefined, {emitEvent: emit});
     this.filterForm.get('showHidden').reset(undefined, {emitEvent: emit});
   }
-  resetPagination(emit: boolean = false){
+  resetPagination(emit = false){
     this.filterForm.get('searchAfter').reset(undefined, {emitEvent: emit});
   }
 
@@ -126,9 +126,9 @@ export class MedicalSourcesFilterService {
   }
 
   //parse angular query string parameters
-  parseQueryParams(queryParams: {[name:string]:string}){
+  parseQueryParams(queryParams: Record<string, string>){
 
-    var updateData: {
+    const updateData: {
       searchAfter?: string,
       query?: string,
       platformTypes?: {},
@@ -145,13 +145,13 @@ export class MedicalSourcesFilterService {
 
     if(queryParams['platformTypes']){
       updateData.platformTypes = updateData.platformTypes ? updateData.platformTypes : {};
-      for(let platformType of queryParams['platformTypes']?.split(',')){
+      for(const platformType of queryParams['platformTypes']?.split(',')){
         updateData.platformTypes[platformType] = true;
       }
     }
     if(queryParams['categories']){
       updateData.categories = updateData.categories ? updateData.categories : {};
-      for(let category of queryParams['categories']?.split(',')){
+      for(const category of queryParams['categories']?.split(',')){
         updateData.categories[category] = true;
       }
     }
@@ -179,12 +179,12 @@ export class MedicalSourcesFilterService {
     return updateData;
   }
 
-  toQueryParams(form) : {[name:string]:string} {
+  toQueryParams(form) : Record<string, string> {
     if(!form){
       form = this.filterForm.value;
     }
 
-    var queryParams = {};
+    const queryParams = {};
 
     // if(form.searchAfter){
     //   var searchAfter = [];
@@ -201,7 +201,7 @@ export class MedicalSourcesFilterService {
     }
 
     if(form.platformTypes && Object.keys(form.platformTypes).length){
-      var platformTypes = [];
+      const platformTypes = [];
       Object.keys(form.platformTypes).forEach((key) => {
         if (form.platformTypes[key]) {
           platformTypes.push(key);
@@ -212,7 +212,7 @@ export class MedicalSourcesFilterService {
     }
 
     if(form.categories && Object.keys(form.categories).length){
-      var categories = [];
+      const categories = [];
       Object.keys(form.categories).forEach((key) => {
         if (form.categories[key]) {
           categories.push(key);
@@ -231,7 +231,7 @@ export class MedicalSourcesFilterService {
 
   toMedicalSourcesFilter(form): MedicalSourcesFilter {
 
-    var medicalSourcesFilter = new MedicalSourcesFilter();
+    const medicalSourcesFilter = new MedicalSourcesFilter();
     if(!form){
       return medicalSourcesFilter
     }

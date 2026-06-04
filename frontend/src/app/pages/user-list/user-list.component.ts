@@ -11,7 +11,7 @@ import { FastenApiService } from '../../services/fasten-api.service';
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
-  loading: boolean = false;
+  loading = false;
 
   constructor(
     private fastenApi: FastenApiService,

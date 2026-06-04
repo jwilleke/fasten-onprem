@@ -83,8 +83,8 @@ export class EventBusService {
       return this.eventBus
     }
 
-    let serviceThis = this;
-    let eventStreamUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/events/stream`
+    const serviceThis = this;
+    const eventStreamUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/events/stream`
     this.eventBusAbortController = new AbortController();
     this.eventBus = new Observable(observer => {
       fetchEventSource(eventStreamUrl, {

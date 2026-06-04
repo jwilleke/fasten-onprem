@@ -7,7 +7,7 @@ describe('AddressModel', () => {
   });
 
   it('should parse fhirdata', () => {
-    let expectedAddress = new AddressModel({})
+    const expectedAddress = new AddressModel({})
     expectedAddress.city = "SALEM"
     expectedAddress.country = "US"
     expectedAddress.line = ["254 ESSEX ST"]

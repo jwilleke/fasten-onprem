@@ -13,7 +13,7 @@ export class DatatableCarePlanComponent extends DatatableGenericResourceComponen
     { title: 'Category', versions: '*', format: 'code', getter: c => c.category[0].coding[0] },
     { title: 'Reason', versions: '*', getter: c => {
         return (c.activity || []).map((a, i) => {
-          let reason = a.detail?.code?.coding[0]?.display || ""
+          const reason = a.detail?.code?.coding[0]?.display || ""
           return reason ? [reason, a.detail?.status || "no data"] : []
         })
       } },

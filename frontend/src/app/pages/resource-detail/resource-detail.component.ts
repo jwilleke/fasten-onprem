@@ -13,12 +13,12 @@ import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-mode
     standalone: false
 })
 export class ResourceDetailComponent implements OnInit {
-  loading: boolean = false
+  loading = false
   debugMode = false;
 
 
-  sourceId: string = ""
-  sourceName: string = ""
+  sourceId = ""
+  sourceName = ""
   resource: ResourceFhir = null
   displayModel: FastenDisplayModel = null
 
@@ -34,7 +34,7 @@ export class ResourceDetailComponent implements OnInit {
       this.sourceName = "unknown" //TODO popualte this
 
       try{
-        let parsed = fhirModelFactory(resourceFhir.source_resource_type as ResourceType, resourceFhir)
+        const parsed = fhirModelFactory(resourceFhir.source_resource_type as ResourceType, resourceFhir)
         this.displayModel = parsed
       } catch (e) {
         console.error(e)

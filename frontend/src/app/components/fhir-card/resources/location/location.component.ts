@@ -18,8 +18,8 @@ import {LocationModel} from '../../../../../lib/models/resources/location-model'
 })
 export class LocationComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: LocationModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
 
   tableData: TableRowItem[] = []
 

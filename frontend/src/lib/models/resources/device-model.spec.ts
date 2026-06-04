@@ -13,14 +13,14 @@ describe('DeviceModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new DeviceModel({})
+      const expected = new DeviceModel({})
 
 
       expect(new DeviceModel(fixture)).toEqual(expected);
     });
 
     it('should parse example2.json', () => {
-      let expected = new DeviceModel({})
+      const expected = new DeviceModel({})
       expected.status = 'active'
 
 

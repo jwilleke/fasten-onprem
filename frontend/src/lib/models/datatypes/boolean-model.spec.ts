@@ -10,16 +10,16 @@ describe('ObservationValueBooleanModel', () => {
   });
 
   it('sets valueObject correctl', () => {
-    let model = new BooleanModel(true);
-    let model2 = new BooleanModel(false);
+    const model = new BooleanModel(true);
+    const model2 = new BooleanModel(false);
 
     expect(model.valueObject()).toEqual({ value: true });
     expect(model2.valueObject()).toEqual({ value: false });
   });
 
   it ('returns correct display', () => {
-    let model = new BooleanModel(true);
-    let model2 = new BooleanModel(false);
+    const model = new BooleanModel(true);
+    const model2 = new BooleanModel(false);
 
     expect(model.display()).toEqual('true');
     expect(model2.display()).toEqual('false');

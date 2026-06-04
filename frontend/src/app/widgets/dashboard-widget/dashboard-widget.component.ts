@@ -24,8 +24,8 @@ import {map} from 'rxjs/operators';
 export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponentInterface {
 
   @Input() widgetConfig: DashboardWidgetConfig;
-  loading: boolean = true;
-  isEmpty: boolean = true;
+  loading = true;
+  isEmpty = true;
 
   chartDatasetsSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([])
   // chartData: {
@@ -57,7 +57,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
       return
     }
     this.loading = true
-    var currentThis = this
+    const currentThis = this
     forkJoin(this.widgetConfig.queries.map(query => {
       return this.fastenApi.queryResources(query.q).pipe(
         map((responseWrapper: ResponseWrapper) => {
@@ -77,12 +77,12 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
     try {
       this.chartDatasets = []
 
-      for (let queryNdx in queryResults) {
-        let queryResult = queryResults[queryNdx]
+      for (const queryNdx in queryResults) {
+        const queryResult = queryResults[queryNdx]
         this.chartLabels = []
         // console.log(`CHART LABELS BEFORE ${this.widgetConfig.title_text}`, this.chartLabels)
-        for(let result of queryResult){
-          let label = (result?.[this.widgetConfig?.parsing?.label] ||  result?.label || result?.timestamp || result?.id || '')
+        for(const result of queryResult){
+          const label = (result?.[this.widgetConfig?.parsing?.label] ||  result?.label || result?.timestamp || result?.id || '')
           // if(Array.isArray(label)){
           //   this.chartLabels.push(...label)
           // } else {
@@ -118,7 +118,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
     if(!response.data || !response.data.length){
       return []
     }
-    let results = response.data
+    const results = response.data
 
     if(query.aggregations?.count_by || query.aggregations?.group_by){
       //list of aggregated results [{"label": "xxx", "value":"xxx"}]
@@ -141,16 +141,16 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   // ie. `name.where(given='Jim')` will be converted to `Patient.name.where(given='Jim')`
   // ie. `name.where(given='Jim') as GivenName` will be converted to `Patient.name.where(given='Jim')` and be stored in the returned map as GivenName`
   // the returned map will always contain a `id` key, which will be the resource id and a `resourceType` key, which will be the resource type
-  fhirPathMapQueryFn(query: DashboardWidgetQuery): (rawResource: any) => { [name:string]: string | string[] | any }  {
-    let selectPathFilters: { [name:string]: string } = query.select.reduce((selectAliasMap, selectPathFilter): { [name:string]: string } => {
+  fhirPathMapQueryFn(query: DashboardWidgetQuery): (rawResource: any) => Record<string, string | string[] | any>  {
+    const selectPathFilters: Record<string, string> = query.select.reduce((selectAliasMap, selectPathFilter): Record<string, string> => {
       let alias = selectPathFilter
       let selectPath = selectPathFilter
       if(selectPathFilter.indexOf(" as ") > -1){
-        let selectPathFilterParts = selectPathFilter.split(" as ")
+        const selectPathFilterParts = selectPathFilter.split(" as ")
         selectPath = selectPathFilterParts[0] as string
         alias = selectPathFilterParts[1] as string
       } else if(selectPathFilter.indexOf(" AS ") > -1){
-        let selectPathFilterParts = selectPathFilter.split(" AS ")
+        const selectPathFilterParts = selectPathFilter.split(" AS ")
         selectPath = selectPathFilterParts[0] as string
         alias = selectPathFilterParts[1] as string
       }
@@ -166,10 +166,10 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
     }, {})
 
     // console.log(selectPathFilters)
-    return function(rawResource: any):{ [name:string]: string | string[] | any } {
-      let results = {}
-      for(let alias in selectPathFilters){
-        let selectPathFilter = selectPathFilters[alias]
+    return function(rawResource: any):Record<string, string | string[] | any> {
+      const results = {}
+      for(const alias in selectPathFilters){
+        const selectPathFilter = selectPathFilters[alias]
         if(selectPathFilter == '*'){
           results[alias] = rawResource
         } else {

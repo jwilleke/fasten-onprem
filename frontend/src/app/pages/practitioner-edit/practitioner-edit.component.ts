@@ -26,12 +26,12 @@ import { parseFullName } from 'parse-full-name';
 })
 export class PractitionerEditPageComponent implements OnInit {
   practitioner: Practitioner | null = null;
-  practitionerId: string = '';
+  practitionerId = '';
   
-  debugMode: boolean = false;
-  isSubmitting: boolean = false;
-  isLoading: boolean = true;
-  loadError: string = '';
+  debugMode = false;
+  isSubmitting = false;
+  isLoading = true;
+  loadError = '';
 
   newPractitionerTypeaheadForm: FormGroup;
   newPractitionerForm: FormGroup;
@@ -85,7 +85,7 @@ export class PractitionerEditPageComponent implements OnInit {
 
   private setupFormSubscriptions(): void {
     this.newPractitionerTypeaheadForm.valueChanges.subscribe(form => {
-      let val = form.data;
+      const val = form.data;
       if (val == null) {
         // Don't reset when editing - user might be clearing to type new value
         return;
@@ -109,7 +109,7 @@ export class PractitionerEditPageComponent implements OnInit {
       }
 
       if (val.provider_address) {
-        let addressGroup = this.newPractitionerForm.get('address');
+        const addressGroup = this.newPractitionerForm.get('address');
         addressGroup?.get('line1')?.setValue(val.provider_address.line1);
         addressGroup?.get('line2')?.setValue(val.provider_address.line2);
         addressGroup?.get('city')?.setValue(val.provider_address.city);

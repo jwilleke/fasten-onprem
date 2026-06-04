@@ -158,8 +158,8 @@ export class FastenApiService {
 
   createRelatedResourcesFastenSource(resourceList: List): Observable<Source> {
 
-    let bundleBlob = new Blob([JSON.stringify(resourceList)], { type: 'application/json' });
-    let bundleFile = new File([ bundleBlob ], 'related.json', { type: 'application/json' });
+    const bundleBlob = new Blob([JSON.stringify(resourceList)], { type: 'application/json' });
+    const bundleFile = new File([ bundleBlob ], 'related.json', { type: 'application/json' });
 
     const formData = new FormData();
     formData.append('file', bundleFile);
@@ -228,7 +228,7 @@ export class FastenApiService {
   }
 
   getResources(sourceResourceType?: string, sourceID?: string, sourceResourceID?: string, page?: number): Observable<ResourceFhir[]> {
-    let queryParams = {}
+    const queryParams = {}
     if(sourceResourceType){
       queryParams["sourceResourceType"] = sourceResourceType
     }
@@ -344,17 +344,17 @@ export class FastenApiService {
   getBinaryModel(sourceId: string, attachmentModel: AttachmentModel): Observable<BinaryModel> {
     if(attachmentModel.url && !attachmentModel.data){
       //this attachment model is a refernce to a Binary model, we need to download it first.
-      let urnPrefix = "urn:uuid:";
-      let resourceType = "Binary"
+      const urnPrefix = "urn:uuid:";
+      const resourceType = "Binary"
       let resourceId = ""
-      let binaryUrl = attachmentModel.url
+      const binaryUrl = attachmentModel.url
       //strip out the urn prefix (if this is an embedded id, eg. urn:uuid:2a35e080-c5f7-4dde-b0cf-8210505708f1)
       if (binaryUrl.startsWith(urnPrefix)) {
         // PREFIX is exactly at the beginning
         resourceId = binaryUrl.slice(urnPrefix.length);
       } else if(binaryUrl.startsWith("http://") || binaryUrl.startsWith("https://") || binaryUrl.startsWith("Binary/")){
         //this is an absolute URL (which could be a FHIR url with Binary/xxx-xxx-xxx-xxx or a direct link to a file)
-        let urlParts = binaryUrl.split("Binary/");
+        const urlParts = binaryUrl.split("Binary/");
         if(urlParts.length > 1){
           //this url has a Binary/xxx-xxx-xxx-xxx part, so we can use that as the resource id
           resourceId = urlParts[urlParts.length - 1];
@@ -375,7 +375,7 @@ export class FastenApiService {
 
 
   getBackgroundJobs(jobType?: string, status?: string,  page?: number): Observable<BackgroundJob[]> {
-    let queryParams = {}
+    const queryParams = {}
     if(jobType){
       queryParams["jobType"] = jobType
     }
@@ -436,14 +436,14 @@ export class FastenApiService {
   }
 
   getIPSExport(exportType?: string) {
-    let format = exportType || "pdf"
+    const format = exportType || "pdf"
     let contentType = "application/pdf"
     if (exportType == "html") {
       contentType = "text/html"
     }
 
-    let httpHeaders = new HttpHeaders().set('Accept', contentType);
-    let queryParams = {
+    const httpHeaders = new HttpHeaders().set('Accept', contentType);
+    const queryParams = {
       "format": format
     };
 
@@ -679,8 +679,8 @@ export class FastenApiService {
   }
 
   getUserFavorites(resourceType?: string): Observable<Favorite[]> {
-    let endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
-    let queryParams = {};
+    const endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
+    const queryParams = {};
     
     if (resourceType) {
       queryParams['resource_type'] = resourceType;

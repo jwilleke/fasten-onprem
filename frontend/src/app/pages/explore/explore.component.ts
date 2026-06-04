@@ -17,7 +17,7 @@ import {SourceListItem} from '../medical-sources/medical-sources.component';
     standalone: false
 })
 export class ExploreComponent implements OnInit {
-  loading: boolean = false
+  loading = false
   connectedSources: SourceListItem[] = []
   constructor(
     private fastenApi: FastenApiService,

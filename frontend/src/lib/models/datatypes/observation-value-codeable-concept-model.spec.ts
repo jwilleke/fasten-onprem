@@ -12,13 +12,13 @@ describe('ObservationValueCodeableConceptModel', () => {
 
   describe('valueObject', () => {
     it('uses text if it is set', () => {
-      let model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.text('Negative for Chlamydia Trachomatis rRNA').build());
+      const model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.text('Negative for Chlamydia Trachomatis rRNA').build());
 
       expect(model.valueObject()).toEqual({ value: 'Negative for Chlamydia Trachomatis rRNA' });
     });
 
     it('uses the first coding display if text is not set', () => {
-      let model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.coding({ display: 'Negative' }).build());
+      const model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.coding({ display: 'Negative' }).build());
 
       expect(model.valueObject()).toEqual({ value: 'Negative' });
     });
@@ -30,13 +30,13 @@ describe('ObservationValueCodeableConceptModel', () => {
 
   describe('display', () => {
     it('uses text if it is set', () => {
-      let model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.text('Negative for Chlamydia Trachomatis rRNA').build());
+      const model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.text('Negative for Chlamydia Trachomatis rRNA').build());
 
       expect(model.display()).toEqual('Negative for Chlamydia Trachomatis rRNA');
     });
 
     it('uses the first coding display if text is not set', () => {
-      let model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.coding({ display: 'Negative' }).build());
+      const model = new ObservationValueCodeableConceptModel(codeableConceptR4Factory.coding({ display: 'Negative' }).build());
 
       expect(model.display()).toEqual('Negative');
     });

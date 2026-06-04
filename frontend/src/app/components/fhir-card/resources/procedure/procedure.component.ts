@@ -18,9 +18,9 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 })
 export class ProcedureComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: ProcedureModel | null
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
-  @Input() isEditable: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
+  @Input() isEditable = false
   
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
   @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
@@ -36,7 +36,7 @@ export class ProcedureComponent implements OnInit, FhirCardEditableComponentInte
   ngOnInit(): void {
 
     //medline only supports CPT procedure codes - "http://www.ama-assn.org/go/cpt", "2.16.840.1.113883.6.12"
-    for(let coding of this.displayModel?.coding ?? []){
+    for(const coding of this.displayModel?.coding ?? []){
       if(coding.system == "http://www.ama-assn.org/go/cpt" ||  coding.system == "2.16.840.1.113883.6.12"){
         this.resourceCode = coding.code
         this.resourceCodeSystem = coding.system

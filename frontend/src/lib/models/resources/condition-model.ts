@@ -48,7 +48,7 @@ export class ConditionModel extends FastenDisplayModel {
     this.has_asserter = _.has(fhirResource, 'asserter');
     this.asserter = _.get(fhirResource, 'asserter');
     this.has_body_site = !!_.get(fhirResource, 'bodySite.0.coding.0.display');
-    let bodySite = _.get(fhirResource, 'bodySite')
+    const bodySite = _.get(fhirResource, 'bodySite')
     if(bodySite){
       this.body_site = bodySite.map((body:any) => new CodableConceptModel(body))
     }

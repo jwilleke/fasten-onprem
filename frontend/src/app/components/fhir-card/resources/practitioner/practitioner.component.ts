@@ -18,9 +18,9 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 })
 export class PractitionerComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: PractitionerModel | null
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
-  @Input() isEditable: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
+  @Input() isEditable = false
     
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
   @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
@@ -52,7 +52,7 @@ export class PractitionerComponent implements OnInit, FhirCardEditableComponentI
     //   status: isContactData,
     // },
   ];
-    for(let idCoding of (this.displayModel?.identifier || [])){
+    for(const idCoding of (this.displayModel?.identifier || [])){
       this.tableData.push({
         label: `Identifier (${idCoding.system})`,
         data: idCoding.display || idCoding.value,
@@ -60,8 +60,8 @@ export class PractitionerComponent implements OnInit, FhirCardEditableComponentI
       })
     }
     if(this.displayModel?.address?.length > 0){
-      let address = this.displayModel?.address?.[0]
-      let addressParts = []
+      const address = this.displayModel?.address?.[0]
+      const addressParts = []
       if(address.line){
         addressParts.push(address.line.join(' '))
       }
@@ -81,7 +81,7 @@ export class PractitionerComponent implements OnInit, FhirCardEditableComponentI
         enabled: !!addressParts,
       })
     }
-    for(let telecom of (this.displayModel?.telecom || [])){
+    for(const telecom of (this.displayModel?.telecom || [])){
       this.tableData.push({
         label: telecom.system,
         data: telecom.value,

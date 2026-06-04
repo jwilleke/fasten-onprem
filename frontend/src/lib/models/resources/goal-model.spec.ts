@@ -13,7 +13,7 @@ describe('GoalModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new GoalModel({})
+      const expected = new GoalModel({})
 
       // expected.title: string | undefined
       expected.status = 'on-hold'
@@ -39,7 +39,7 @@ describe('GoalModel', () => {
     });
 
     it('should parse example2.json', () => {
-      let expected = new GoalModel({})
+      const expected = new GoalModel({})
 
       // expected.title: string | undefined
       expected.status = 'completed'

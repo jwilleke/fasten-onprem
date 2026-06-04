@@ -26,13 +26,13 @@ import { uuidV4 } from '../../../lib/utils/uuid';
     styleUrls: ['./practitioner-create.component.scss']
 })
 export class PractitionerCreateComponent implements OnInit {
-  debugMode: boolean = false;
-  isSubmitting: boolean = false;
+  debugMode = false;
+  isSubmitting = false;
   
   newPractitionerTypeaheadForm: FormGroup;
   newPractitionerForm: FormGroup;
   
-  totalPractitioners: number = 0;
+  totalPractitioners = 0;
 
   constructor(
     private router: Router,
@@ -236,7 +236,7 @@ export class PractitionerCreateComponent implements OnInit {
   }
 
   private practitionerFormToDisplayModel(form: FormGroup): PractitionerModel {
-    let address = new AddressModel(null);
+    const address = new AddressModel(null);
     address.city = form.get('address')?.get('city')?.value;
     address.line = [
       form.get('address')?.get('line1')?.value,
@@ -246,7 +246,7 @@ export class PractitionerCreateComponent implements OnInit {
     address.country = form.get('address')?.get('country')?.value;
     address.postalCode = form.get('address')?.get('zip')?.value;
   
-    let model = new PractitionerModel({});
+    const model = new PractitionerModel({});
     model.source_resource_id = form.get('id')?.value;
     model.identifier = form.get('identifier')?.value || [];
     model.name = [];
@@ -293,7 +293,7 @@ export class PractitionerCreateComponent implements OnInit {
     }
     
     if (form.get('name')?.value) {
-      let nameParts = parseFullName(form.get('name')?.value);
+      const nameParts = parseFullName(form.get('name')?.value);
       model.name.push({
         givenName: nameParts.first,
         familyName: nameParts.last,
@@ -318,7 +318,7 @@ export class PractitionerCreateComponent implements OnInit {
     });
     
     this.newPractitionerTypeaheadForm.valueChanges.subscribe(form => {
-      let val = form.data;
+      const val = form.data;
       
       if (val == null) {
         // Reset the dependent fields (user cleared the text box)
@@ -329,7 +329,7 @@ export class PractitionerCreateComponent implements OnInit {
         this.newPractitionerForm.get('fax')?.setValue(null);
         this.newPractitionerForm.get('email')?.setValue(null);
         
-        let addressGroup = this.newPractitionerForm.get('address');
+        const addressGroup = this.newPractitionerForm.get('address');
         addressGroup?.get('line1')?.setValue(null);
         addressGroup?.get('line2')?.setValue(null);
         addressGroup?.get('city')?.setValue(null);
@@ -363,7 +363,7 @@ export class PractitionerCreateComponent implements OnInit {
       }
 
       if (val.provider_address) {
-        let addressGroup = this.newPractitionerForm.get('address');
+        const addressGroup = this.newPractitionerForm.get('address');
         addressGroup?.get('line1')?.setValue(val.provider_address.line1);
         addressGroup?.get('line2')?.setValue(val.provider_address.line2);
         addressGroup?.get('city')?.setValue(val.provider_address.city);

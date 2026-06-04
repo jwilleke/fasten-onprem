@@ -16,7 +16,7 @@ export class RtfComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let doc = new RTFJS.Document(this.stringToArrayBuffer(this.displayModel.content), null);
+    const doc = new RTFJS.Document(this.stringToArrayBuffer(this.displayModel.content), null);
     doc.render().then(function(htmlElements) {
       const parent: HTMLElement = document.getElementById('rtfContent');
       for(let i = 0; i < htmlElements.length; i++){

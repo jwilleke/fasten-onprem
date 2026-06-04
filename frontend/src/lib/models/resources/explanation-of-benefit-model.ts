@@ -102,7 +102,7 @@ export class ExplanationOfBenefitModel extends FastenDisplayModel {
   };
 
   r4DTO(fhirResource){
-    let principalDiagnosis = fhirpath.evaluate(fhirResource, "ExplanationOfBenefit.diagnosis.where(type.coding.code='principal').first().diagnosisCodeableConcept.first()")
+    const principalDiagnosis = fhirpath.evaluate(fhirResource, "ExplanationOfBenefit.diagnosis.where(type.coding.code='principal').first().diagnosisCodeableConcept.first()")
 
     if(principalDiagnosis.length > 0) {
       this.code = principalDiagnosis[0] as CodableConceptModel
@@ -126,8 +126,8 @@ export class ExplanationOfBenefitModel extends FastenDisplayModel {
     this.procedures = _.get(fhirResource, 'procedure', []);
 
     // Person can have multiple insurances, but one with focal = true is used to judge this claim
-    let insuranceList = _.get(fhirResource, 'insurance', []);
-    let adjudicationInsurance = insuranceList.filter(item => item.focal)[0];
+    const insuranceList = _.get(fhirResource, 'insurance', []);
+    const adjudicationInsurance = insuranceList.filter(item => item.focal)[0];
     this.insurance = _.get(adjudicationInsurance, 'coverage');
 
     /**

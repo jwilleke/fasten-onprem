@@ -24,7 +24,7 @@ export class ReferenceRangeModel implements ObservationReferenceRange {
     this.age = _.get(fhirData, 'age');
     this.text = _.get(fhirData, 'text');
 
-    let standardizedValues = this.chartableReferenceRange()
+    const standardizedValues = this.chartableReferenceRange()
     this.low_value = standardizedValues.low;
     this.high_value = standardizedValues.high;
   }
@@ -42,7 +42,7 @@ export class ReferenceRangeModel implements ObservationReferenceRange {
       return { low: this.low.value, high: this.high.value }
     }
 
-    let matches = this.text?.match(/(?<value1>[\d.]*)?(?<operator>[^\d]*)?(?<value2>[\d.]*)?/)
+    const matches = this.text?.match(/(?<value1>[\d.]*)?(?<operator>[^\d]*)?(?<value2>[\d.]*)?/)
 
     if(!matches) {
       return { low: null, high: null }

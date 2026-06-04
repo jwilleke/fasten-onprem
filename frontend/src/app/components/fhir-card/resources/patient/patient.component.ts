@@ -15,8 +15,8 @@ import { FhirCardComponentInterface } from '../../fhir-card/fhir-card-component-
 })
 export class PatientComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: PatientModel;
-  @Input() showDetails: boolean = true;
-  @Input() isCollapsed: boolean = false;
+  @Input() showDetails = true;
+  @Input() isCollapsed = false;
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) { }
 

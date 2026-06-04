@@ -33,17 +33,17 @@ import {parseFullName}  from 'parse-full-name'
     styleUrls: ['./medical-record-wizard-add-practitioner.component.scss']
 })
 export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
-  @Input() debugMode: boolean = false;
+  @Input() debugMode = false;
   @Input() disabledResourceIds: string[] = [];
 
-  activeId: string = 'find'
+  activeId = 'find'
 
   newPractitionerTypeaheadForm: FormGroup
   newPractitionerForm: FormGroup //ResourceCreatePractitioner
 
   //find tab options
   selectedPractitioner: {source_resource_id: string,source_resource_type: ResourceType, resource: ResourceFhir} = null
-  totalPractitioners: number = 0
+  totalPractitioners = 0
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -100,7 +100,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
   }
 
   private practitionerFormToDisplayModel(form: FormGroup): PractitionerModel {
-    let address = new AddressModel(null)
+    const address = new AddressModel(null)
     address.city = form.get('address').get('city').value
     address.line = []
     if (form.get('address').get('line1').value) {
@@ -113,7 +113,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     address.country = form.get('address').get('country').value
     address.postalCode = form.get('address').get('zip').value
 
-    let model = new PractitionerModel({})
+    const model = new PractitionerModel({})
     model.source_resource_id = form.get('id').value
     model.identifier = form.get('identifier').value
     model.name = []
@@ -145,7 +145,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
       model.qualification = form.get('profession').value.identifier
     }
     if(form.get('name').value) {
-      let nameParts = parseFullName(form.get('name').value)
+      const nameParts = parseFullName(form.get('name').value)
       model.name.push({
         givenName: nameParts.first,
         familyName: nameParts.last,
@@ -169,7 +169,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
       data: new FormControl(null, Validators.required),
     })
     this.newPractitionerTypeaheadForm.valueChanges.subscribe(form => {
-      let val = form.data
+      const val = form.data
       if(val == null){
         //reset the dependant fields (user cleared the text box)
         this.newPractitionerForm.get('id').setValue(null)
@@ -177,7 +177,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
         this.newPractitionerForm.get('identifier').setValue(null);
         this.newPractitionerForm.get('phone').setValue(null);
         this.newPractitionerForm.get('fax').setValue(null);
-        let addressGroup = this.newPractitionerForm.get('address')
+        const addressGroup = this.newPractitionerForm.get('address')
         addressGroup.get('line1').setValue(null)
         addressGroup.get('line2').setValue(null)
         addressGroup.get('city').setValue(null)
@@ -206,7 +206,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
       }
 
       if(val.provider_address){
-        let addressGroup = this.newPractitionerForm.get('address')
+        const addressGroup = this.newPractitionerForm.get('address')
         addressGroup.get('line1').setValue(val.provider_address.line1)
         addressGroup.get('line2').setValue(val.provider_address.line2)
         addressGroup.get('city').setValue(val.provider_address.city)

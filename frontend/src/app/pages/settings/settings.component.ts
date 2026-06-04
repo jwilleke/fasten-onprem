@@ -13,16 +13,16 @@ import QRCode from 'qrcode';
 export class SettingsComponent implements OnInit {
   tokens: any[] = [];
   qrCodeUrl: SafeUrl | null = null;
-  qrCodeData: string = '';
-  isLoading: boolean = false;
-  hasError: boolean = false;
-  isRawQrCodeCollapsed: boolean = true;
-  errorMessage: string = '';
-  accessToken: string = '';
+  qrCodeData = '';
+  isLoading = false;
+  hasError = false;
+  isRawQrCodeCollapsed = true;
+  errorMessage = '';
+  accessToken = '';
   serverInfo: any = null;
   currentUser: any = null;
-  newDeviceName: string = '';
-  newDeviceExpiration: number = 0; // 0 for no expiration, otherwise days
+  newDeviceName = '';
+  newDeviceExpiration = 0; // 0 for no expiration, otherwise days
   expirationOptions = [
     { value: 0, label: 'No Expiration' },
     { value: 7, label: '7 Days' },

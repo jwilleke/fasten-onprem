@@ -21,7 +21,7 @@ export class ObservationTableComponent implements OnInit {
       return;
     }
 
-    let displayRange = this.rangeExists(this.observations);
+    const displayRange = this.rangeExists(this.observations);
 
     if (displayRange) {
       this.headers = ['Date', 'Result', 'Reference Range'];

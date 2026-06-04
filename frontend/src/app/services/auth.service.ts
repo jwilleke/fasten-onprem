@@ -27,7 +27,7 @@ export class AuthService {
   public async IdpConnect(idp_type: string) {
 
     const state = uuidV4()
-    let sourceStateInfo = new SourceState()
+    const sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
     // sourceStateInfo.source_type = idp_type
     sourceStateInfo.redirect_uri = `${window.location.href}/callback/hello`
@@ -67,7 +67,7 @@ export class AuthService {
       client_id: 'f5d8284d-c205-4d06-9fa4-c9fd809f30fc',
       token_endpoint_auth_method: 'none'
     }
-    let codeVerifier = expectedSourceStateInfo.code_verifier
+    const codeVerifier = expectedSourceStateInfo.code_verifier
 
     const as = {
       issuer: "https://issuer.hello.coop",
@@ -91,13 +91,13 @@ export class AuthService {
       expectedSourceStateInfo.redirect_uri,
       codeVerifier,
     )
-    let payload = await response.json()
+    const payload = await response.json()
     console.log("ENDING--- Oauth.authorizationCodeGrantRequest", payload)
 
 
     //trade Hello Idtoken for Fasten DB token.
-    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)
-    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/callback/${idp_type}`, payload).toPromise()
+    const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)
+    const resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/callback/${idp_type}`, payload).toPromise()
 
     this.setAuthToken(resp.data)
 
@@ -112,8 +112,8 @@ export class AuthService {
    * @constructor
    */
   public async Signup(newUser?: User): Promise<any> {
-    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)
-    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signup`, newUser).toPromise()
+    const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)
+    const resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signup`, newUser).toPromise()
     console.log(resp)
 
     this.setAuthToken(resp.data)
@@ -121,18 +121,18 @@ export class AuthService {
   }
 
   public async Signin(username: string, pass: string): Promise<any> {
-    let currentUser = new User()
+    const currentUser = new User()
     currentUser.username = username
     currentUser.password = pass
 
-    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)
-    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signin`, currentUser).toPromise()
+    const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)
+    const resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signin`, currentUser).toPromise()
 
     this.setAuthToken(resp.data)
   }
 
   public createUser(newUser: User): Observable<any> {
-    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
+    const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
     return this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/secure/users`, newUser)
       .pipe(
         catchError((error) => {
@@ -148,16 +148,16 @@ export class AuthService {
 
   //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
   public async IsAuthenticated(): Promise<boolean> {
-    let authToken = this.GetAuthToken()
-    let hasAuthToken = !!authToken
+    const authToken = this.GetAuthToken()
+    const hasAuthToken = !!authToken
     if(!hasAuthToken){
       this.publishAuthenticationState(false)
       return false
     }
 
     //check if the authToken has expired
-    let jwtClaims = jose.decodeJwt(authToken)
-    let valid = Date.now() < (jwtClaims.exp * 1000);
+    const jwtClaims = jose.decodeJwt(authToken)
+    const valid = Date.now() < (jwtClaims.exp * 1000);
     this.publishAuthenticationState(valid)
     return valid
 
@@ -188,13 +188,13 @@ export class AuthService {
   }
 
   public GetCurrentUser(): UserRegisteredClaims {
-    let authToken = this.GetAuthToken()
+    const authToken = this.GetAuthToken()
     if(!authToken){
       throw new Error("no auth token found")
     }
 
     //parse the authToken to get user information
-    let jwtClaims = jose.decodeJwt(authToken)
+    const jwtClaims = jose.decodeJwt(authToken)
 
     // @ts-ignore
     return jwtClaims as UserRegisteredClaims

@@ -25,17 +25,17 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
   practitioners: Practitioner[] = [];
   filteredPractitioners: Practitioner[] = [];
   selectedPractitioners: Practitioner[] = [];
-  loading: boolean = false;
-  isHoverable: boolean = false;
-  isTouchEnabled: boolean = false;
-  searchTerm: string = '';
-  showSelectionDropdown: boolean = false;
-  showActionsDropdown: boolean = false;
-  favoriteIds: Set<string> = new Set();
+  loading = false;
+  isHoverable = false;
+  isTouchEnabled = false;
+  searchTerm = '';
+  showSelectionDropdown = false;
+  showActionsDropdown = false;
+  favoriteIds = new Set<string>();
   favoritePractitioners: Practitioner[] = [];
   filterType: 'all' | 'favorites' = 'all';
-  currentLetter: string = 'A';
-  isScrolling: boolean = false;
+  currentLetter = 'A';
+  isScrolling = false;
   private scrollTimeout: any;
   showPractitionerDropdown: string | null = null;
 

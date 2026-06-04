@@ -15,8 +15,8 @@ export class ReportHeaderComponent implements OnInit {
   patient: ResourceFhir = null
   primaryCare: PractitionerModel = null
   lastUpdated: Date = null
-  @Input() reportHeaderTitle: string = ""
-  @Input() reportHeaderSubTitle: string = "Organized by condition and encounters"
+  @Input() reportHeaderTitle = ""
+  @Input() reportHeaderSubTitle = "Organized by condition and encounters"
   constructor(
     private fastenApi: FastenApiService,
   ) { }
@@ -34,10 +34,10 @@ export class ReportHeaderComponent implements OnInit {
       this.patient = results[0]
       if(!this.patient) return
 
-      let primaryCareId = fhirpath.evaluate(this.patient?.resource_raw, "Patient.generalPractitioner.reference.first()")
+      const primaryCareId = fhirpath.evaluate(this.patient?.resource_raw, "Patient.generalPractitioner.reference.first()")
       if(primaryCareId){
-        let primaryCareIdStr = primaryCareId.join("")
-        let primaryCareIdParts = primaryCareIdStr.split("/")
+        const primaryCareIdStr = primaryCareId.join("")
+        const primaryCareIdParts = primaryCareIdStr.split("/")
         if(primaryCareIdParts.length == 2) {
           this.fastenApi.getResources(primaryCareIdParts[0], this.patient?.source_id,  primaryCareIdParts[1]).subscribe(primaryResults => {
             if (primaryResults.length > 0){

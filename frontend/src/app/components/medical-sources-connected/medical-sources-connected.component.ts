@@ -24,8 +24,8 @@ import {extractErrorFromResponse, replaceErrors} from '../../../lib/utils/error_
     standalone: false
 })
 export class MedicalSourcesConnectedComponent implements OnInit {
-  loading: boolean = false
-  status: { [name: string]:  undefined | "token" | "authorize" | "failed" } = {}
+  loading = false
+  status: Record<string, undefined | "token" | "authorize" | "failed"> = {}
 
   modalSelectedSourceListItem:SourceListItem = null;
   modalCloseResult = '';
@@ -75,7 +75,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     const callbackState = this.activatedRoute.snapshot.paramMap.get('state')
     if(callbackState) {
 
-      let sourceInfo = this.lighthouseApi.getSourceState(callbackState)
+      const sourceInfo = this.lighthouseApi.getSourceState(callbackState)
 
       console.log("handle callback redirect from source", callbackState, sourceInfo)
       this.status[sourceInfo.brand_id] = "token"
@@ -124,7 +124,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         if(callbackError && !callbackCode){
           //TOOD: print this message in the UI
-          let errMsg = "an error occurred while authenticating to this source. Please try again later"
+          const errMsg = "an error occurred while authenticating to this source. Please try again later"
           console.error(errMsg, callbackErrorDescription)
           throw new Error(`callback error: ${callbackError}, description: ${callbackErrorDescription}`)
         }
@@ -137,7 +137,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         if(!payload.access_token || payload.error){
           //if the access token is not set, then something is wrong,
-          let errMsg = payload.error || "unable to retrieve access_token"
+          const errMsg = payload.error || "unable to retrieve access_token"
           console.error(errMsg)
           throw new Error(errMsg)
         }
@@ -148,7 +148,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           console.log("NO PATIENT ID present, decoding jwt to extract patient")
           //const introspectionResp = await Oauth.introspectionRequest(as, client, payload.access_token)
           //console.log(introspectionResp)
-          let decodedIdToken = this.jwtDecode(payload.id_token)
+          const decodedIdToken = this.jwtDecode(payload.id_token)
           //nextGen uses fhirUser instead of profile.
           payload.patient = decodedIdToken["patient"] || decodedIdToken["profile"] || decodedIdToken["fhirUser"]
 
@@ -163,8 +163,8 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           // "pp.group_id": "GH_CXXXXXXXXXXXX9_5",
           // Becomes: PD--05XXXXXXXXX3.GH--CXXXXXXXXXXXX9--5
 
-          let decodedAccessToken = this.jwtDecode(payload.access_token)
-          let patientId = `${decodedAccessToken["pp.patient_id"]}.${decodedAccessToken["pp.group_id"]}`.replace(/_/g, '--')
+          const decodedAccessToken = this.jwtDecode(payload.access_token)
+          const patientId = `${decodedAccessToken["pp.patient_id"]}.${decodedAccessToken["pp.group_id"]}`.replace(/_/g, '--')
           payload.patient = patientId
         }
 
@@ -203,7 +203,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
               // this.connectedSourceList.
 
               //find the index of the "inprogress" source in the connected List, and then add this source to its source metadata.
-              let foundSource = this.connectedSourceList.findIndex((item) => {
+              const foundSource = this.connectedSourceList.findIndex((item) => {
                 return item.source?.brand_id == dbSourceCredential.brand_id || item.brand?.id == dbSourceCredential.brand_id
               })
               this.connectedSourceList[foundSource].source = resp.source
@@ -250,7 +250,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         this.toastService.show(toastNotification)
         console.error(err)
 
-        let errData = new BackgroundJobSyncData()
+        const errData = new BackgroundJobSyncData()
         errData.source_id = expectedSourceStateInfo.reconnect_source_id
         errData.brand_id = expectedSourceStateInfo.brand_id
         errData.checkpoint_data = {
@@ -333,7 +333,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     // Option 2 - using the exp property of JWT tokens (must not assume JWT!)
     if (tokenResponse.access_token) {
 
-      let tokenBody = this.jwtDecode(tokenResponse.access_token);
+      const tokenBody = this.jwtDecode(tokenResponse.access_token);
       if (tokenBody && tokenBody['exp']) {
         return parseInt(tokenBody['exp']);
       }
@@ -349,7 +349,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {
-    let brandId = sourceListItem?.source?.brand_id || sourceListItem?.brand?.id
+    const brandId = sourceListItem?.source?.brand_id || sourceListItem?.brand?.id
 
 
     if(
@@ -403,8 +403,8 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   }
 
   public sourceDeleteHandler(){
-    let source = this.modalSelectedSourceListItem.source
-    let sourceDisplayName = this.modalSelectedSourceListItem?.source?.display || this.modalSelectedSourceListItem?.brand?.name || 'unknown'
+    const source = this.modalSelectedSourceListItem.source
+    const sourceDisplayName = this.modalSelectedSourceListItem?.source?.display || this.modalSelectedSourceListItem?.brand?.name || 'unknown'
 
     this.status[source.id] = "authorize"
     this.modalService.dismissAll()
@@ -415,7 +415,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         delete this.status[source.brand_id]
 
         //delete this source from the connnected list
-        let foundIndex = this.connectedSourceList.findIndex((connectedSource) => {
+        const foundIndex = this.connectedSourceList.findIndex((connectedSource) => {
           return connectedSource?.source?.id == source.id
         }, this)
         if(foundIndex > -1){
@@ -447,7 +447,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   //TODO: refactor this to use the connectHandler in the MedicalSourcesComponent
   public sourceReconnectHandler(selectedSourceListItem: SourceListItem){
 
-    let endpointId = selectedSourceListItem?.source?.endpoint_id
+    const endpointId = selectedSourceListItem?.source?.endpoint_id
     this.lighthouseApi.getLighthouseSource(endpointId)
       .then(async (sourceMetadata: LighthouseSourceMetadata) => {
 
@@ -457,7 +457,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         }
 
         console.log(sourceMetadata);
-        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata, selectedSourceListItem.source.id)
+        const authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata, selectedSourceListItem.source.id)
 
         console.log('authorize url:', authorizationUrl.toString());
         // redirect to lighthouse with uri's (or open a new window in desktop mode)

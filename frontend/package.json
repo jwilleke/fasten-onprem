@@ -13,7 +13,6 @@
     "build": "ng build --output-path=../dist",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
     "dist": "ng build --watch --output-path=../dist",
     "storybook": "ng run fastenhealth:storybook",
     "build-storybook": "ng run fastenhealth:build-storybook"
@@ -68,17 +67,21 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.3.27",
+    "@angular-eslint/builder": "20.7.0",
     "@angular/cli": "^20.3.27",
     "@angular/compiler-cli": "^20.3.24",
     "@angular/language-service": "^20.3.24",
     "@compodoc/compodoc": "^1.1.19",
+    "@eslint/js": "^9.39.1",
+    "@storybook/addon-docs": "^9.1.20",
     "@storybook/addon-links": "^9.1.20",
     "@storybook/angular": "^9.1.20",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/qrcode": "^1.5.5",
+    "angular-eslint": "20.7.0",
     "chromatic": "^6.19.8",
-    "codelyzer": "^5.1.2",
+    "eslint": "^9.39.1",
     "fishery": "^2.2.2",
     "jasmine-core": "~5.1.2",
     "jasmine-spec-reporter": "~7.0.0",
@@ -89,14 +92,12 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
     "karma-verbose-reporter": "^0.0.8",
-    "protractor": "~7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^9.1.20",
     "ts-node": "~8.3.0",
-    "tslint": "~6.1.0",
     "typescript": "~5.8.3",
-    "@storybook/addon-docs": "^9.1.20"
+    "typescript-eslint": "8.46.4"
   },
   "resolutions": {
     "webpack": "5.94.0"

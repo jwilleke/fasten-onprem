@@ -6,7 +6,7 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./badge.component.scss']
 })
 export class BadgeComponent implements OnInit {
-  @Input() status: string = ""
+  @Input() status = ""
 
   constructor() { }
 
@@ -14,7 +14,7 @@ export class BadgeComponent implements OnInit {
   }
 
   getBadgeStatusColor(status): string {
-    let lookup = {
+    const lookup = {
       // condition
       active: 'badge-primary',
       recurrence: '',

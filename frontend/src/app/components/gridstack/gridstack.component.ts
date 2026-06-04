@@ -15,10 +15,10 @@ import {WidgetsModule, WidgetComponents} from '../../widgets/widgets.module';
 import {DashboardWidgetComponentInterface} from '../../widgets/dashboard-widget-component-interface';
 
 /** events handlers emitters signature for different events */
-export type eventCB = {event: Event};
-export type elementCB = {event: Event, el: GridItemHTMLElement};
-export type nodesCB = {event: Event, nodes: GridStackNode[]};
-export type droppedCB = {event: Event, previousNode: GridStackNode, newNode: GridStackNode};
+export interface eventCB {event: Event}
+export interface elementCB {event: Event, el: GridItemHTMLElement}
+export interface nodesCB {event: Event, nodes: GridStackNode[]}
+export interface droppedCB {event: Event, previousNode: GridStackNode, newNode: GridStackNode}
 
 /** extends to store Ng Component selector, instead/inAddition to content */
 export interface NgGridStackWidget extends GridStackWidget {
@@ -39,7 +39,7 @@ export interface GridCompHTMLElement extends GridHTMLElement {
 }
 
 /** selector string to runtime Type mapping */
-export type SelectorToType = {[key: string]: Type<Object>};
+export type SelectorToType = Record<string, Type<object>>;
 
 /**
  * HTML Component Wrapper for gridstack, in combination with GridstackItemComponent for the items
@@ -106,11 +106,11 @@ export class GridstackComponent implements OnInit, AfterContentInit, OnDestroy {
    */
   public static selectorToType: SelectorToType = {};
   /** add a list of ng Component to be mapped to selector */
-  public static addComponentToSelectorType(typeList: Array<Type<Object>>) {
+  public static addComponentToSelectorType(typeList: Type<object>[]) {
     typeList.forEach(type => GridstackComponent.selectorToType[ GridstackComponent.getSelector(type) ] = type);
   }
   /** return the ng Component selector */
-  public static getSelector(type: Type<Object>): string {
+  public static getSelector(type: Type<object>): string {
     const mirror = reflectComponentType(type)!;
     return mirror.selector;
   }
@@ -118,7 +118,7 @@ export class GridstackComponent implements OnInit, AfterContentInit, OnDestroy {
   private _options?: GridStackOptions;
   private _grid?: GridStack;
   private loaded?: boolean;
-  private ngUnsubscribe: Subject<void> = new Subject();
+  private ngUnsubscribe = new Subject<void>();
 
   constructor(
     // private readonly zone: NgZone,
@@ -234,8 +234,8 @@ export function gsCreateNgComponents(host: GridCompHTMLElement | HTMLElement, w:
     const selector = (w as NgGridStackWidget).type;
     const type = selector ? GridstackComponent.selectorToType[selector] : undefined;
     if (!w.subGridOpts && type) {
-      let componentRef = gridItem?.container?.createComponent<DashboardWidgetComponentInterface>(type as Type<DashboardWidgetComponentInterface>);
-      let widgetConfig = (w as NgGridStackWidget)?.widgetConfig
+      const componentRef = gridItem?.container?.createComponent<DashboardWidgetComponentInterface>(type as Type<DashboardWidgetComponentInterface>);
+      const widgetConfig = (w as NgGridStackWidget)?.widgetConfig
       if(widgetConfig){
         componentRef.instance.widgetConfig = widgetConfig
       }

@@ -37,9 +37,9 @@ export const FORMATTERS = {
     if(codeableConcept.text) return codeableConcept.text
     return codeableConcept.coding && codeableConcept.coding[0] ? `${codeableConcept.coding[0].code}: ${codeableConcept.coding[0].display ? codeableConcept.coding[0].display : ''}` : ''
   },
-  address: (address): Array<string> => {
+  address: (address): string[] => {
     if(!address) return []
-    var addressParts = []
+    const addressParts = []
     if(address.line) addressParts.push(...address.line)
     addressParts.push(`${address.city}, ${address.state} ${address.postalCode}`)
     if(address.country) addressParts.push(address.country)
@@ -50,7 +50,7 @@ export const FORMATTERS = {
     if(humanName.text){
       return humanName.text
     }
-    var nameParts = []
+    const nameParts = []
     if(humanName.prefix) nameParts.push(humanName.prefix.join(', '))
     if(humanName.given) nameParts.push(humanName.given.join(' '))
     if(humanName.family) nameParts.push(humanName.family)
@@ -59,7 +59,7 @@ export const FORMATTERS = {
   },
   contact: (contact) => {
     if (!contact) return ''
-    var contactParts = []
+    const contactParts = []
     if (contact.system) contactParts.push(contact.system)
     if (contact.value) contactParts.push(contact.value)
     if (contact.use) contactParts.push(`(${contact.use})`)
@@ -120,7 +120,7 @@ export function duration(period) {
   if (!period.end) {
     return '';
   }
-  let start = moment(period.start);
-  let end = moment(period.end);
+  const start = moment(period.start);
+  const end = moment(period.end);
   return moment.duration( start.diff(end) ).humanize();
 };

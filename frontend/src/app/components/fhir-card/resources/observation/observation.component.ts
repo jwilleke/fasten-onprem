@@ -17,11 +17,11 @@ import { ObservationVisualizationComponent } from '../../common/observation-visu
 })
 export class ObservationComponent implements OnInit {
   @Input() displayModel: ObservationModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
 
   tableData: TableRowItem[] = []
-  displayVisualization: boolean = true
+  displayVisualization = true
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) { }
 
@@ -30,7 +30,7 @@ export class ObservationComponent implements OnInit {
       return
     }
 
-    let visualizationTypes = this.displayModel?.value_model?.visualizationTypes()
+    const visualizationTypes = this.displayModel?.value_model?.visualizationTypes()
 
     // If only table is allowed, just don't display anything since we are already displaying
     // everything in tabular format.

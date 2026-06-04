@@ -14,11 +14,11 @@ import {Location} from '@angular/common';
     standalone: false
 })
 export class AuthSigninComponent implements OnInit {
-  loading: boolean = false
+  loading = false
 
-  submitted: boolean = false
+  submitted = false
   existingUser: User = new User()
-  errorMsg: string = ""
+  errorMsg = ""
   showExternalIdP: boolean = environment.environment_cloud
 
   constructor(
@@ -31,19 +31,19 @@ export class AuthSigninComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let idpType = this.route.snapshot.paramMap.get('idp_type')
+    const idpType = this.route.snapshot.paramMap.get('idp_type')
     if(idpType){
       this.loading = true
-      let params = new URLSearchParams(window.location.hash.substring(1))
-      let code = params.get('code') // eyJhbGciOiJSUzI1...rest_of_ID_Token
-      let state = params.get('state') // eyJhbGciOiJSUzI1...rest_of_ID_Token
+      const params = new URLSearchParams(window.location.hash.substring(1))
+      const code = params.get('code') // eyJhbGciOiJSUzI1...rest_of_ID_Token
+      const state = params.get('state') // eyJhbGciOiJSUzI1...rest_of_ID_Token
 
       this.resetUrlOnCallback()
       this.authService.IdpCallback(idpType, state, code)
         .then(() => {
           //for cloud users ONLY, skip the encryption manager.
           //TODO: replace Pouchdb.
-          let userId = this.authService.GetCurrentUser().sub
+          const userId = this.authService.GetCurrentUser().sub
           //TODO: static IV, must be removed/replaced.
           return {username: userId, key: userId}
         })

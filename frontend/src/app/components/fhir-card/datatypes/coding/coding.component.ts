@@ -10,7 +10,7 @@ import {CommonModule} from "@angular/common";
 })
 export class CodingComponent implements OnInit {
   @Input() coding: CodingModel
-  has_additional_info: boolean = false
+  has_additional_info = false
   constructor() { }
 
 

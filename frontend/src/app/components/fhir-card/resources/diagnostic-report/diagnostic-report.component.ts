@@ -19,14 +19,14 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 })
 export class DiagnosticReportComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: DiagnosticReportModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
-  @Input() isEditable: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
+  @Input() isEditable = false
 
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
   @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
-  active: number = 0
+  active = 0
 
   //these are used to populate the description of the resource. May not be available for all resources
   resourceCode?: string;
@@ -66,7 +66,7 @@ export class DiagnosticReportComponent implements OnInit, FhirCardEditableCompon
       },
     ];
 
-    for(let categoryCodeable of (this.displayModel?.category_coding || [])){
+    for(const categoryCodeable of (this.displayModel?.category_coding || [])){
       this.tableData.push({
         label: `Category`,
         data_type: TableRowItemDataType.CodableConcept,

@@ -26,9 +26,9 @@ import { AddressModel } from 'src/lib/models/datatypes/address-model';
     styleUrls: ['./medical-record-wizard-edit-organization.component.scss']
 })
 export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
-  @Input() debugMode: boolean = false;
+  @Input() debugMode = false;
   @Input() organization: OrganizationModel;
-  loading: boolean = false
+  loading = false
 
   //create tab options
   organizationForm: FormGroup
@@ -47,7 +47,7 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
       data: new FormControl(null, Validators.required),
     })
     this.organizationTypeaheadForm.valueChanges.subscribe(form => {
-      let val = form.data
+      const val = form.data
 
       if (val == null) {
         //reset the dependant fields (user cleared the text box)
@@ -55,7 +55,7 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
         this.organizationForm.get('identifier').setValue(null);
         this.organizationForm.get('phone').setValue(null);
         this.organizationForm.get('fax').setValue(null);
-        let addressGroup = this.organizationForm.get('address')
+        const addressGroup = this.organizationForm.get('address')
         addressGroup.get('line1').setValue(null)
         addressGroup.get('line2').setValue(null)
         addressGroup.get('city').setValue(null)
@@ -79,7 +79,7 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
         this.organizationForm.get('fax').setValue(val.provider_fax)
       }
       if (val.provider_address) {
-        let addressGroup = this.organizationForm.get('address')
+        const addressGroup = this.organizationForm.get('address')
         addressGroup.get('line1').setValue(val.provider_address.line1)
         addressGroup.get('line2').setValue(val.provider_address.line2)
         addressGroup.get('city').setValue(val.provider_address.city)
@@ -120,7 +120,7 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
     this.organizationForm.get('identifier').setValue(organization.identifier?.[0])
     this.organizationForm.get('type').setValue(organization.type?.[0])
 
-    let addressGroup = this.organizationForm.get('address')
+    const addressGroup = this.organizationForm.get('address')
     addressGroup.get('line1').setValue(organization.addresses?.[0].line?.[0])
     addressGroup.get('line2').setValue(organization.addresses?.[0].line?.[1])
     addressGroup.get('city').setValue(organization.addresses?.[0].city)
@@ -128,17 +128,17 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
     addressGroup.get('zip').setValue(organization.addresses?.[0].postalCode)
     addressGroup.get('country').setValue(organization.addresses?.[0].country)
 
-    let organizationForm = organization.telecom.find((telecom) => telecom.system == 'phone')
+    const organizationForm = organization.telecom.find((telecom) => telecom.system == 'phone')
     if (organizationForm) {
       this.organizationForm.get('phone').setValue(organizationForm.value)
     }
 
-    let organizationFax = organization.telecom.find((telecom) => telecom.system == 'fax')
+    const organizationFax = organization.telecom.find((telecom) => telecom.system == 'fax')
     if (organizationFax) {
       this.organizationForm.get('fax').setValue(organizationFax.value)
     }
 
-    let organizationEmail = organization.telecom.find((telecom) => telecom.system == 'email')
+    const organizationEmail = organization.telecom.find((telecom) => telecom.system == 'email')
     if (organizationEmail) {
       this.organizationForm.get('email').setValue(organizationEmail.value)
     }
@@ -149,9 +149,9 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
   }
 
   submit() {
-    let organization = this.organization
+    const organization = this.organization
 
-    let address = new AddressModel(null)
+    const address = new AddressModel(null)
     address.city = this.organizationForm.get('address').get('city').value
     address.line = []
     if (this.organizationForm.get('address').get('line1').value) {
@@ -170,12 +170,12 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
     }
 
     if (this.organizationForm.get('phone').value) {
-      let phone = {
+      const phone = {
         system: 'phone',
         value: this.organizationForm.get('phone').value,
         use: 'work'
       }
-      let existingPhoneIndex = organization.telecom.findIndex((telecom) => telecom.system == 'phone')
+      const existingPhoneIndex = organization.telecom.findIndex((telecom) => telecom.system == 'phone')
       if (existingPhoneIndex != -1) {
         organization.telecom[existingPhoneIndex] = phone
       } else {
@@ -183,12 +183,12 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
       }
     }
     if (this.organizationForm.get('fax').value) {
-      let fax = {
+      const fax = {
         system: 'fax',
         value: this.organizationForm.get('fax').value,
         use: 'work'
       }
-      let existingFaxIndex = organization.telecom.findIndex((telecom) => telecom.system == 'fax')
+      const existingFaxIndex = organization.telecom.findIndex((telecom) => telecom.system == 'fax')
       if (existingFaxIndex != -1) {
         organization.telecom[existingFaxIndex] = fax
       } else {
@@ -196,12 +196,12 @@ export class MedicalRecordWizardEditOrganizationComponent implements OnInit {
       }
     }
     if (this.organizationForm.get('email').value) {
-      let email = {
+      const email = {
         system: 'email',
         value: this.organizationForm.get('email').value,
         use: 'work'
       }
-      let existingEmailIndex = organization.telecom.findIndex((telecom) => telecom.system == 'email')
+      const existingEmailIndex = organization.telecom.findIndex((telecom) => telecom.system == 'email')
       if (existingEmailIndex != -1) {
         organization.telecom[existingEmailIndex] = email
       } else {

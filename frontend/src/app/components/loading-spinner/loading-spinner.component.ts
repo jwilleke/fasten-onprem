@@ -7,8 +7,8 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./loading-spinner.component.scss']
 })
 export class LoadingSpinnerComponent implements OnInit {
-  @Input() loadingTitle: string = "Please wait, loading..."
-  @Input() loadingSubTitle: string = ""
+  @Input() loadingTitle = "Please wait, loading..."
+  @Input() loadingSubTitle = ""
 
   constructor() { }
 

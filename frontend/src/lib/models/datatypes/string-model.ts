@@ -20,7 +20,7 @@ export class StringModel implements ObservationValue {
   }
 
   valueObject(): ValueObject {
-    let matches = this.sourceString?.match(/(?<value1>[\d.]*)?(?<operator>[^\d]*)?(?<value2>[\d.]*)?/)
+    const matches = this.sourceString?.match(/(?<value1>[\d.]*)?(?<operator>[^\d]*)?(?<value2>[\d.]*)?/)
 
     switch (matches.groups['operator']?.trim()) {
       case '<':
@@ -48,7 +48,7 @@ export class StringModel implements ObservationValue {
         }
     }
 
-    let float = parseFloat(matches.groups['value1']);
+    const float = parseFloat(matches.groups['value1']);
 
     if (Number.isNaN(float)) {
       return { value: this.sourceString }
