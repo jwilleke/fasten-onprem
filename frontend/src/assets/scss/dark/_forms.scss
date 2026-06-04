@@ -30,20 +30,16 @@
         border-color: var(--border);
     }
 
-    // Manual upload dropzone (Sources)
-    ngx-dropzone {
+    // Manual upload dropzone (Sources) — native drag/drop zone
+    .upload-dropzone {
         background-color: var(--background);
-        border: 1px dashed var(--border);
+        border: 2px dashed var(--border);
         color: var(--dark-text-color);
     }
-
-    ngx-dropzone-label {
-        color: var(--dark-text-color);
-    }
-
-    ngx-dropzone-preview {
-        background-color: var(--background);
-        color: var(--dark-text-color);
+    .upload-dropzone:hover,
+    .upload-dropzone.drag-active {
+        border-color: #4f9cf9;
+        background-color: rgba(79, 156, 249, 0.08);
     }
 
         //Label

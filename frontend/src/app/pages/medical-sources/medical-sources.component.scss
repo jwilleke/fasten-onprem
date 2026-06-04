@@ -1,0 +1,19 @@
+.upload-dropzone {
+  border: 2px dashed #ced4da;
+  border-radius: 8px;
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  color: #6c757d;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.upload-dropzone:hover,
+.upload-dropzone.drag-active {
+  border-color: #4f9cf9;
+  background-color: rgba(79, 156, 249, 0.06);
+}
+.upload-dropzone i {
+  display: block;
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}

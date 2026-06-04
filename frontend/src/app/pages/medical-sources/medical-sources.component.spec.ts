@@ -9,7 +9,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner.component';
 import { MedicalSourcesFilterComponent } from 'src/app/components/medical-sources-filter/medical-sources-filter.component';
 import { MedicalSourcesConnectedComponent } from 'src/app/components/medical-sources-connected/medical-sources-connected.component';
-import { NgxDropzoneModule } from 'ngx-dropzone';
 
 describe('MedicalSourcesComponent', () => {
   let component: MedicalSourcesComponent;
@@ -18,7 +17,7 @@ describe('MedicalSourcesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ MedicalSourcesComponent, MedicalSourcesFilterComponent, MedicalSourcesConnectedComponent ],
-      imports: [HttpClientTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule, LoadingSpinnerComponent, NgxDropzoneModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule, LoadingSpinnerComponent],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,

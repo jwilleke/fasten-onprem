@@ -14,7 +14,6 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxDropzoneModule } from 'ngx-dropzone';
 import { IsAuthenticatedAuthGuard } from './auth-guards/is-authenticated-auth-guard';
 import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
@@ -81,7 +80,6 @@ import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wiza
     HttpClientModule,
     NgbModule,
     NgChartsModule,
-    NgxDropzoneModule,
     HighlightModule,
     MomentModule,
     PipesModule,

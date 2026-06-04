@@ -41,6 +41,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   uploadedFile: File[] = []
   uploadErrorMsg: string = ""
+  dragActive: boolean = false
 
   searchTermUpdate = new BehaviorSubject<string>("");
   status: { [name: string]: undefined | "token" | "authorize" } = {}
@@ -166,9 +167,27 @@ export class MedicalSourcesComponent implements OnInit {
    * this function is used to process manually "uploaded" FHIR bundle files, adding them to the database.
    * @param event
    */
-  public async uploadSourceBundleHandler(event) {
+  // Native file <input> change: read files, then reset value so re-selecting the same file fires again.
+  public onBundleInput(input: HTMLInputElement) {
+    this.handleBundleFiles(input.files)
+    input.value = ""
+  }
+
+  // Drag-and-drop onto the upload zone.
+  public onBundleDrop(event: DragEvent) {
+    event.preventDefault()
+    this.dragActive = false
+    this.handleBundleFiles(event.dataTransfer?.files ?? null)
+  }
+
+  private handleBundleFiles(fileList: FileList | null) {
+    if (!fileList || fileList.length === 0) { return }
+    this.uploadSourceBundleHandler(Array.from(fileList))
+  }
+
+  public async uploadSourceBundleHandler(files: File[]) {
     this.uploadErrorMsg = ""
-    let processingFile = event.addedFiles[0] as File
+    let processingFile = files[0] as File
     this.uploadedFile = [processingFile]
 
     if(processingFile.type == "text/xml"){

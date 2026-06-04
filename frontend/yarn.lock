@@ -9224,13 +9224,6 @@ ng2-charts@^4.1.1:
     lodash-es "^4.17.15"
     tslib "^2.3.0"
 
-ngx-dropzone@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/ngx-dropzone/-/ngx-dropzone-3.1.0.tgz#f2045a9ca90903fa96304f1b2aa33a922f14b15a"
-  integrity sha512-5RBaEl07QUcY6sv/BBPyIxN6nbWY/KqTGheEKgbuGS0N1QPFY7NJUo8+X3fYUwQgLS+wjJeqPiR37dd0YNDtWA==
-  dependencies:
-    tslib "^2.0.0"
-
 ngx-highlightjs@^7.0.1:
   version "7.0.1"
   resolved "https://registry.npmjs.org/ngx-highlightjs/-/ngx-highlightjs-7.0.1.tgz#52bef4e26a9707893cc2bbee20fbaff2a5f9a77a"
