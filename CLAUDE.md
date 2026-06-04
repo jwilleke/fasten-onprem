@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
+**Mission: Your medical records, immediately and in your hands — for free.** (Fulfilling the 21st Century Cures Act, 2016. See issue #15 / `private-jims/goals.md`.) Prioritize work that advances immediate, complete patient access to records.
+
 **YourPHR** is a self-hosted personal/family electronic medical record viewer — a community continuation of Fasten OnPrem. It imports FHIR R4 bundles (manual upload or, in the original project, provider sync) and displays them. A **Go backend** (Gin + GORM, SQLite) serves a JSON API and the compiled **Angular 14 frontend**.
 
 **YourPHR is a standalone, community-maintained continuation** of `fastenhealth/fasten-onprem` (original by Jason Kulatunga / @AnalogJ and Alex Szilagyi, GPL v3 — attribution retained). It carries the project forward after upstream stalled and is going standalone (see EPIC #2). Near-term focus: improve display compatibility with **non-US-Core FHIR R4 exports**, specifically Veradigm/FollowMyHealth patient portal data. See `docs/Roadmap.md` and `README.md`. When fixing display issues, prefer fallbacks for missing US-Core fields (e.g. `class.code` when `type[]` is absent) rather than assuming strict US-Core conformance.
