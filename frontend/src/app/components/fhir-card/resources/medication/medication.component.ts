@@ -19,9 +19,9 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 })
 export class MedicationComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: MedicationModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
-  @Input() isEditable: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
+  @Input() isEditable = false
 
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
   @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()

@@ -40,12 +40,12 @@ import {RtfComponent} from '../../datatypes/rtf/rtf.component';
 })
 export class BinaryComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: BinaryModel
-  @Input() showDetails: boolean = true
+  @Input() showDetails = true
   @Input() attachmentSourceId: string
   @Input() attachmentModel: AttachmentModel //can only have attachmentModel or binaryModel, not both.
-  @Input() isCollapsed: boolean = false
+  @Input() isCollapsed = false
 
-  loading: boolean = false
+  loading = false
   constructor(public changeRef: ChangeDetectorRef, public router: Router, public fastenApi: FastenApiService) {}
 
   ngOnInit(): void {

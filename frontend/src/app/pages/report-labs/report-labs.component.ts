@@ -14,7 +14,7 @@ import {ResourceType} from '../../../lib/models/constants';
 class ObservationGroup {[key: string]: ResourceFhir[]}
 class ObservationGroupInfo {
   observationGroups: ObservationGroup = {}
-  observationGroupTitles: {[key: string]: string} = {}
+  observationGroupTitles: Record<string, string> = {}
 }
 class LabResultCodeByDate {
   label: string //lab result coding (system|code)
@@ -29,22 +29,22 @@ class LabResultCodeByDate {
     standalone: false
 })
 export class ReportLabsComponent implements OnInit {
-  loading: boolean = false
+  loading = false
 
-  currentPage: number = 1 //1-based index due to the way the pagination component works
-  pageSize: number = 10
+  currentPage = 1 //1-based index due to the way the pagination component works
+  pageSize = 10
   allObservationGroups: string[] = []
 
 
   //diagnostic report data
-  reportSourceId: string = ''
-  reportResourceType: string = ''
-  reportResourceId: string = ''
+  reportSourceId = ''
+  reportResourceType = ''
+  reportResourceId = ''
   reportDisplayModel: FastenDisplayModel = null
 
   //currentPage data
   observationGroups: ObservationGroup = {}
-  observationGroupTitles: {[key: string]: string} = {}
+  observationGroupTitles: Record<string, string> = {}
 
   isEmptyReport = false
 
@@ -90,7 +90,7 @@ export class ReportLabsComponent implements OnInit {
   //using the current list of allObservationGroups, retrieve a list of observations, group them by observationGroup, and set the observationGroupTitles
   populateObservationsForCurrentPage(){
 
-    let observationGroups = this.allObservationGroups.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
+    const observationGroups = this.allObservationGroups.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
 
     this.loading = true
     this.getObservationsByCodes(observationGroups).subscribe((data) => {
@@ -98,7 +98,7 @@ export class ReportLabsComponent implements OnInit {
       this.observationGroups = data.observationGroups
       this.observationGroupTitles = data.observationGroupTitles
 
-      this.isEmptyReport = !!!Object.keys(this.observationGroups).length
+      this.isEmptyReport = !Object.keys(this.observationGroups).length
     }, error => {
       this.loading = false
       this.isEmptyReport = true
@@ -111,29 +111,29 @@ export class ReportLabsComponent implements OnInit {
     return this.fastenApi.getResources(resourceType, sourceId, resourceId)
       .pipe(
         mergeMap((diagnosticReports) => {
-          let diagnosticReport = diagnosticReports?.[0]
+          const diagnosticReport = diagnosticReports?.[0]
           this.reportDisplayModel = fhirModelFactory(diagnosticReport.source_resource_type as ResourceType, diagnosticReport)
 
 
           //get a list of all the observations associated with this report
-          let observationIds = fhirpath.evaluate(diagnosticReport.resource_raw, "DiagnosticReport.result.reference")
+          const observationIds = fhirpath.evaluate(diagnosticReport.resource_raw, "DiagnosticReport.result.reference")
 
           //request each observation, and find the lab codes associated with each
-          let requests = []
-          for(let observationId of observationIds){
-            let observationIdParts = observationId.split("/")
+          const requests = []
+          for(const observationId of observationIds){
+            const observationIdParts = observationId.split("/")
             requests.push(this.fastenApi.getResources(observationIdParts[0], diagnosticReport.source_id, observationIdParts[1]))
           }
 
           return forkJoin(requests)
         }),
         map((results:ResourceFhir[][]) => {
-          let allObservationGroups = []
+          const allObservationGroups = []
 
           //for each result, loop through the observations and find the loinc code
-          for(let result of results){
-            for(let observation of result){
-              let observationGroup = fhirpath.evaluate(observation.resource_raw, "Observation.code.coding.where(system='http://loinc.org').first().code")[0]
+          for(const result of results){
+            for(const observation of result){
+              const observationGroup = fhirpath.evaluate(observation.resource_raw, "Observation.code.coding.where(system='http://loinc.org').first().code")[0]
               allObservationGroups.push('http://loinc.org|' + observationGroup)
             }
           }
@@ -199,12 +199,12 @@ export class ReportLabsComponent implements OnInit {
     }).pipe(
       map((response: ResponseWrapper) => {
 
-        let observationGroups: ObservationGroup = {}
-        let observationGroupTitles: {[key: string]: string} = {}
+        const observationGroups: ObservationGroup = {}
+        const observationGroupTitles: Record<string, string> = {}
 
         //loop though all observations, group by "code.system": "http://loinc.org"
-        for(let observation of response.data){
-          let observationGroup = fhirpath.evaluate(observation.resource_raw, "Observation.code.coding.where(system='http://loinc.org').first().code")[0]
+        for(const observation of response.data){
+          const observationGroup = fhirpath.evaluate(observation.resource_raw, "Observation.code.coding.where(system='http://loinc.org').first().code")[0]
           observationGroups[observationGroup] = observationGroups[observationGroup] ? observationGroups[observationGroup] : []
           observationGroups[observationGroup].push(observation)
 

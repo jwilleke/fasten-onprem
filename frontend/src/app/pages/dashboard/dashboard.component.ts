@@ -13,7 +13,7 @@ import {Summary} from '../../models/fasten/summary';
 
 // unique ids sets for each item for correct ngFor updating
 //TODO: fix this
-let ids = 1;
+const ids = 1;
 
 @Component({
     selector: 'app-dashboard',
@@ -22,22 +22,22 @@ let ids = 1;
     standalone: false
 })
 export class DashboardComponent implements OnInit {
-  loading: boolean = false
+  loading = false
 
   lastUpdated: Date = null
 
   sources: Source[] = []
-  encounterCount: number = 0
-  recordsCount: number = 0
-  patientForSource: {[name: string]: ResourceFhir} = {}
+  encounterCount = 0
+  recordsCount = 0
+  patientForSource: Record<string, ResourceFhir> = {}
 
   dashboardConfigs: DashboardConfig[] = []
-  selectedDashboardConfigNdx: number = 0
+  selectedDashboardConfigNdx = 0
 
   //dashboardLocation is used to store the location of the dashboard that we're trying to add
-  addDashboardLoading: boolean = false
-  dashboardLocation: string = ''
-  dashboardLocationError: string = ''
+  addDashboardLoading = false
+  dashboardLocation = ''
+  dashboardLocationError = ''
 
   @ViewChild(GridstackComponent) gridComp?: GridstackComponent;
 
@@ -97,8 +97,8 @@ export class DashboardComponent implements OnInit {
     if(source.platform_type == "manual" || source.platform_type == 'fasten'){
       return '--'
     }
-    let expiresDate = new Date(source.expires_at);
-    let currentDate = new Date()
+    const expiresDate = new Date(source.expires_at);
+    const currentDate = new Date()
     return expiresDate < currentDate ? 'active' : 'expired'
   }
 
@@ -134,7 +134,7 @@ export class DashboardComponent implements OnInit {
         h: widgetConfig.height,
         // @ts-ignore
         type: widgetConfig.item_type,
-        widgetConfig: !!widgetConfig?.queries?.length ? widgetConfig : undefined,
+        widgetConfig: widgetConfig?.queries?.length ? widgetConfig : undefined,
       })
     })
   }

@@ -12,7 +12,7 @@ describe('DiagnosticReportModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new DiagnosticReportModel({})
+      const expected = new DiagnosticReportModel({})
 
       expected.title = 'Complete blood count (hemogram) panel - Blood by Automated count'
       expected.status = 'final'

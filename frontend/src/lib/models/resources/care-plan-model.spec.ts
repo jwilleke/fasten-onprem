@@ -13,7 +13,7 @@ describe('CarePlanModel', () => {
 
     it('should parse heartOperationPlan.json', () => {
 
-      let expected = new CarePlanModel({})
+      const expected = new CarePlanModel({})
       expected.status = "completed"
       // expected.expiry = "completed"
       // expected.category = "completed"
@@ -57,7 +57,7 @@ describe('CarePlanModel', () => {
 
     it('should parse pregnancyPlan.json', () => {
 
-      let expected = new CarePlanModel({})
+      const expected = new CarePlanModel({})
       expected.status = "active"
       // expected.expiry = "completed"
       // expected.category = "completed"
@@ -81,7 +81,7 @@ describe('CarePlanModel', () => {
 
     it('should parse weightLossPlan.json', () => {
 
-      let expected = new CarePlanModel({})
+      const expected = new CarePlanModel({})
       expected.status = "active"
       // expected.expiry = "completed"
       expected.category = [{ text: 'Weight management plan' }]

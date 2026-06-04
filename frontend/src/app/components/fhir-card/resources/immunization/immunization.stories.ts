@@ -41,7 +41,7 @@ export default meta;
 type Story = StoryObj<ImmunizationComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
-let r4Example1DisplayModel =  new ImmunizationModel(R4Example1Json, fhirVersions.R4)
+const r4Example1DisplayModel =  new ImmunizationModel(R4Example1Json, fhirVersions.R4)
 r4Example1DisplayModel.source_id = '123-456-789'
 r4Example1DisplayModel.source_resource_id = '123-456-789'
 export const R4Example1: Story = {
@@ -50,7 +50,7 @@ export const R4Example1: Story = {
   }
 };
 
-let r4Example2DisplayModel =  new ImmunizationModel(R4Example2Json, fhirVersions.R4)
+const r4Example2DisplayModel =  new ImmunizationModel(R4Example2Json, fhirVersions.R4)
 r4Example2DisplayModel.source_id = '123-456-789'
 r4Example2DisplayModel.source_resource_id = '123-456-789'
 export const R4Example2: Story = {
@@ -59,7 +59,7 @@ export const R4Example2: Story = {
   }
 };
 
-let r4Example3DisplayModel =  new ImmunizationModel(R4Example3Json, fhirVersions.R4)
+const r4Example3DisplayModel =  new ImmunizationModel(R4Example3Json, fhirVersions.R4)
 r4Example3DisplayModel.source_id = '123-456-789'
 r4Example3DisplayModel.source_resource_id = '123-456-789'
 export const R4Example3: Story = {

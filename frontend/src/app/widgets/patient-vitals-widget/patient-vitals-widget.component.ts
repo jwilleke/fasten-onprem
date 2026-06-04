@@ -15,9 +15,9 @@ import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 })
 export class PatientVitalsWidgetComponent extends DashboardWidgetComponent implements OnInit {
 
-  name: string = ''
-  age: string = ''
-  gender: string = ''
+  name = ''
+  age = ''
+  gender = ''
   vitalSigns: {
     display: string,
     code: string,
@@ -80,8 +80,8 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
     }
 
     //process Patient objects
-    let sortedPatients = _.sortBy(queryResults?.[1], ['birthDate'])
-    for(let patient of sortedPatients){
+    const sortedPatients = _.sortBy(queryResults?.[1], ['birthDate'])
+    for(const patient of sortedPatients){
       if(!this.name && _.get(patient, 'name[0].family') && _.get(patient, 'name[0].given[0]')){
         this.name = `${_.get(patient, 'name[0].given[0]')} ${_.get(patient, 'name[0].family')}`
       }
@@ -98,20 +98,20 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
 
 
 
-    let vitalSignCodeLookup = queryResults?.[0].reduce((acc, observation) => {
+    const vitalSignCodeLookup = queryResults?.[0].reduce((acc, observation) => {
 
 
       if(observation.codes.length){
-        let foundCode = observation.codes.find((code) => code.system === 'http://loinc.org')
+        const foundCode = observation.codes.find((code) => code.system === 'http://loinc.org')
         if(foundCode && !(foundCode.code === '85354-9' || foundCode.code === '55284-4')){ //
           acc[foundCode.code] = acc[foundCode.code] || {
             code: foundCode.code,
             display: this.vitalSignsCodeLookup[foundCode.code] || foundCode.display,
           }
-          let vitalSignCodeLookupEntry = acc[foundCode.code]
+          const vitalSignCodeLookupEntry = acc[foundCode.code]
 
-          let foundDate = observation.date?.[0] || ""
-          let existingDate = vitalSignCodeLookupEntry.date || ""
+          const foundDate = observation.date?.[0] || ""
+          const existingDate = vitalSignCodeLookupEntry.date || ""
           // console.log("OBSERVATION!!!!!!", foundCode, foundDate, observation)
           if(foundDate > existingDate){
             vitalSignCodeLookupEntry.date = foundDate
@@ -123,18 +123,18 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
           acc[foundCode.code] = vitalSignCodeLookupEntry
         }
         else if(foundCode && (foundCode.code === '85354-9' || foundCode.code === '55284-4')){
-          let components = observation.components
-          for(let component of components){
-            let foundComponentCode = component?.code?.coding?.find((code) => code.system === 'http://loinc.org')
+          const components = observation.components
+          for(const component of components){
+            const foundComponentCode = component?.code?.coding?.find((code) => code.system === 'http://loinc.org')
             if(foundComponentCode){
               acc[foundComponentCode.code] = acc[foundComponentCode.code] || {
                 code: foundComponentCode.code,
                 display: this.vitalSignsCodeLookup[foundComponentCode.code] || foundComponentCode.display,
               }
-              let vitalSignCodeLookupEntry = acc[foundComponentCode.code]
+              const vitalSignCodeLookupEntry = acc[foundComponentCode.code]
 
-              let foundDate = observation.date?.[0] || ""
-              let existingDate = vitalSignCodeLookupEntry.date || ""
+              const foundDate = observation.date?.[0] || ""
+              const existingDate = vitalSignCodeLookupEntry.date || ""
               // console.log("OBSERVATION!!!!!!", foundComponentCode, foundDate, observation)
               if(foundDate > existingDate){
                 vitalSignCodeLookupEntry.date = foundDate
@@ -187,7 +187,7 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
     //
     // }
 
-    for(let key in vitalSignCodeLookup){
+    for(const key in vitalSignCodeLookup){
       this.vitalSigns.push(vitalSignCodeLookup[key])
     }
   }

@@ -7,8 +7,8 @@ describe('ReferenceRangeModel', () => {
   });
 
   it('returns the correct display', () => {
-    let range = new ReferenceRangeModel(referenceRangeR4Factory.low({value: 6.2}).high({value: 8.3}).build());
-    let range2 = new ReferenceRangeModel(referenceRangeR4Factory.text('50.3mg/L-109.2mg/L').build());
+    const range = new ReferenceRangeModel(referenceRangeR4Factory.low({value: 6.2}).high({value: 8.3}).build());
+    const range2 = new ReferenceRangeModel(referenceRangeR4Factory.text('50.3mg/L-109.2mg/L').build());
 
     expect(range.display()).toEqual('6.2 \u{2013} 8.3')
     expect(range2.display()).toEqual('50.3mg/L-109.2mg/L')
@@ -16,7 +16,7 @@ describe('ReferenceRangeModel', () => {
 
   describe('parsing data', () => {
     it('parses high and low correctly', () => {
-      let range = new ReferenceRangeModel(referenceRangeR4Factory.low({value: 6.2}).high({value: 8.3}).build());
+      const range = new ReferenceRangeModel(referenceRangeR4Factory.low({value: 6.2}).high({value: 8.3}).build());
 
       expect(range.low_value).toEqual(6.2);
       expect(range.high_value).toEqual(8.3);
@@ -24,45 +24,45 @@ describe('ReferenceRangeModel', () => {
 
     describe('when text is set', () => {
       it('parses values correctly when there is a high and a low', () => {
-        let tests = [
+        const tests = [
           { text: '50.3-109.2', result: { low: 50.3, high: 109.2 } },
           { text: '50.3mg/L-109.2mg/L', result: { low: 50.3, high: 109.2 } },
           { text: '50.3-109.2mg/L', result: { low: 50.3, high: 109.2 } },
           { text: '50.3mg/L-109.2', result: { low: 50.3, high: 109.2 } }
         ]
 
-        for(let test of tests) {
-          let range = new ReferenceRangeModel(referenceRangeR4Factory.text(test.text).build());
+        for(const test of tests) {
+          const range = new ReferenceRangeModel(referenceRangeR4Factory.text(test.text).build());
           expect(range.low_value).toEqual(test.result.low);
           expect(range.high_value).toEqual(test.result.high);
         }
       });
 
       it('parses values correctly when there is only a low', () => {
-        let tests = [
+        const tests = [
           { text: '>50.3', result: { low: 50.3, high: null } },
           { text: '>50.3mg/L', result: { low: 50.3, high: null } },
           { text: '>=50.3', result: { low: 50.3, high: null } },
           { text: '>=50.3mg/L', result: { low: 50.3, high: null } }
         ]
 
-        for(let test of tests) {
-          let range = new ReferenceRangeModel(referenceRangeR4Factory.text(test.text).build());
+        for(const test of tests) {
+          const range = new ReferenceRangeModel(referenceRangeR4Factory.text(test.text).build());
           expect(range.low_value).toEqual(test.result.low);
           expect(range.high_value).toEqual(test.result.high);
         }
       });
 
       it('parses values correctly when there is only a high', () => {
-        let tests = [
+        const tests = [
           { text: '<109.2', result: { low: null, high: 109.2 } },
           { text: '<109.2mg/L', result: { low: null, high: 109.2 } },
           { text: '<=109.2', result: { low: null, high: 109.2 } },
           { text: '<=109.2mg/L', result: { low: null, high: 109.2 } }
         ]
 
-        for(let test of tests) {
-          let range = new ReferenceRangeModel(referenceRangeR4Factory.text(test.text).build());
+        for(const test of tests) {
+          const range = new ReferenceRangeModel(referenceRangeR4Factory.text(test.text).build());
           expect(range.low_value).toEqual(test.result.low);
           expect(range.high_value).toEqual(test.result.high);
         }

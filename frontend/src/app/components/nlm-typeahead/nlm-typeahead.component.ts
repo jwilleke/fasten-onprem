@@ -59,10 +59,10 @@ export enum NlmSearchType {
 })
 export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
-  @Input() debugMode: Boolean = false; //if true, will show the debug panel
-  @Input() openOnFocus: Boolean = false; //if true, will display results on focus
-  @Input() idResult: Boolean = false; //if true, will return the id of the result instead of an object, implies editable = false
-  @Input() editable: Boolean = true; //if true, will allow the user to enter values not in the list
+  @Input() debugMode = false; //if true, will show the debug panel
+  @Input() openOnFocus = false; //if true, will display results on focus
+  @Input() idResult = false; //if true, will return the id of the result instead of an object, implies editable = false
+  @Input() editable = true; //if true, will allow the user to enter values not in the list
   @Input() prePopulatedOptions: NlmSearchResults[] = []
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;

@@ -12,9 +12,9 @@ export class PatientModel extends FastenDisplayModel {
   patient_age: number|undefined
   patient_gender: string|undefined
   patient_contact: string|undefined
-  patient_address: Array<string>|undefined
-  patient_phones: Array<any>|undefined
-  communication_languages: Array<any>|undefined
+  patient_address: string[]|undefined
+  patient_phones: any[]|undefined
+  communication_languages: any[]|undefined
   has_communication_language: boolean|undefined
   has_patient_phones: boolean|undefined
   active: string|undefined
@@ -28,8 +28,8 @@ export class PatientModel extends FastenDisplayModel {
   mothers_maiden_name: string|undefined
   birth_place: string|undefined
   multiple_birth: boolean|undefined
-  identifiers: Array<any>|undefined
-  extensions: Array<any>|undefined
+  identifiers: any[]|undefined
+  extensions: any[]|undefined
   ssn: string|undefined
   mrn: string|undefined
 
@@ -50,7 +50,7 @@ export class PatientModel extends FastenDisplayModel {
     this.has_patient_phones = !_.isEmpty(this.patient_phones);
     this.active = _.get(fhirResource, 'active', false);
     this.active_status = this.active ? 'active' : 'inactive';
-    let deceasedBoolean = _.get(fhirResource, 'deceasedBoolean', false);
+    const deceasedBoolean = _.get(fhirResource, 'deceasedBoolean', false);
     this.deceased_date = _.get(fhirResource, 'deceasedDateTime');
     this.is_deceased = deceasedBoolean || this.deceased_date;
     this.birth_sex = this.getBirthSex(fhirResource);

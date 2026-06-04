@@ -32,16 +32,16 @@ import {uuidV4} from '../../../lib/utils/uuid';
 })
 export class MedicalRecordWizardAddEncounterComponent implements OnInit {
 
-  @Input() debugMode: boolean = false;
-  loading: boolean = false
-  activeId: string = 'find'
+  @Input() debugMode = false;
+  loading = false
+  activeId = 'find'
 
   //create tab options
   newEncounterForm: FormGroup //ResourceCreateEncounter
 
   //find tab options
   selectedEncounter: {source_id: string, source_resource_id: string,source_resource_type: ResourceType, resource: ResourceFhir} = null
-  totalEncounters: number = 0
+  totalEncounters = 0
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
@@ -103,8 +103,8 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
 
         if(graphResponse.results["Encounter"]?.[0]){
 
-          let parsed = RecResourceRelatedDisplayModel(graphResponse.results["Encounter"]?.[0])
-          let encounterDisplayModelWithRelated = parsed.displayModel as EncounterModel
+          const parsed = RecResourceRelatedDisplayModel(graphResponse.results["Encounter"]?.[0])
+          const encounterDisplayModelWithRelated = parsed.displayModel as EncounterModel
 
           this.activeModal.close({
             action: this.activeId,
@@ -124,15 +124,15 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
   }
 
   private encounterFormToDisplayModel(form: FormGroup): EncounterModel {
-    let encounter = new EncounterModel({})
+    const encounter = new EncounterModel({})
     encounter.code = form.get('code').value
 
     if(form.get('period_start').value){
-      let period_start = form.get('period_start').value
+      const period_start = form.get('period_start').value
       encounter.period_start = (new Date(period_start.year, period_start.month-1, period_start.day)).toISOString()
     }
     if(form.get('period_end').value){
-      let period_end = form.get('period_end').value
+      const period_end = form.get('period_end').value
       encounter.period_end = (new Date(period_end.year, period_end.month-1, period_end.day)).toISOString()
     }
     if(!encounter.source_resource_id){

@@ -52,7 +52,7 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
   //location to dynamically load the resource list
   @ViewChild(FhirDatatableOutletDirective, {static: true}) resourceListOutlet!: FhirDatatableOutletDirective;
 
-  knownResourceType: boolean = true;
+  knownResourceType = true;
 
   constructor(public router: Router, private fastenApi: FastenApiService) { }
 
@@ -68,7 +68,7 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
     const viewContainerRef = this.resourceListOutlet.viewContainerRef;
     viewContainerRef.clear();
 
-    let componentType = this.typeLookup(this.resourceListType)
+    const componentType = this.typeLookup(this.resourceListType)
     if(componentType != null){
       const componentRef = viewContainerRef.createComponent<ResourceListComponentInterface>(componentType);
       componentRef.instance.totalElements = this.selectedTotalElements;

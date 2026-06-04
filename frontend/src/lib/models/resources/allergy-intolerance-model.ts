@@ -46,7 +46,7 @@ export class AllergyIntoleranceModel extends FastenDisplayModel {
     this.asserter = _.get(fhirResource, 'reporter');
     this.note = []
     this.category = _.get(fhirResource, 'category') ? [_.get(fhirResource, 'category')] : [];
-    let patientRef = _.get(fhirResource, 'patient.reference')
+    const patientRef = _.get(fhirResource, 'patient.reference')
     if(patientRef){
       this.patient = {"reference": patientRef};
     }
@@ -56,7 +56,7 @@ export class AllergyIntoleranceModel extends FastenDisplayModel {
     this.title = _.get(fhirResource, 'code.coding.0.display');
     this.status = _.get(fhirResource, 'verificationStatus');
     this.recorded_date = _.get(fhirResource, 'assertedDate');
-    let substanceCoding = _.get(fhirResource, 'reaction', []).filter((item: any) =>
+    const substanceCoding = _.get(fhirResource, 'reaction', []).filter((item: any) =>
       _.get(item, 'substance.coding'),
     );
     this.substance_coding = _.get(substanceCoding, '0.substance.coding', []);
@@ -68,7 +68,7 @@ export class AllergyIntoleranceModel extends FastenDisplayModel {
     this.title = _.get(fhirResource, 'code.coding.0.display') || _.get(fhirResource, 'code.text')
     this.status = _.get(fhirResource, 'verificationStatus.coding[0].display');
     this.recorded_date = _.get(fhirResource, 'recordedDate');
-    let substanceCoding = _.get(fhirResource, 'reaction', []).filter((item: any) =>
+    const substanceCoding = _.get(fhirResource, 'reaction', []).filter((item: any) =>
       _.get(item, 'substance.coding'),
     );
     this.substance_coding = _.get(substanceCoding, '0.substance.coding', []);

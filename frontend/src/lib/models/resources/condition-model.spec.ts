@@ -15,7 +15,7 @@ describe('ConditionModel', () => {
 
     it('should parse example1.json', () => {
       // let fixture = require("../../fixtures/r4/resources/condition/example1.json")
-      let expected = new ConditionModel({})
+      const expected = new ConditionModel({})
       expected.code_id = '39065001'
       expected.code_system = 'http://snomed.info/sct'
       expected.code_text = 'Burn of ear'
@@ -41,7 +41,7 @@ describe('ConditionModel', () => {
     });
     it('should parse example2.json', () => {
 
-      let expected = new ConditionModel({})
+      const expected = new ConditionModel({})
       expected.code_text = 'Asthma'
       expected.severity_text = 'Mild'
       // expected.hasAsserter: boolean | undefined
@@ -56,7 +56,7 @@ describe('ConditionModel', () => {
       expect(new ConditionModel(example2Fixture)).toEqual(expected);
     });
     it('should parse example3.json', () => {
-      let expected = new ConditionModel({})
+      const expected = new ConditionModel({})
       expected.code_text = 'Fever'
       expected.code_id = '386661006'
       expected.code_system = 'http://snomed.info/sct'

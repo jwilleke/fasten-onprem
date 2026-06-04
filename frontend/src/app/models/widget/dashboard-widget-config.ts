@@ -33,5 +33,5 @@ export class DashboardWidgetConfig {
   x?: number
   y?: number
 
-  parsing?: {label?: string, xAxisKey?: string, yAxisKey?: string} | {[name:string]: string}
+  parsing?: {label?: string, xAxisKey?: string, yAxisKey?: string} | Record<string, string>
 }

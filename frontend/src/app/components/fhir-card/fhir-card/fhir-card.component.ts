@@ -44,9 +44,9 @@ import {PatientComponent} from '../resources/patient/patient.component';
 export class FhirCardComponent implements OnInit, OnChanges {
 
   @Input() displayModel: FastenDisplayModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
-  @Input() isEditable: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
+  @Input() isEditable = false
 
   @Output() unlinkRequested = new EventEmitter<FastenDisplayModel>()
   @Output() editRequested = new EventEmitter<FastenDisplayModel>()
@@ -68,7 +68,7 @@ export class FhirCardComponent implements OnInit, OnChanges {
     const viewContainerRef = this.fhirCardOutlet.viewContainerRef;
     viewContainerRef.clear();
 
-    let componentType = this.typeLookup(this.displayModel?.source_resource_type)
+    const componentType = this.typeLookup(this.displayModel?.source_resource_type)
     if(componentType != null){
       const componentRef = viewContainerRef.createComponent<FhirCardComponentInterface>(componentType);
       componentRef.instance.displayModel = this.displayModel;

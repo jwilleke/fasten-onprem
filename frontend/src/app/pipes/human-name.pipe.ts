@@ -15,11 +15,11 @@ export class HumanNamePipe implements PipeTransform {
       return null
     }
 
-    let names = []
+    const names = []
 
     if(Array.isArray(humanNameModel)){
       //array of values
-      for(let humanName of humanNameModel){
+      for(const humanName of humanNameModel){
         names.push(this.getDisplayName(humanName));
       }
     } else {

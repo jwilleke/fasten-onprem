@@ -10,7 +10,7 @@ import { IntegerModel } from "./integer-model";
     });
 
     it('sets valueObject correctl', () => {
-      let model = new IntegerModel(6.3);
+      const model = new IntegerModel(6.3);
 
       expect(model.valueObject()).toEqual({ value: 6.3 });
     });

@@ -59,7 +59,7 @@ export default meta;
 type Story = StoryObj<BinaryComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
-let r4ExampleJpegDisplayModel =  new BinaryModel(R4ExampleJpegJson, fhirVersions.R4)
+const r4ExampleJpegDisplayModel =  new BinaryModel(R4ExampleJpegJson, fhirVersions.R4)
 r4ExampleJpegDisplayModel.source_id = '123-456-789'
 r4ExampleJpegDisplayModel.source_resource_id = '123-456-789'
 export const R4ExampleJpeg: Story = {
@@ -68,7 +68,7 @@ export const R4ExampleJpeg: Story = {
   }
 };
 
-let r4ExampleHtmlDisplayModel =  new BinaryModel(R4ExampleHtmlJson, fhirVersions.R4)
+const r4ExampleHtmlDisplayModel =  new BinaryModel(R4ExampleHtmlJson, fhirVersions.R4)
 r4ExampleHtmlDisplayModel.source_id = '123-456-789'
 r4ExampleHtmlDisplayModel.source_resource_id = '123-456-789'
 export const R4ExampleHtml: Story = {
@@ -77,7 +77,7 @@ export const R4ExampleHtml: Story = {
   }
 };
 
-let r4ExampleDicomDisplayModel =  new BinaryModel(R4ExampleDicomJson, fhirVersions.R4)
+const r4ExampleDicomDisplayModel =  new BinaryModel(R4ExampleDicomJson, fhirVersions.R4)
 r4ExampleDicomDisplayModel.source_id = '123-456-789'
 r4ExampleDicomDisplayModel.source_resource_id = '123-456-789'
 export const R4ExampleDicom: Story = {
@@ -86,7 +86,7 @@ export const R4ExampleDicom: Story = {
   }
 };
 
-let r4ExamplePdfDisplayModel =  new BinaryModel(R4ExamplePdfJson, fhirVersions.R4)
+const r4ExamplePdfDisplayModel =  new BinaryModel(R4ExamplePdfJson, fhirVersions.R4)
 r4ExamplePdfDisplayModel.source_id = '123-456-789'
 r4ExamplePdfDisplayModel.source_resource_id = '123-456-789'
 export const R4ExamplePdf: Story = {
@@ -95,7 +95,7 @@ export const R4ExamplePdf: Story = {
   }
 };
 
-let r4ExampleTextDisplayModel =  new BinaryModel(R4ExampleTextJson, fhirVersions.R4)
+const r4ExampleTextDisplayModel =  new BinaryModel(R4ExampleTextJson, fhirVersions.R4)
 r4ExampleTextDisplayModel.source_id = '123-456-789'
 r4ExampleTextDisplayModel.source_resource_id = '123-456-789'
 export const R4ExampleText: Story = {
@@ -106,7 +106,7 @@ export const R4ExampleText: Story = {
 
 
 
-let r4ExampleXmlDisplayModel =  new BinaryModel(R4ExampleXmlJson, fhirVersions.R4)
+const r4ExampleXmlDisplayModel =  new BinaryModel(R4ExampleXmlJson, fhirVersions.R4)
 r4ExampleXmlDisplayModel.source_id = '123-456-789'
 r4ExampleXmlDisplayModel.source_resource_id = '123-456-789'
 export const R4ExampleXml: Story = {

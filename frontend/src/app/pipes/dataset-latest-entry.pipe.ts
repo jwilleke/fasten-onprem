@@ -17,7 +17,7 @@ export class DatasetLatestEntryPipe implements PipeTransform {
       if (!round) {
         round = 0 //round to nearest whole number
       }
-      let lastItem = dataset?.data?.[dataset?.data?.length - 1] || ''
+      const lastItem = dataset?.data?.[dataset?.data?.length - 1] || ''
       // let valueKey = this.chartOptions?.parsing?.['yAxisKey'] || dataset?.parsing?.['key']
       let lastItemUnit = ""
       let lastItemValue

@@ -12,7 +12,7 @@ describe('EncounterModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new EncounterModel({})
+      const expected = new EncounterModel({})
       // periodEnd: string | undefined
       // periodStart: string | undefined
       // hasParticipant: boolean | undefined
@@ -26,7 +26,7 @@ describe('EncounterModel', () => {
     });
 
     it('should parse example2.json', () => {
-      let expected = new EncounterModel({})
+      const expected = new EncounterModel({})
       expected.period_end = '2015-01-17T16:30:00Z'
       expected.period_start = '2015-01-17T16:00:00Z'
       expected.has_participant = true
@@ -50,7 +50,7 @@ describe('EncounterModel', () => {
     });
 
     it('should parse example3.json', () => {
-      let expected = new EncounterModel({})
+      const expected = new EncounterModel({})
       // expected.periodEnd = '2015-01-17T16:30:00+10:00'
       // expected.periodStart = '2015-01-17T16:00:00+10:00'
       expected.has_participant = true

@@ -13,7 +13,7 @@ describe('DocumentReferenceModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new DocumentReferenceModel({})
+      const expected = new DocumentReferenceModel({})
       expected.description = 'Physical'
       expected.status =  'current'
       // expected.docStatus: string | undefined

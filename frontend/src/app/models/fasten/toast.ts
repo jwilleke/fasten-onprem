@@ -9,8 +9,8 @@ export class ToastNotification {
   title?: string
   message: string
   type: ToastType = ToastType.Info
-  displayClass: string = 'demo-static-toast'
-  autohide: boolean = true
+  displayClass = 'demo-static-toast'
+  autohide = true
   link?: {
     text: string,
     url: string

@@ -14,7 +14,7 @@ export class ObservationVisualizationComponent implements OnInit {
   @Input() observations: ObservationModel[]
   @Input() preferredVisualizationType?: string = 'bar'
 
-  visualizationType: string = ''
+  visualizationType = ''
 
   constructor() { }
 

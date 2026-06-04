@@ -14,7 +14,7 @@ describe('LocationModel', () => {
 
   describe('with r4', () => {
     it('should parse example1.json', () => {
-      let expectedLocation = new LocationModel({})
+      const expectedLocation = new LocationModel({})
       expectedLocation.name = 'South Wing, second floor'
       expectedLocation.status = 'active'
       expectedLocation.description = 'Second floor of the Old South Wing, formerly in use by Psychiatry'
@@ -48,7 +48,7 @@ describe('LocationModel', () => {
     });
 
     it('should parse example2.json', () => {
-      let expectedLocation = new LocationModel({})
+      const expectedLocation = new LocationModel({})
       expectedLocation.name = 'BUMC Ambulance'
       expectedLocation.status = 'active'
       expectedLocation.description = "Ambulance provided by Burgers University Medical Center"
@@ -85,7 +85,7 @@ describe('LocationModel', () => {
   describe('with dstu2', () => {
 
     it('should parse example1.json', () => {
-      let expectedLocation = new LocationModel({})
+      const expectedLocation = new LocationModel({})
       expectedLocation.name = "South Wing, second floor"
       expectedLocation.status = 'active'
       expectedLocation.description = "Second floor of the Old South Wing, formerly in use by Psychiatry"

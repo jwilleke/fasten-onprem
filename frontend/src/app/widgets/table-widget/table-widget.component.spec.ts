@@ -72,7 +72,7 @@ describe('TableWidgetComponent', () => {
           }
         }
         //test
-        let processedQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, encountersFixture)
+        const processedQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, encountersFixture)
         component.chartProcessQueryResults([processedQueryResponse])
 
         //assert

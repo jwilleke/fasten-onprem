@@ -14,10 +14,10 @@ import {ResourceGraphResponse} from '../../models/fasten/resource-graph-response
     standalone: false
 })
 export class MedicalHistoryComponent implements OnInit {
-  loading: boolean = false
+  loading = false
 
-  currentPage: number = 1 //1-based index due to the way the pagination component works
-  pageSize: number = 10
+  currentPage = 1 //1-based index due to the way the pagination component works
+  pageSize = 10
   allEncountersIds: any[] = []
 
   closeResult = '';
@@ -63,7 +63,7 @@ export class MedicalHistoryComponent implements OnInit {
   pageChange(){
     this.loading = true
 
-    let encounterIds = this.allEncountersIds.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
+    const encounterIds = this.allEncountersIds.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
 
     this.fastenApi.getResourceGraph(null, encounterIds).subscribe((graphResponse: ResourceGraphResponse) => {
         this.loading = false

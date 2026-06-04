@@ -59,7 +59,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
   conditionDisplayModel: Partial<ConditionModel>
 
   //lookup table for all resources
-  resourcesLookup: {[name:string]: FastenDisplayModel} = {}
+  resourcesLookup: Record<string, FastenDisplayModel> = {}
 
   involvedInCare: {displayName: string, role?: string, email?: string, displayModel?: FastenDisplayModel}[] = []
   encounters: EncounterModel[] = []
@@ -76,20 +76,20 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
     }
 
     //add resources to the lookup table, ensure uniqueness.
-    let result = RecResourceRelatedDisplayModel(this.conditionGroup)
+    const result = RecResourceRelatedDisplayModel(this.conditionGroup)
     this.resourcesLookup = result.resourcesLookup
     this.conditionDisplayModel = result.displayModel
 
-    let involvedInCareMap: {[resource_id: string]: {displayName: string, role?: string, email?: string}} = {}
+    const involvedInCareMap: Record<string, {displayName: string, role?: string, email?: string}> = {}
 
     //loop though all resources, process display data
-    for(let resourceId in this.resourcesLookup){
-      let resource = this.resourcesLookup[resourceId]
+    for(const resourceId in this.resourcesLookup){
+      const resource = this.resourcesLookup[resourceId]
 
       switch(resource.source_resource_type){
         case ResourceType.CareTeam:
-          for(let participant of (resource as CareTeamModel).participants){
-            let id = participant.reference.reference || participant.display
+          for(const participant of (resource as CareTeamModel).participants){
+            const id = participant.reference.reference || participant.display
             involvedInCareMap[id] = _.mergeWith(
               {},
               involvedInCareMap[id],
@@ -101,12 +101,12 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
           }
           break
         case ResourceType.Practitioner:
-          let practitionerModel = resource as PractitionerModel
-          let id = `${resource.source_resource_type}/${resource.source_resource_id}`
+          const practitionerModel = resource as PractitionerModel
+          const id = `${resource.source_resource_type}/${resource.source_resource_id}`
 
-          let telecomEmails =_.find(practitionerModel.telecom, {"system": "email"})
-          let email = _.get(telecomEmails, '[0].value')
-          let qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"}) as CodingModel
+          const telecomEmails =_.find(practitionerModel.telecom, {"system": "email"})
+          const email = _.get(telecomEmails, '[0].value')
+          const qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"}) as CodingModel
 
           involvedInCareMap[id] = _.mergeWith(
             {},
@@ -125,7 +125,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
           this.encounters.push(resource as EncounterModel);
 
           (resource as EncounterModel).participant.map((participant) => {
-            let id = participant.reference.reference
+            const id = participant.reference.reference
             involvedInCareMap[id] = _.mergeWith(
               {},
               involvedInCareMap[id],
@@ -140,7 +140,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
 
     }
 
-    for(let resourceId in involvedInCareMap){
+    for(const resourceId in involvedInCareMap){
       this.involvedInCare.push(involvedInCareMap[resourceId])
     }
   }

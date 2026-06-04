@@ -14,8 +14,8 @@ export class AppComponent implements OnInit {
   title = 'fastenhealth';
 
   public layoutOption: string;
-  showHeader:boolean = false;
-  showFooter:boolean = true;
+  showHeader = false;
+  showFooter = true;
 
   constructor(
     private router: Router,

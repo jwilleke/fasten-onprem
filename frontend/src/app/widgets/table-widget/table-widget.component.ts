@@ -24,17 +24,17 @@ export class TableWidgetComponent  extends DashboardWidgetComponent implements O
       return
     }
 
-    let results = queryResults[0]
+    const results = queryResults[0]
 
-    for(let header in this.widgetConfig.parsing){
+    for(const header in this.widgetConfig.parsing){
       this.headers.push(header)
       this.keys.push(this.widgetConfig.parsing[header])
     }
 
-    let keys = this.keys
+    const keys = this.keys
     this.rows = results.map((result: any) => {
-      let row = []
-      for(let key of keys){
+      const row = []
+      for(const key of keys){
         row.push(typeof (result?.[key]) === 'string' ? (result?.[key] || '') : ((result?.[key]?.[0]) || ''))
       }
       return row

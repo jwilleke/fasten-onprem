@@ -56,8 +56,8 @@ describe('PatientVitalsWidgetComponent', () => {
 
         try {
 
-          let processedVitalsQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, patientVitalsObservationFixture)
-          let processedPatientQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[1].q, patientVitalsPatientFixture)
+          const processedVitalsQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, patientVitalsObservationFixture)
+          const processedPatientQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[1].q, patientVitalsPatientFixture)
           component.vitalsProcessQueryResults([processedVitalsQueryResponse, processedPatientQueryResponse])
         } finally {
 

@@ -1,14 +1,14 @@
 export class ResourceFhir {
   user_id?: string
-  source_id: string = ""
-  source_resource_type: string = ""
-  source_resource_id: string = ""
+  source_id = ""
+  source_resource_type = ""
+  source_resource_id = ""
 
-  fhir_version: string = ""
+  fhir_version = ""
   resource_raw: IResourceRaw
   related_resources?: ResourceFhir[] = []
 
-  sort_title: string = ""
+  sort_title = ""
   sort_date: Date = null
 
   constructor(object?: any) {

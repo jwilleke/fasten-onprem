@@ -7,9 +7,9 @@ import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 
 class UserWizard extends User {
-  password_confirm: string = ""
-  agree_terms: boolean = false
-  join_mailing_list: boolean = true
+  password_confirm = ""
+  agree_terms = false
+  join_mailing_list = true
 }
 
 
@@ -108,11 +108,11 @@ export class AuthSignupWizardComponent implements OnInit {
     "b53ff282-4725-45f7-a436-89f77320f062.png",
   ]
 
-  loading: boolean = false
+  loading = false
 
-  submitted: boolean = false
+  submitted = false
   newUser: UserWizard = new UserWizard()
-  errorMsg: string = ""
+  errorMsg = ""
 
   constructor(
     private authService: AuthService,

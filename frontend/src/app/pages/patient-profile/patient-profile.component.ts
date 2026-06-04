@@ -15,7 +15,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
     standalone: false
 })
 export class PatientProfileComponent implements OnInit {
-  loading: {[name: string]: boolean} = {page: false, delete: false}
+  loading: Record<string, boolean> = {page: false, delete: false}
 
   modalCloseResult = '';
 

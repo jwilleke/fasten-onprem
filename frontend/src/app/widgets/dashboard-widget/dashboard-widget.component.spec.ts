@@ -75,7 +75,7 @@ describe('DashboardWidgetComponent', () => {
           }
         }
         //test
-        let processedQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, weightFixture)
+        const processedQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, weightFixture)
         component.chartProcessQueryResults([processedQueryResponse])
 
         //assert
@@ -148,8 +148,8 @@ describe('DashboardWidgetComponent', () => {
           }
         }
         //test
-        let processedClaimsQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, claimsFixture)
-        let processedImmunizationsQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[1].q, immunizationsFixture)
+        const processedClaimsQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, claimsFixture)
+        const processedImmunizationsQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[1].q, immunizationsFixture)
         component.chartProcessQueryResults([processedClaimsQueryResponse, processedImmunizationsQueryResponse])
 
         //assert
@@ -215,7 +215,7 @@ describe('DashboardWidgetComponent', () => {
           }
         }
         //test
-        let processedEncountersQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, encountersFixture)
+        const processedEncountersQueryResponse = component.processQueryResourcesSelectClause(component.widgetConfig.queries[0].q, encountersFixture)
         component.chartProcessQueryResults([processedEncountersQueryResponse])
 
         //assert
@@ -255,7 +255,7 @@ describe('DashboardWidgetComponent', () => {
 
   it('fhirPathMapQueryFn should generate a valid select map with aliases', () => {
     //setup
-    let patient = {
+    const patient = {
       "resourceType": "Patient",
       "id": "example",
       "address": [
@@ -277,7 +277,7 @@ describe('DashboardWidgetComponent', () => {
       ]
     }
 
-    let query = {
+    const query = {
       // use: string
       select: ['address.use', "address.where(type='both').state as state"],
       from: 'Patient',
@@ -286,7 +286,7 @@ describe('DashboardWidgetComponent', () => {
     } as DashboardWidgetQuery
 
 
-    let query2 = {
+    const query2 = {
       // use: string
       select: ['*', "address.where(type='both').use | address.city as joined"],
       from: 'Patient',
@@ -296,11 +296,11 @@ describe('DashboardWidgetComponent', () => {
 
 
     //test
-    let fn = component.fhirPathMapQueryFn(query)
+    const fn = component.fhirPathMapQueryFn(query)
     expect(fn(patient)).toEqual({ "address.use": [ 'home' ], "state": [ 'Vic' ], 'id': 'example', 'resourceType': 'Patient' })
 
     // let fn2 = service.fhirPathMapQueryFn(query2)
-    let fn2 = component.fhirPathMapQueryFn(query2)
+    const fn2 = component.fhirPathMapQueryFn(query2)
     expect(fn2(patient)).toEqual({
       "joined": [ 'home', 'PleasantVille' ],
       "*": {

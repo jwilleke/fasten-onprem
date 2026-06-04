@@ -12,11 +12,11 @@ import {AuthService} from '../../services/auth.service';
     standalone: false
 })
 export class AuthSignupComponent implements OnInit {
-  loading: boolean = false
+  loading = false
 
-  submitted: boolean = false
+  submitted = false
   newUser: User = new User()
-  errorMsg: string = ""
+  errorMsg = ""
 
   constructor(
     private authService: AuthService,

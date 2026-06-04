@@ -35,7 +35,7 @@ const meta: Meta<ObservationComponent> = {
 export default meta;
 type Story = StoryObj<ObservationComponent>;
 
-let observation = new ObservationModel(observationR4Factory.valueQuantity().referenceRange().build(), fhirVersions.R4);
+const observation = new ObservationModel(observationR4Factory.valueQuantity().referenceRange().build(), fhirVersions.R4);
 observation.source_id = '123-456-789'
 observation.source_resource_id = '123-456-789'
 export const Entry: Story = {
@@ -44,7 +44,7 @@ export const Entry: Story = {
   }
 };
 
-let observation2 = new ObservationModel(observationR4Factory.valueCodeableConcept().code(codeableConceptR4Factory.text('Covid Test').build()).build(), fhirVersions.R4);
+const observation2 = new ObservationModel(observationR4Factory.valueCodeableConcept().code(codeableConceptR4Factory.text('Covid Test').build()).build(), fhirVersions.R4);
 observation.source_id = '123-456-789'
 observation.source_resource_id = '123-456-789'
 export const CodeableConcept: Story = {
@@ -53,7 +53,7 @@ export const CodeableConcept: Story = {
   }
 };
 
-let observation3 = new ObservationModel(observationR4Factory.dataAbsent().build(), fhirVersions.R4);
+const observation3 = new ObservationModel(observationR4Factory.dataAbsent().build(), fhirVersions.R4);
 observation.source_id = '123-456-789'
 observation.source_resource_id = '123-456-789'
 export const DataAbsent: Story = {

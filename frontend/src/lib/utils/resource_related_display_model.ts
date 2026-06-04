@@ -8,11 +8,11 @@ import {ResourceType} from '../models/constants';
 
 
 // This function takes a ResourceFhir object, then recursively converts it, and its related resources, into FastenDisplayModel objects.
-export function RecResourceRelatedDisplayModel(resource: ResourceFhir, resourcesLookup?: {[name:string]: FastenDisplayModel}): {displayModel: FastenDisplayModel, resourcesLookup: {[name:string]: FastenDisplayModel}} {
+export function RecResourceRelatedDisplayModel(resource: ResourceFhir, resourcesLookup?: Record<string, FastenDisplayModel>): {displayModel: FastenDisplayModel, resourcesLookup: Record<string, FastenDisplayModel>} {
   if(!resourcesLookup){
     resourcesLookup = {}
   }
-  let resourceId = GenResourceId(resource)
+  const resourceId = GenResourceId(resource)
   let resourceDisplayModel: FastenDisplayModel = resourcesLookup[resourceId]
 
 
@@ -32,10 +32,10 @@ export function RecResourceRelatedDisplayModel(resource: ResourceFhir, resources
   if(!resource.related_resources){
     return {displayModel: resourceDisplayModel, resourcesLookup}
   } else {
-    for(let relatedResource of resource.related_resources){
+    for(const relatedResource of resource.related_resources){
       resourceDisplayModel.related_resources[relatedResource.source_resource_type] = resourceDisplayModel.related_resources[relatedResource.source_resource_type] || []
 
-      let result = RecResourceRelatedDisplayModel(relatedResource, resourcesLookup)
+      const result = RecResourceRelatedDisplayModel(relatedResource, resourcesLookup)
       resourcesLookup = result.resourcesLookup
       if(result.displayModel){
         resourceDisplayModel.related_resources[relatedResource.source_resource_type].push(result.displayModel)

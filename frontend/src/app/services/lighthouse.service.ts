@@ -124,7 +124,7 @@ export class LighthouseService {
   // TODO: use the fasten-sources js library
   async generateSourceAuthorizeUrl(lighthouseSource: LighthouseSourceMetadata, reconnectSourceId?: string): Promise<URL> {
     const state = uuidV4()
-    let sourceStateInfo = new SourceState()
+    const sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
     sourceStateInfo.endpoint_id = lighthouseSource.id
     sourceStateInfo.portal_id = lighthouseSource.portal_id
@@ -211,7 +211,7 @@ export class LighthouseService {
       originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${state}`])
     }
 
-    let redirectUrl = this.pathJoin([environment.lighthouse_api_endpoint_base, `redirect/${state}`])
+    const redirectUrl = this.pathJoin([environment.lighthouse_api_endpoint_base, `redirect/${state}`])
 
     const redirectUrlParts = new URL(redirectUrl);
     const redirectParams = new URLSearchParams()
@@ -272,11 +272,11 @@ export class LighthouseService {
 
       //check if source requires a CORS relay
       if(sourceMetadata.cors_relay_required){
-        let corsProxyBaseUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/cors/${sourceMetadata.id}/`
+        const corsProxyBaseUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/cors/${sourceMetadata.id}/`
 
         //this endpoint requires a CORS relay
         //get the path to the Fasten server, and append `cors/` and then append the request url
-        let tokenEndpointUrlParts = new URL(tokenEndpointUrl)
+        const tokenEndpointUrlParts = new URL(tokenEndpointUrl)
         tokenEndpointUrl = corsProxyBaseUrl + `${tokenEndpointUrlParts.hostname}${tokenEndpointUrlParts.pathname}${tokenEndpointUrlParts.search}`
         console.warn("Using local CORS proxy for token endpoint", tokenEndpointUrl)
       }
@@ -305,7 +305,7 @@ export class LighthouseService {
       sourceMetadata.redirect_uri,
       codeVerifier,
     )
-    let payload = await response.json()
+    const payload = await response.json()
     console.log("ENDING--- Oauth.authorizationCodeGrantRequest", payload)
     return payload
   }
@@ -333,7 +333,7 @@ export class LighthouseService {
       return throwError("wails is not defined, this is likely because you're running in a browser.")
     }
 
-    let fromWailsEvent = bindCallback(wails.Events.Once)
+    const fromWailsEvent = bindCallback(wails.Events.Once)
 
     //new code to listen to post message
     return fromWailsEvent('wails:fasten-lighthouse:response')
@@ -372,12 +372,12 @@ export class LighthouseService {
     //User was shown a popup, which was closed, and data was returned using events
     //redirect to callback page with code
 
-    let urlTree = this.router.createUrlTree(
+    const urlTree = this.router.createUrlTree(
       ['/sources/callback/' + state],
       { queryParams: codeData, }
     );
 
-    let absUrl = this.location.prepareExternalUrl(this.urlSerializer.serialize(urlTree))
+    const absUrl = this.location.prepareExternalUrl(this.urlSerializer.serialize(urlTree))
     console.log(absUrl);
     window.location.replace(absUrl)
 

@@ -21,7 +21,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
   performer: ReferenceModel | undefined
   issued: string | undefined
   presented_form: AttachmentModel[] | undefined
-  is_category_lab_report: boolean = false
+  is_category_lab_report = false
 
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {

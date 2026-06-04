@@ -17,7 +17,7 @@ describe('AllergyIntoleranceModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new AllergyIntoleranceModel({})
+      const expected = new AllergyIntoleranceModel({})
       expected.title = 'Cashew nuts'
       expected.status = 'Confirmed'
       expected.recorded_date = '2014-10-09T14:58:00+11:00'
@@ -39,7 +39,7 @@ describe('AllergyIntoleranceModel', () => {
     });
 
     it('should parse r4 example2.json', () => {
-      let expected = new AllergyIntoleranceModel({})
+      const expected = new AllergyIntoleranceModel({})
       expected.title = 'Penicillin G'
       expected.status = 'Unconfirmed'
       expected.recorded_date = '2010-03-01'
@@ -55,7 +55,7 @@ describe('AllergyIntoleranceModel', () => {
     });
 
     it('should parse r4 example3.json', () => {
-      let expected = new AllergyIntoleranceModel({})
+      const expected = new AllergyIntoleranceModel({})
       expected.title = 'No Known Allergy (situation)'
       expected.status = 'Confirmed'
       expected.recorded_date = '2015-08-06T15:37:31-06:00'
@@ -73,7 +73,7 @@ describe('AllergyIntoleranceModel', () => {
   describe('with dstu2', () => {
 
     it('should parse example1.json', () => {
-      let expected = new AllergyIntoleranceModel({})
+      const expected = new AllergyIntoleranceModel({})
       expected.title = "ALLERGENIC EXTRACT, PENICILLIN"
       expected.status = 'unconfirmed'
       expected.recorded_date = "2010-03-01"
@@ -94,7 +94,7 @@ describe('AllergyIntoleranceModel', () => {
     });
 
     it('should parse example2.json', () => {
-      let expected = new AllergyIntoleranceModel({})
+      const expected = new AllergyIntoleranceModel({})
       expected.title = 'PENICILLINS'
       expected.status = 'confirmed'
       expected.recorded_date = '2008-02-22T06:00:00.000Z'
@@ -119,7 +119,7 @@ describe('AllergyIntoleranceModel', () => {
 
     it('should parse example1.json', () => {
 
-      let expected = new AllergyIntoleranceModel({})
+      const expected = new AllergyIntoleranceModel({})
       expected.title = 'Cashew nuts'
       expected.status = 'confirmed'
       expected.recorded_date = '2014-10-09T14:58:00+11:00'
@@ -141,7 +141,7 @@ describe('AllergyIntoleranceModel', () => {
 
     it('should parse example2.json', () => {
 
-      let expected = new AllergyIntoleranceModel({})
+      const expected = new AllergyIntoleranceModel({})
       expected.title =  'Fish - dietary (substance)'
       expected.status = 'confirmed'
       expected.recorded_date = '2015-08-06T15:37:31-06:00'

@@ -41,7 +41,7 @@ export default meta;
 type Story = StoryObj<AllergyIntoleranceComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
-let aiDisplayModel1 =  new AllergyIntoleranceModel(R4Example1Json, fhirVersions.R4)
+const aiDisplayModel1 =  new AllergyIntoleranceModel(R4Example1Json, fhirVersions.R4)
 aiDisplayModel1.source_id = '123-456-789'
 aiDisplayModel1.source_resource_id = '123-456-789'
 export const R4Example1: Story = {
@@ -50,7 +50,7 @@ export const R4Example1: Story = {
   }
 };
 
-let aiDisplayModel2 =  new AllergyIntoleranceModel(R4Example2Json, fhirVersions.R4)
+const aiDisplayModel2 =  new AllergyIntoleranceModel(R4Example2Json, fhirVersions.R4)
 aiDisplayModel2.source_id = '123-456-789'
 aiDisplayModel2.source_resource_id = '123-456-789'
 export const R4Example2: Story = {
@@ -59,7 +59,7 @@ export const R4Example2: Story = {
   }
 };
 
-let aiDisplayModel3 =  new AllergyIntoleranceModel(R4Example3Json, fhirVersions.R4)
+const aiDisplayModel3 =  new AllergyIntoleranceModel(R4Example3Json, fhirVersions.R4)
 aiDisplayModel3.source_id = '123-456-789'
 aiDisplayModel3.source_resource_id = '123-456-789'
 export const R4Example3: Story = {

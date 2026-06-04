@@ -11,7 +11,7 @@ describe('AdverseEventModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new AdverseEventModel({})
+      const expected = new AdverseEventModel({})
       expected.subject = {
         "reference": "Patient/example"
       }

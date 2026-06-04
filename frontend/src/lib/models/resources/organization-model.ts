@@ -35,7 +35,7 @@ export class OrganizationModel extends FastenDisplayModel {
     this.type_codings = _.get(fhirResource, 'type.coding');
   };
   stu3DTO(fhirResource:any){
-    let typeCodings = _.get(fhirResource, 'type', []).map((type: { coding: any; }) => type.coding);
+    const typeCodings = _.get(fhirResource, 'type', []).map((type: { coding: any; }) => type.coding);
     this.type_codings = _.flatten(typeCodings)
   };
 

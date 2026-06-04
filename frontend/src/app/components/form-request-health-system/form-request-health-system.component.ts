@@ -12,9 +12,9 @@ import { FastenApiService } from '../../services/fasten-api.service';
 export class FormRequestHealthSystemComponent implements OnInit {
   formRequestHealthSystem: FormRequestHealthSystem = null
 
-  loading: boolean = false
-  submitSuccess: boolean = false
-  errorMsg: string = ""
+  loading = false
+  submitSuccess = false
+  errorMsg = ""
 
   constructor(
     private fastenApi: FastenApiService,
@@ -27,7 +27,7 @@ export class FormRequestHealthSystemComponent implements OnInit {
 
   resetForm() {
     this.submitSuccess = false
-    let requestForm = new FormRequestHealthSystem()
+    const requestForm = new FormRequestHealthSystem()
     requestForm.email = ''
     requestForm.name = ''
     requestForm.street_address = ''

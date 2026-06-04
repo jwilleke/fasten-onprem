@@ -9,8 +9,8 @@ import { CommonModule } from '@angular/common';
     styleUrls: ['./confirmation-modal.component.scss']
 })
 export class ConfirmationModalComponent {
-  @Input() message: string = 'Are you sure?';
-  @Input() title: string = 'Confirm Action';
+  @Input() message = 'Are you sure?';
+  @Input() title = 'Confirm Action';
 
   constructor(public activeModal: NgbActiveModal) { }
 

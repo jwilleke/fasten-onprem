@@ -17,7 +17,7 @@ class ObservationR4Factory extends Factory<{}> {
   }
 
   valueQuantity(params?: {}) {
-    let p = params || {}
+    const p = params || {}
     return this.params({
       valueQuantity: {
         value: p['value'] || 6.3,

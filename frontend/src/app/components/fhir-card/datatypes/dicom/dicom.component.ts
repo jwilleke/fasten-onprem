@@ -140,7 +140,7 @@ export class DicomComponent implements OnInit {
       return;
     }
     //Load from Input file
-    let files = [new File([
+    const files = [new File([
       this.dataBase64toBlob(this.displayModel.data, "application/dicom")
     ], "dicom.dcm", {type: "application/dicom"})]
 
@@ -252,12 +252,12 @@ export class DicomComponent implements OnInit {
   dataBase64toBlob(base64Data, contentType) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-    var byteString = atob(base64Data);
+    const byteString = atob(base64Data);
 
     // write the bytes of the string to an ArrayBuffer
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i);
     }
     return new Blob([ab], { type: contentType });

@@ -8,7 +8,7 @@ describe('HumanNameModel', () => {
   });
 
   it('should parse fhirdata', () => {
-    let expectedHumanName = new HumanNameModel({})
+    const expectedHumanName = new HumanNameModel({})
     expectedHumanName.givenName = 'Peter, James'
     expectedHumanName.familyName = 'Windsor'
     expectedHumanName.suffix = ''

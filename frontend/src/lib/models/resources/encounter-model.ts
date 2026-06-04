@@ -72,7 +72,7 @@ export class EncounterModel extends FastenDisplayModel {
 
     this.resource_class = _.get(fhirResource, 'class.display');
     this.participant = _.get(fhirResource, 'participant', []).map((item: any) => {
-      let periodStart = _.get(item, 'period.start');
+      const periodStart = _.get(item, 'period.start');
       const reference = _.get(item, 'individual', {});
       return {
         display: _.get(item, 'type[0].coding[0].display'),
@@ -90,7 +90,7 @@ export class EncounterModel extends FastenDisplayModel {
     // Veradigm R4 exports class with system but no display or code — fall back to code
     this.resource_class = _.get(fhirResource, 'class.display') || _.get(fhirResource, 'class.code');
     this.participant = _.get(fhirResource, 'participant', []).map((item: any) => {
-      let periodStart = _.get(item, 'period.start');
+      const periodStart = _.get(item, 'period.start');
       return {
         role: _.get(item, 'type[0].text') || _.get(item, 'type[0].coding[0].display'),
         display: _.get(item, 'individual.display'),

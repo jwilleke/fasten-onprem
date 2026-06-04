@@ -13,7 +13,7 @@ export function extractErrorFromResponse(errResp: any): string {
 //stringify error objects
 export function replaceErrors(key, value) {
   if (value instanceof Error) {
-    var error = {};
+    const error = {};
 
     Object.getOwnPropertyNames(value).forEach(function (propName) {
       error[propName] = value[propName];

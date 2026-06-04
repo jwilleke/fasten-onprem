@@ -17,12 +17,12 @@ export class GlossaryLookupComponent implements OnInit {
 
   @Input() code: string
   @Input() codeSystem: string
-  @Input() snippetLength: number = -1
+  @Input() snippetLength = -1
 
   description: SafeHtml = ""
-  url: string = ""
-  source: string = ""
-  loading: boolean = true
+  url = ""
+  source = ""
+  loading = true
 
   constructor(private fastenApi: FastenApiService, private sanitized: DomSanitizer) { }
 

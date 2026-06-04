@@ -33,10 +33,10 @@ import {ResourceType} from '../../../lib/models/constants';
     styleUrls: ['./medical-record-wizard-add-organization.component.scss']
 })
 export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
-  @Input() debugMode: boolean = false;
+  @Input() debugMode = false;
   @Input() disabledResourceIds: string[] = [];
 
-  activeId: string = 'find'
+  activeId = 'find'
 
   //create tab options
   newOrganizationTypeaheadForm: FormGroup
@@ -44,7 +44,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
 
   //find tab options
   selectedOrganization: {source_resource_id: string,source_resource_type: ResourceType, resource: ResourceFhir} = null
-  totalOrganizations: number = 0
+  totalOrganizations = 0
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
@@ -100,7 +100,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
   }
 
   private organizationFormToDisplayModel(form: FormGroup): OrganizationModel {
-    let address = new AddressModel(null)
+    const address = new AddressModel(null)
     address.city = form.get('address').get('city').value
     address.line = []
     if (form.get('address').get('line1').value) {
@@ -113,7 +113,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     address.country = form.get('address').get('country').value
     address.postalCode = form.get('address').get('zip').value
 
-    let model = new OrganizationModel({})
+    const model = new OrganizationModel({})
     model.source_resource_id = form.get('id').value
     model.identifier = form.get('identifier').value
     model.name = form.get('name').value
@@ -142,7 +142,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
       })
     }
     if(form.get('type').value) {
-      let codableConcept = new CodableConceptModel({})
+      const codableConcept = new CodableConceptModel({})
       codableConcept.coding = form.get('type').value.identifier
       codableConcept.text = form.get('type').value.text
       model.type.push(codableConcept)
@@ -161,7 +161,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
       data: new FormControl(null, Validators.required),
     })
     this.newOrganizationTypeaheadForm.valueChanges.subscribe(form => {
-      let val = form.data
+      const val = form.data
 
       if(val == null){
         //reset the dependant fields (user cleared the text box)
@@ -170,7 +170,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
         this.newOrganizationForm.get('identifier').setValue(null);
         this.newOrganizationForm.get('phone').setValue(null);
         this.newOrganizationForm.get('fax').setValue(null);
-        let addressGroup = this.newOrganizationForm.get('address')
+        const addressGroup = this.newOrganizationForm.get('address')
         addressGroup.get('line1').setValue(null)
         addressGroup.get('line2').setValue(null)
         addressGroup.get('city').setValue(null)
@@ -197,7 +197,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
         this.newOrganizationForm.get('fax').setValue(val.provider_fax)
       }
       if(val.provider_address){
-        let addressGroup = this.newOrganizationForm.get('address')
+        const addressGroup = this.newOrganizationForm.get('address')
         addressGroup.get('line1').setValue(val.provider_address.line1)
         addressGroup.get('line2').setValue(val.provider_address.line2)
         addressGroup.get('city').setValue(val.provider_address.city)

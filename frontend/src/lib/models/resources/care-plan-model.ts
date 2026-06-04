@@ -68,7 +68,7 @@ export class CarePlanModel extends FastenDisplayModel {
   };
 
   stu3DTO(fhirResource: any) {
-    let activity = _.get(fhirResource, 'activity');
+    const activity = _.get(fhirResource, 'activity');
     this.has_activity = Array.isArray(activity);
     this.activity = !this.has_activity
       ? activity

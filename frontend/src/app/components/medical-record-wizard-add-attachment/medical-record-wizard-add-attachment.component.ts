@@ -19,7 +19,7 @@ import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
     styleUrls: ['./medical-record-wizard-add-attachment.component.scss']
 })
 export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
-  @Input() debugMode: boolean = false;
+  @Input() debugMode = false;
 
   newAttachmentForm: FormGroup
 
@@ -37,10 +37,10 @@ export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
   }
 
   onAttachmentFileChange($event){
-    let fileInput = $event.target as HTMLInputElement;
+    const fileInput = $event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
-      let processingFile = fileInput.files[0]
-      let reader = new FileReader();
+      const processingFile = fileInput.files[0]
+      const reader = new FileReader();
       reader.onloadend = () => {
         // use a regex to remove data url part
         const base64String = (reader.result as string).replace('data:', '').replace(/^.+,/, '');

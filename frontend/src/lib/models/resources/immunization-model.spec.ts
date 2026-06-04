@@ -8,7 +8,7 @@ describe('ImmunizationModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let expected = new ImmunizationModel({})
+      const expected = new ImmunizationModel({})
 
       expected.title = 'Fluvax (Influenza)'
       expected.status = 'completed'

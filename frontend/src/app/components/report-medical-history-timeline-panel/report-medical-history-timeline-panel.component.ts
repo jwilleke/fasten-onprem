@@ -25,12 +25,12 @@ export class ReportMedicalHistoryTimelinePanelComponent implements OnInit {
       return;
     }
 
-    let parsed = RecResourceRelatedDisplayModel(this.resourceFhir)
+    const parsed = RecResourceRelatedDisplayModel(this.resourceFhir)
     this.displayModel = parsed.displayModel as EncounterModel
   }
 
   diagnosticReportLink(diagnosticReportRaw: FastenDisplayModel): string {
-    let diagnosticReport = diagnosticReportRaw as DiagnosticReportModel
+    const diagnosticReport = diagnosticReportRaw as DiagnosticReportModel
     return diagnosticReport?.is_category_lab_report ?
       '/labs/report/'+ diagnosticReport?.source_id + '/' + diagnosticReport?.source_resource_type + '/' + diagnosticReport?.source_resource_id :
       '/explore/'+ diagnosticReport?.source_id + '/resource/' + diagnosticReport?.source_resource_id + '/'

@@ -30,7 +30,7 @@ export class AdverseEventModel extends FastenDisplayModel {
     this.code = _.get(fhirResource, 'event');
     this.subject = _.get(fhirResource, 'subject');
     this.date = _.get(fhirResource, 'date');
-    let seriousness = _.get(fhirResource, 'seriousness', [])
+    const seriousness = _.get(fhirResource, 'seriousness', [])
     this.seriousness = new CodableConceptModel(seriousness);
     this.has_seriousness = hasValue(seriousness);
   };
@@ -43,7 +43,7 @@ export class AdverseEventModel extends FastenDisplayModel {
 
   r4DTO(fhirResource:any){
     this.actuality = _.get(fhirResource, 'actuality');
-    let event = _.get(fhirResource, 'event', [])
+    const event = _.get(fhirResource, 'event', [])
     this.event = new CodableConceptModel(event);
     this.has_event = hasValue(event);
   };

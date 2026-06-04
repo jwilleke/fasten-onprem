@@ -10,7 +10,7 @@ export class MedicalSourcesCategoryLookupPipe implements PipeTransform {
     if (!categoryCode){
       return null;
     }
-    let lookupDescription = SOURCE_CATEGORY_CODE_LOOKUP[categoryCode];
+    const lookupDescription = SOURCE_CATEGORY_CODE_LOOKUP[categoryCode];
     if (!lookupDescription){
       return categoryCode;
     } else {

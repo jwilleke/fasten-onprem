@@ -8,7 +8,7 @@ describe('RtfComponent', () => {
   let component: RtfComponent;
   let fixture: ComponentFixture<RtfComponent>;
 
-  const rtf: string = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}} \\f0\\fs60 Hello, World! }";
+  const rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}} \\f0\\fs60 Hello, World! }";
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

@@ -119,7 +119,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     }
 
     this.fastenApi.getSources().subscribe((sources) => {
-      let fastenSource = sources.find((source) => source.platform_type === 'fasten')
+      const fastenSource = sources.find((source) => source.platform_type === 'fasten')
 
       this.fastenSourceId = fastenSource.id
     })
@@ -169,10 +169,10 @@ export class MedicalRecordWizardComponent implements OnInit {
 
   //<editor-fold desc="Form Add">
   addEncounter(openEncounterResult: WizardFhirResourceWrapper<EncounterModel>){
-    let encounter = openEncounterResult.data;
+    const encounter = openEncounterResult.data;
     this.existingEncounter = encounter;
 
-    let clonedEncounter = this.deepClone(encounter) as EncounterModel;
+    const clonedEncounter = this.deepClone(encounter) as EncounterModel;
     clonedEncounter.related_resources = {};
 
     this.form.get("encounter").get('data').setValue(clonedEncounter);
@@ -253,7 +253,7 @@ export class MedicalRecordWizardComponent implements OnInit {
 
   //<editor-fold desc="Open Modals">
   openEncounterModal() {
-    let modalRef = this.modalService.open(MedicalRecordWizardAddEncounterComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardAddEncounterComponent, {
       ariaLabelledBy: 'modal-edit-encounter',
       size: 'lg',
     })
@@ -271,12 +271,12 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openPractitionerModal(formGroup?: AbstractControl, controlName?: string) {
-    let disabledResourceIds = [];
+    const disabledResourceIds = [];
     disabledResourceIds.push(...(this.practitioners?.value || []).map(practitioner => practitioner.data.source_resource_id));
     disabledResourceIds.push(...(this.existingEncounter?.related_resources?.['Practitioner'] || []).map(practitioner => practitioner.source_resource_id));
 
     // this.resetPractitionerForm()
-    let modalRef = this.modalService.open(MedicalRecordWizardAddPractitionerComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardAddPractitionerComponent, {
       ariaLabelledBy: 'modal-practitioner',
       size: 'lg',
     })
@@ -298,11 +298,11 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
-    let disabledResourceIds = [];
+    const disabledResourceIds = [];
     disabledResourceIds.push(...(this.organizations?.value || []).map(org => org.data.source_resource_id));
     disabledResourceIds.push(...(this.existingEncounter?.related_resources?.['Organization'] || []).map(org => org.source_resource_id));
 
-    let modalRef = this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
       ariaLabelledBy: 'modal-organization',
       size: 'lg',
     })
@@ -322,7 +322,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     );
   }
   openLabResultsModal() {
-    let modalRef = this.modalService.open(MedicalRecordWizardAddLabResultsComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardAddLabResultsComponent, {
       ariaLabelledBy: 'modal-labresults',
       size: 'lg'
     })
@@ -338,7 +338,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {
-    let modalRef = this.modalService.open(MedicalRecordWizardAddAttachmentComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardAddAttachmentComponent, {
       ariaLabelledBy: 'modal-attachment',
       size: 'lg'
     })
@@ -352,7 +352,7 @@ export class MedicalRecordWizardComponent implements OnInit {
         if(formGroup && controlName){
 
           //add this attachment id to the current FormArray
-          let controlArrayVal = formGroup.get(controlName).getRawValue();
+          const controlArrayVal = formGroup.get(controlName).getRawValue();
           controlArrayVal.push(result.id)
           formGroup.get(controlName).setValue(controlArrayVal);
         }
@@ -365,7 +365,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   //</editor-fold>
 
   openEditEncounterModal(encounter: EncounterModel) {
-    let modalRef = this.modalService.open(MedicalRecordWizardEditEncounterComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardEditEncounterComponent, {
       ariaLabelledBy: 'modal-encounter',
       size: 'lg',
     })
@@ -373,7 +373,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.encounter = encounter;
     modalRef.result.then(
       (result) => {
-        let encounter = EncounterToR4Encounter(result)
+        const encounter = EncounterToR4Encounter(result)
 
         this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
           resource_raw: encounter,
@@ -386,7 +386,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openEditMedicationModal(medication: MedicationModel) {
-    let modalRef = this.modalService.open(MedicalRecordWizardEditMedicationComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardEditMedicationComponent, {
       ariaLabelledBy: 'modal-edit-medication',
       size: 'lg',
     })
@@ -394,20 +394,20 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.medication = medication;
     modalRef.componentInstance.practitioners = this.existingEncounter?.related_resources?.['Practitioner'];
 
-    let medicationRequest = this.existingEncounter?.related_resources?.['MedicationRequest'].find((medicationRequest) => {
+    const medicationRequest = this.existingEncounter?.related_resources?.['MedicationRequest'].find((medicationRequest) => {
       return (medicationRequest as MedicationRequestModel).medication_reference.reference === `Medication/${medication.source_resource_id}`
     })
     modalRef.componentInstance.medicationRequest = medicationRequest
     modalRef.result.then(
       (result) => {
-        let medication = UpdateMedicationToR4Medication(result.medication)
+        const medication = UpdateMedicationToR4Medication(result.medication)
         this.fastenApi.updateResource(result.medication.source_resource_type, result.medication.source_resource_id, {
           resource_raw: medication,
           sort_title: result.medication.sort_title,
           sort_date: result.medication.sort_date
         }).subscribe()
 
-        let medicationRequest = UpdateMedicationRequestToR4MedicationRequest(result.medicationRequest, result.medication)
+        const medicationRequest = UpdateMedicationRequestToR4MedicationRequest(result.medicationRequest, result.medication)
         this.fastenApi.updateResource(result.medicationRequest.source_resource_type, result.medicationRequest.source_resource_id, {
           resource_raw: medicationRequest,
           sort_title: result.medicationRequest.sort_title,
@@ -418,7 +418,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openEditPractitionerModal(practitioner: PractitionerModel) {
-    let modalRef = this.modalService.open(MedicalRecordWizardEditPractitionerComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardEditPractitionerComponent, {
       ariaLabelledBy: 'modal-edit-practitioner',
       size: 'lg',
     })
@@ -426,7 +426,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.practitioner = practitioner;
     modalRef.result.then(
       (result) => {
-        let practitioner = PractitionerToR4Practitioner(result)
+        const practitioner = PractitionerToR4Practitioner(result)
         
         this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
           resource_raw: practitioner,
@@ -438,7 +438,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openEditProcedureModal(procedure: ProcedureModel) {
-    let modalRef = this.modalService.open(MedicalRecordWizardEditProcedureComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardEditProcedureComponent, {
       ariaLabelledBy: 'modal-edit-procedure',
       size: 'lg',
     })
@@ -448,7 +448,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.organizations = this.existingEncounter?.related_resources?.['Organization']
     modalRef.result.then(
       (result) => {
-        let procedure = UpdateProcedureToR4Procedure(result)
+        const procedure = UpdateProcedureToR4Procedure(result)
 
         this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
           resource_raw: procedure,
@@ -460,7 +460,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openEditOrganizationModal(organization: OrganizationModel) {
-    let modalRef = this.modalService.open(MedicalRecordWizardEditOrganizationComponent, {
+    const modalRef = this.modalService.open(MedicalRecordWizardEditOrganizationComponent, {
       ariaLabelledBy: 'modal-edit-organization',
       size: 'lg',
     })
@@ -468,7 +468,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.organization = organization;
     modalRef.result.then(
       (result) => {
-        let organization = OrganizationToR4Organization(result)
+        const organization = OrganizationToR4Organization(result)
         
         this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
           resource_raw: organization,
@@ -485,10 +485,10 @@ export class MedicalRecordWizardComponent implements OnInit {
       source_id: diagnosticReport.source_id,
     }]).subscribe((graphResponse) => {
       if (graphResponse.results["DiagnosticReport"]?.[0]) {
-        let parsed = RecResourceRelatedDisplayModel(graphResponse.results["DiagnosticReport"]?.[0])
-        let observations = (parsed.displayModel as DiagnosticReportModel).related_resources?.["Observation"] as ObservationModel[]
+        const parsed = RecResourceRelatedDisplayModel(graphResponse.results["DiagnosticReport"]?.[0])
+        const observations = (parsed.displayModel as DiagnosticReportModel).related_resources?.["Observation"] as ObservationModel[]
 
-        let modalRef = this.modalService.open(MedicalRecordWizardEditLabResultsComponent, {
+        const modalRef = this.modalService.open(MedicalRecordWizardEditLabResultsComponent, {
           ariaLabelledBy: 'modal-edit-lab-results',
           size: 'lg',
         })
@@ -513,12 +513,12 @@ export class MedicalRecordWizardComponent implements OnInit {
     if (this.form.valid) {
       this.submitWizardLoading = true;
 
-      let resourceStorage = GenerateR4ResourceLookup(this.form.getRawValue());
+      const resourceStorage = GenerateR4ResourceLookup(this.form.getRawValue());
 
       //generate a ndjson file from the resourceList
       //make sure we extract the encounter resource
 
-      let fhirListResource = {
+      const fhirListResource = {
         resourceType: 'List',
         entry: [],
         encounter: null,
@@ -526,10 +526,10 @@ export class MedicalRecordWizardComponent implements OnInit {
       } as List
 
       let encounter = null
-      for(let resourceType in resourceStorage) {
+      for(const resourceType in resourceStorage) {
         if (resourceType === 'Encounter') {
           //set the encounter to the first encounter
-          let [encounterId] = Object.keys(resourceStorage[resourceType])
+          const [encounterId] = Object.keys(resourceStorage[resourceType])
           encounter = resourceStorage[resourceType][encounterId]
 
           if(!(encounter.type && encounter.reference)){
@@ -539,8 +539,8 @@ export class MedicalRecordWizardComponent implements OnInit {
           continue
         }
 
-        for(let resourceId in resourceStorage[resourceType]) {
-          let resourceFromStorage = resourceStorage[resourceType][resourceId]
+        for(const resourceId in resourceStorage[resourceType]) {
+          const resourceFromStorage = resourceStorage[resourceType][resourceId]
           if((resourceFromStorage as Reference).type && (resourceFromStorage as Reference).reference){
             //this is a reference
             fhirListResource.entry.push({

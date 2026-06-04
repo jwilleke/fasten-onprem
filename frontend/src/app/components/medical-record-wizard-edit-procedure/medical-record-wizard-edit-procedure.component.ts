@@ -28,11 +28,11 @@ import { generateReferenceUriFromResourceOrReference } from 'src/lib/utils/bundl
     styleUrls: ['./medical-record-wizard-edit-procedure.component.scss']
 })
 export class MedicalRecordWizardEditProcedureComponent implements OnInit {
-  @Input() debugMode: boolean = false
+  @Input() debugMode = false
   @Input() procedure: ProcedureModel
   @Input() practitioners: PractitionerModel[]
   @Input() organizations: OrganizationModel[]
-  loading: boolean = false
+  loading = false
 
   //create tab options
   procedureForm: FormGroup
@@ -73,10 +73,10 @@ export class MedicalRecordWizardEditProcedureComponent implements OnInit {
 
     this.procedureForm.get('comment').setValue(procedure?.note?.[0]?.text)
 
-    let actorReference = procedure?.performer?.[0]?.actor?.reference
+    const actorReference = procedure?.performer?.[0]?.actor?.reference
     if (actorReference) {
-      let performer = this.practitioners.find((pracitioner) => {
-        let referenceUri = generateReferenceUriFromResourceOrReference(pracitioner)
+      const performer = this.practitioners.find((pracitioner) => {
+        const referenceUri = generateReferenceUriFromResourceOrReference(pracitioner)
         return actorReference == referenceUri
       })
       if (performer) {
@@ -84,10 +84,10 @@ export class MedicalRecordWizardEditProcedureComponent implements OnInit {
       }
     }
 
-    let onBehalfOfReference = procedure?.performer?.[0]?.onBehalfOf?.reference
+    const onBehalfOfReference = procedure?.performer?.[0]?.onBehalfOf?.reference
     if (onBehalfOfReference) {
-      let location = this.organizations.find((organization) => {
-        let referenceUri = generateReferenceUriFromResourceOrReference(organization)
+      const location = this.organizations.find((organization) => {
+        const referenceUri = generateReferenceUriFromResourceOrReference(organization)
         return onBehalfOfReference == referenceUri
       })
       if (location) {
@@ -101,7 +101,7 @@ export class MedicalRecordWizardEditProcedureComponent implements OnInit {
   }
 
   submit() {
-    let procedure = this.procedure
+    const procedure = this.procedure
 
     procedure.code = this.procedureForm.get('data').value
     if (procedure.code?.text) {
@@ -109,7 +109,7 @@ export class MedicalRecordWizardEditProcedureComponent implements OnInit {
       procedure.display = procedure.code.text
     }
 
-    let performedDate = this.procedureForm.get('whendone').value
+    const performedDate = this.procedureForm.get('whendone').value
     procedure.performed_datetime = (new Date(performedDate.year, performedDate.month - 1, performedDate.day)).toISOString()
 
     if (this.procedureForm.get('comment').value) {

@@ -12,13 +12,13 @@ describe('DataAbsentReasonModel', () => {
 
   describe('valueObject', () => {
     it('uses text if it is set', () => {
-      let model = new DataAbsentReasonModel(codeableConceptR4Factory.text('Unknown').build());
+      const model = new DataAbsentReasonModel(codeableConceptR4Factory.text('Unknown').build());
 
       expect(model.valueObject()).toEqual({ value: 'Unknown' });
     });
 
     it('uses the first coding display if text is not set', () => {
-      let model = new DataAbsentReasonModel(codeableConceptR4Factory.coding({ display: 'Unknown' }).build());
+      const model = new DataAbsentReasonModel(codeableConceptR4Factory.coding({ display: 'Unknown' }).build());
 
       expect(model.valueObject()).toEqual({ value: 'Unknown' });
     });
@@ -30,13 +30,13 @@ describe('DataAbsentReasonModel', () => {
 
   describe('display', () => {
     it('uses text if it is set', () => {
-      let model = new DataAbsentReasonModel(codeableConceptR4Factory.text('unknown').build());
+      const model = new DataAbsentReasonModel(codeableConceptR4Factory.text('unknown').build());
 
       expect(model.display()).toEqual('unknown (data absent)');
     });
 
     it('uses the first coding display if text is not set', () => {
-      let model = new DataAbsentReasonModel(codeableConceptR4Factory.coding({ display: 'Unknown' }).build());
+      const model = new DataAbsentReasonModel(codeableConceptR4Factory.coding({ display: 'Unknown' }).build());
 
       expect(model.display()).toEqual('Unknown (data absent)');
     });

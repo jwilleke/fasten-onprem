@@ -8,7 +8,7 @@ class CodableConceptR4Factory extends Factory<{}> {
   }
 
   coding(params?: {}) {
-    let p = params || {}
+    const p = params || {}
     return this.params({
       text: null,
       coding: [

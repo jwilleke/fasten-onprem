@@ -65,6 +65,20 @@ jobs:
       - run: |
           make build-storybook
 
+  lint-frontend:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: frontend/.nvmrc
+      - name: ng lint (angular-eslint)
+        run: |
+          make lint-frontend
+
   lint-markdown:
     name: Lint Markdown
     runs-on: ubuntu-latest

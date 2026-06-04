@@ -13,7 +13,7 @@ export class BackgroundJob {
 export class BackgroundJobSyncData {
   source_id?: string
   brand_id: string
-  checkpoint_data?: {[key:string]:string}
-  error_data?: {[key:string]:string}
+  checkpoint_data?: Record<string, string>
+  error_data?: Record<string, string>
 
 }

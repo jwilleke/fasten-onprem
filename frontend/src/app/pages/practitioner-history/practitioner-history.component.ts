@@ -12,10 +12,10 @@ import { FastenApiService } from 'src/app/services/fasten-api.service';
     standalone: false
 })
 export class PractitionerHistoryComponent implements OnInit {
-  loading: boolean = false;
+  loading = false;
 
-  currentPage: number = 1; // 1-based index due to the way the pagination component works
-  pageSize: number = 10;
+  currentPage = 1; // 1-based index due to the way the pagination component works
+  pageSize = 10;
 
   allEncountersIds: any[] = [];
   encounters: ResourceFhir[] = [];

@@ -14,8 +14,8 @@ import {HighlightModule} from 'ngx-highlightjs';
 })
 export class FallbackComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: BinaryModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 

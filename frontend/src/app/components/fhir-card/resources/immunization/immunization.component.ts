@@ -17,8 +17,8 @@ import { FhirCardComponentInterface } from '../../fhir-card/fhir-card-component-
 })
 export class ImmunizationComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: ImmunizationModel
-  @Input() showDetails: boolean = true
-  @Input() isCollapsed: boolean = false
+  @Input() showDetails = true
+  @Input() isCollapsed = false
 
   tableData: TableRowItem[] = []
 
