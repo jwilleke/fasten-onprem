@@ -8,7 +8,7 @@ This is the **master** doc; it will be upgraded as decisions are made. The relay
 
 - **Phase:** research / design. No implementation started.
 - **Last updated:** 2026-06-04.
-- **Decisions made:** **all Go** (client *and* relay); store-and-poll relay, self-hosted; no Fasten Lighthouse server; rename "Lighthouse" identifiers (see [Decision log](#decision-log)). Others still open (see [Open decisions](#open-decisions)).
+- **Decisions made:** **all Go** (client *and* relay); store-and-poll relay, self-hosted; **per-user / BYO `client_id`** distribution with a configurable dumb relay; no Fasten Lighthouse server; rename "Lighthouse" identifiers (see [Decision log](#decision-log)). Others still open (see [Open decisions](#open-decisions)).
 
 ## TL;DR
 
@@ -60,7 +60,7 @@ SMART requires a publicly reachable `redirect_uri`, but a self-hosted instance o
 Two framings matter:
 
 - **The demo platform.** `yourphr.nerdsbythehour.com` is a development/demo, not a locked-down LAN production box, so the "maximal LAN isolation" rationale is weak for it. For the demo we can make a callback public (or just use a sandbox) with little concern.
-- **The distributed product.** End users each run their own instance at different, often non-public, URLs. "One app needs thousands of redirect URIs" is the classic self-hosted-OAuth problem. A **shared relay** (one registration per provider, fan-out by `state`) is the low-friction answer and is exactly what Lighthouse was.
+- **The distributed product.** End users each run their own instance at different, often non-public, URLs. "One app needs thousands of redirect URIs" is the classic self-hosted-OAuth problem. A shared *registered-app* relay (one provider registration for everyone) is what Lighthouse was, but we reject that model — see the distribution-model decision below.
 
 ## What the repo already implements (reuse, do not rebuild)
 
@@ -82,7 +82,9 @@ Two framings matter:
 | BYO-registration (each user registers their own SMART app) | their instance URL | most decentralized; high user friction | not built |
 | Non-OAuth ingestion (manual export, Apple Health intermediary) | none | works today; sidesteps SMART | manual import works |
 
-For the distributed product, the central fork is **shared community relay** vs **per-user public-deploy / BYO**.
+**Distribution model — DECIDED (2026-06-04): per-user / BYO `client_id` + a configurable dumb relay.** Each user registers their own SMART app (their own `client_id`) — they are the patient exercising their own access right, which keeps ToS clean, avoids a shared credential, removes central project liability, and isolates blast radius. The public `redirect_uri` problem is solved separately by a **provider-agnostic, client-agnostic relay** that only bounces a short-TTL `code` by `state` (never a registered app, never sees tokens); its endpoint is configurable — a project-hosted convenience relay or a self-hosted one.
+
+**Rejected: Option A** — a shared *registered-app* relay (one project-owned `client_id` for everyone). That is the Fasten Lighthouse model Fasten commercialized, with central liability, ongoing cost, ToS exposure (operating apps on behalf of strangers), and a single point of failure.
 
 ## Relay architecture
 
@@ -201,7 +203,7 @@ Short version: **no copyright/IP-infringement risk** in building our own SMART c
 1. **Relay architecture** — *DECIDED: store-and-poll, self-hosted **Go** relay, hosted on the existing k8s cluster via `mj-infra-flux` + Cloudflare ingress for dev/demo* (not Fasten Lighthouse, not a JS Cloudflare Worker). Revisit a managed runtime (Fly.io / Cloud Run) for the distributed product.
 2. **Where the production SMART client runs** — *DECIDED (2026-06-04): all Go.* The full SMART flow (discovery, PKCE, token exchange, refresh, FHIR fetch) is built in the **Go backend** with `golang.org/x/oauth2` + `net/http` + `gofhir-models`. `fhirclient` is dropped; the de-risk spike is also written in Go so it exercises the production libraries. The relay is Go as well — a self-hosted store-and-poll service (decision 1).
 3. **Generic vs per-vendor client** — recommend one generic SMART-R4 client driven by `.well-known` discovery + per-provider config; vendor quirks (Veradigm non-US-Core) belong in the display/normalization layer (upstream #428 / #431 / #347), not the auth client.
-4. **Distribution model** — shared community relay vs per-user public-deploy / BYO-registration.
+4. **Distribution model** — *DECIDED: per-user / BYO `client_id` + a configurable dumb relay* (not a shared registered-app relay). See [Method options](#method-options-be-open).
 5. **First provider target** — Veradigm/FollowMyHealth vs Epic vs catalog-driven. (Sandbox first regardless.)
 6. **Sequencing vs display bugs** — the ecosystem doc prioritizes non-US-Core display fixes before sync; confirm SMART is the near-term priority.
 
@@ -230,4 +232,5 @@ Append dated entries as decisions are made.
 - **2026-06-04 — No Fasten Lighthouse server.** We will not use Fasten's hosted Lighthouse relay (commercial; not open). We run our own relay or use the no-relay (inline public callback) option. Resolves part of open decision 1.
 - **2026-06-04 — DECIDED: all Go (client and relay).** The full SMART flow is built in the Go backend with `golang.org/x/oauth2` + `net/http` + `gofhir-models`; the de-risk spike is written in Go too; `fhirclient` and other JS OAuth deps are dropped. Resolves open decision 2.
 - **2026-06-04 — DECIDED: store-and-poll relay, self-hosted Go service, hosted via `mj-infra-flux`.** Maximal isolation (only outbound polls from the instance), matches the desktop-poll flow the frontend already implements, consistent with "no Fasten Lighthouse" and "all Go." The relay is a small public Go HTTP service (not a JS Cloudflare Worker); tokens never pass through it. For dev/demo it deploys to the existing k8s cluster via `mj-infra-flux` behind Cloudflare ingress at `relay.nerdsbythehour.com` (the dev domain; `yourphr.org` is static GitHub Pages), excluded from Authentik. Revisit Fly.io / Cloud Run at `relay.yourphr.org` for the distributed product (stateless, so trivial to move). Resolves open decision 1.
+- **2026-06-04 — DECIDED: distribution model = per-user / BYO `client_id` + configurable dumb relay.** Each user registers their own SMART app (own `client_id`); the relay is a provider-agnostic, client-agnostic code-bouncer (project-hosted or self-hosted, configurable) that never holds a registered app or tokens. Rejected Option A (shared registered-app relay = the commercial Lighthouse model: central liability, cost, ToS exposure, single point of failure). Keeps ToS clean, decentralizes trust, isolates blast radius. Resolves open decision 4.
 - **2026-06-04 — Rename "Lighthouse" identifiers (trademark hygiene).** Audit found "Lighthouse" only in internal `.ts` identifiers, never user-facing — so legal risk is low, but since we build our own relay we will rename relay-specific identifiers (e.g. `LighthouseService`, `lighthouse_api_endpoint_base`) to neutral terms during the relay refactor. Keep deep upstream-interface identifiers (`fasten-sources`, `FastenDisplayModel`) per `CLAUDE.md`. This is a scoped exception to the "do not rename internal identifiers" guidance, justified because we are replacing the component they name.
