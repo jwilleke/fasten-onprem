@@ -3,7 +3,6 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
-import {ITreeOptions} from '@circlon/angular-tree-component';
 
 class RelatedNode {
   name: string
@@ -12,6 +11,7 @@ class RelatedNode {
   source_id: string
   children: RelatedNode[]
   show_checkbox: boolean
+  expanded: boolean
   resource: ResourceFhir
 }
 
@@ -53,10 +53,6 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     //   ]
     // }
   ];
-  options: ITreeOptions = {
-    allowDrag: false,
-    allowDrop: false,
-  }
 
   selectedResources:{ [id:string]: ResourceFhir} = {}
   constructor(
@@ -69,12 +65,12 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   }
 
 
-  onResourceCheckboxClick($event, node:{data:RelatedNode}){
-    let key = `${node.data.source_id}/${node.data.source_resource_type}/${node.data.source_resource_id}`
+  onResourceCheckboxClick($event, node: RelatedNode){
+    let key = `${node.source_id}/${node.source_resource_type}/${node.source_resource_id}`
     if($event.target.checked){
-      this.selectedResources[key] = node.data.resource
+      this.selectedResources[key] = node.resource
       if(!this.compositionTitle){
-        this.compositionTitle = node.data.resource.sort_title
+        this.compositionTitle = node.resource.sort_title
       }
     } else {
       //delete this key (unselected)
@@ -115,6 +111,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
     let relatedNode = {
       show_checkbox: false,
+      expanded: false,
       source_id: resourceFhir.source_id,
       name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id.length > 10 ? resourceFhir.source_resource_id.substring(0, 10)+ '...' : resourceFhir.source_resource_id}] `,
       source_resource_id: resourceFhir.source_resource_id,

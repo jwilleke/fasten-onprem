@@ -23,30 +23,29 @@
     </div>
   </div>
 
-  <tree-root [nodes]="nodes" [options]="options">
+  <div class="related-tree">
+    <ng-container *ngFor="let node of nodes">
+      <ng-container *ngTemplateOutlet="treeNode; context: { $implicit: node, depth: 0 }"></ng-container>
+    </ng-container>
+  </div>
 
-    <ng-template #treeNodeWrapperTemplate let-node let-index="index">
-      <div class="node-wrapper" [style.padding-left]="node.getNodePadding()">
-        <tree-node-checkbox *ngIf="node.data.show_checkbox"
-                            (click)="onResourceCheckboxClick($event, node)"
-                            [node]="node"></tree-node-checkbox>
-        <tree-node-expander [node]="node"></tree-node-expander>
-        <div class="node-content-wrapper"
-             [class.node-content-wrapper-active]="node.isActive"
-             [class.node-content-wrapper-focused]="node.isFocused"
-             (click)="node.mouseAction('click', $event)"
-             (dblclick)="node.mouseAction('dblClick', $event)"
-             (contextmenu)="node.mouseAction('contextMenu', $event)"
-             (treeDrop)="node.onDrop($event)"
-             [treeAllowDrop]="node.allowDrop"
-             [treeDrag]="node"
-             [treeDragEnabled]="node.allowDrag()">
-
-          <tree-node-content [node]="node" [index]="index"></tree-node-content>
-        </div>
-      </div>
-    </ng-template>
-  </tree-root>
+  <ng-template #treeNode let-node let-depth="depth">
+    <div class="tree-node" [style.padding-left.px]="depth * 20">
+      <button *ngIf="node.children?.length; else toggleSpacer" type="button" class="tree-toggle"
+              (click)="node.expanded = !node.expanded" [attr.aria-expanded]="node.expanded">
+        <i class="fas" [ngClass]="node.expanded ? 'fa-caret-down' : 'fa-caret-right'"></i>
+      </button>
+      <ng-template #toggleSpacer><span class="tree-toggle"></span></ng-template>
+      <input *ngIf="node.show_checkbox" type="checkbox" class="tree-checkbox"
+             (change)="onResourceCheckboxClick($event, node)">
+      <span class="tree-label">{{ node.name }}</span>
+    </div>
+    <ng-container *ngIf="node.expanded">
+      <ng-container *ngFor="let child of node.children">
+        <ng-container *ngTemplateOutlet="treeNode; context: { $implicit: child, depth: depth + 1 }"></ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-template>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-indigo" [disabled]="!compositionTitle"  (click)="onMergeResourcesClick()">Merge Selected</button>

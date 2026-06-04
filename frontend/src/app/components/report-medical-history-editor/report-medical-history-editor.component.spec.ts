@@ -4,7 +4,6 @@ import { ReportMedicalHistoryEditorComponent } from './report-medical-history-ed
 import {NgbActiveModal, NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {HttpClient} from '@angular/common/http';
-import { TreeModule } from '@circlon/angular-tree-component';
 import { FormsModule } from '@angular/forms';
 
 describe('ReportMedicalHistoryEditorComponent', () => {
@@ -14,7 +13,7 @@ describe('ReportMedicalHistoryEditorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ ReportMedicalHistoryEditorComponent ],
-      imports: [ TreeModule, FormsModule ],
+      imports: [ FormsModule ],
       providers: [NgbActiveModal, {
         provide: FastenApiService,
         useValue: jasmine.createSpyObj('FastenApiService', ['createResourceComposition'])
