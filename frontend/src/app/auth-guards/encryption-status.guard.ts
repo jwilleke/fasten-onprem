@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { FastenApiService } from '../services/fasten-api.service';
 
 interface Health {
@@ -15,7 +10,7 @@ interface Health {
 @Injectable({
   providedIn: 'root',
 })
-export class EncryptionStatusGuard implements CanActivate {
+export class EncryptionStatusGuard  {
   constructor(
     private fastenService: FastenApiService,
     private router: Router
