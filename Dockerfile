@@ -41,7 +41,7 @@ RUN mkdir -p /opt/fasten/db \
 #########################################################################################################
 # Distribution Build
 #########################################################################################################
-FROM gcr.io/distroless/static-debian11
+FROM gcr.io/distroless/static-debian12
 
 EXPOSE 8080
 WORKDIR /opt/fasten/

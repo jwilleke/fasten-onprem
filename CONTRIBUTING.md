@@ -8,17 +8,19 @@ Fasten is made up of a handful of different components. Here's a summary of the 
 
 ## Frontend
 
-- NodeJS `v18.9.0`
-- Yarn `1.22.19`
-- Angular `v14.1.3`
+- Node.js `v20` — pinned in `frontend/.nvmrc` (run `nvm use` in `frontend/`)
+- Yarn `1.22.22` — classic, pinned via `package.json` `packageManager` (`corepack enable`)
+- Angular `v14.1.3` — upgrade to `v20` is in progress (see [#12](https://github.com/jwilleke/yourphr/issues/12))
 
 ## Backend
 
-- Go `v1.22.1`
+- Go `v1.24` — built with `golang:1.24`; `go.mod` requires `go 1.23+`
 
 ## Misc
 
-- Docker `v20.10.17`
+- Docker `v24+`
+
+> Stack modernization (target: Node 24, Angular 20, Go 1.24, Docker distroless debian12) is tracked in [#12](https://github.com/jwilleke/yourphr/issues/12). The authoritative pinned versions live in `frontend/.nvmrc`, `frontend/package.json`, `go.mod`, and `Dockerfile` — keep this section in sync with those.
 
 # Development Environment Setup
 
