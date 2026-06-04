@@ -1,6 +1,8 @@
 # SMART on FHIR — master plan
 
-Living research-and-decision doc for [issue #20](https://github.com/jwilleke/yourphr/issues/20) (support SMART on FHIR live provider sync). Directly serves the mission in [issue #15](https://github.com/jwilleke/yourphr/issues/15) — immediate, complete patient access to records.
+Living research-and-decision doc for the [EPIC #20](https://github.com/jwilleke/yourphr/issues/20) (SMART on FHIR live provider sync). Directly serves the mission in [issue #15](https://github.com/jwilleke/yourphr/issues/15) — immediate, complete patient access to records.
+
+Tracked work: EPIC #20 → spike #48, generic client #49, relay #50, backend endpoints #51, frontend connect UI #52, Veradigm #53. Non-US-Core display polish is **deferred** (volunteer-driven) in #54.
 
 This is the **master** doc; it will be upgraded as decisions are made. The relay-specific deep dive lives in [`oauth-gateway.md`](./oauth-gateway.md). Related ingestion options and ecosystem notes are in [`../personal-health/health-record-aggregation.md`](../personal-health/health-record-aggregation.md) and [`../personal-health/fastenhealth-ecosystem.md`](../personal-health/fastenhealth-ecosystem.md).
 
@@ -8,7 +10,7 @@ This is the **master** doc; it will be upgraded as decisions are made. The relay
 
 - **Phase:** research / design. No implementation started.
 - **Last updated:** 2026-06-04.
-- **Decisions made:** **all Go** (client *and* relay); store-and-poll relay, self-hosted; **per-user / BYO `client_id`** distribution with a configurable dumb relay; **one generic SMART-R4 client**; **first provider Veradigm** (sandbox first); no Fasten Lighthouse server; rename "Lighthouse" identifiers (see [Decision log](#decision-log)). Only sequencing-vs-display-bugs remains open (see [Open decisions](#open-decisions)).
+- **Decisions made (all):** **all Go** (client *and* relay); store-and-poll relay, self-hosted; **per-user / BYO `client_id`** distribution with a configurable dumb relay; **one generic SMART-R4 client**; **first provider Veradigm** (sandbox first); **SMART-now** (non-US-Core display deferred, #54); no Fasten Lighthouse server; rename "Lighthouse" identifiers (see [Decision log](#decision-log)). No open decisions remain — execution is tracked in EPIC #20.
 
 ## TL;DR
 
@@ -154,12 +156,16 @@ SMART on FHIR is roughly `.well-known` discovery (a plain GET) + OAuth2 auth-cod
 
 ## Recommended sequencing (de-risk first)
 
-1. **Spike against a SMART sandbox** (throwaway): prove the full PKCE flow end-to-end (authorize, callback, token exchange, `GET /Patient/$everything`, save bundle) with test patients and no PHI. Validates the protocol and the existing frontend relay/desktop code.
-2. **Spike against real Veradigm**: register the app, repeat the flow. De-risks the external registration/approval long pole and surfaces real non-US-Core data.
-3. **Relay** (Worker or Tunnel) implementing the protocol the frontend already expects.
-4. **Backend SMART client**: generic SMART-R4 client in the `fasten-sources` stub + authorize / callback / scheduled-refresh wiring (components C, D, E).
-5. **Re-enable the "Add Source" UI** against the new endpoints (component G).
-6. **Add providers** (Epic, etc.) as separate registrations.
+Mapped to EPIC #20 child issues:
+
+1. **Spike against a SMART sandbox** (#48, throwaway Go): prove the full PKCE flow end-to-end (authorize, callback, token exchange, `GET /Patient/$everything`, save bundle) with test patients and no PHI, using the production libraries (`golang.org/x/oauth2`).
+2. **Generic Go SMART-R4 client** (#49): discovery + PKCE + token exchange + refresh in the `fasten-sources` stub (components A, C, D, E).
+3. **Self-hosted Go store-and-poll relay** (#50): component B, deployed via `mj-infra-flux` at `relay.nerdsbythehour.com`.
+4. **Backend OAuth endpoints + token storage + scheduled refresh** (#51): wire into `source.go` / `server.go` (components C, D, E, F).
+5. **Frontend: rename `Lighthouse` identifiers + re-enable "Add Source" UI** (#52, component G).
+6. **Veradigm registration + end-to-end integration** (#53), after the sandbox spike passes.
+
+Deferred (not blocking): non-US-Core display polish (#54). Additional providers (Epic, etc.) come later.
 
 ## Intellectual property and licensing
 
@@ -205,7 +211,7 @@ Short version: **no copyright/IP-infringement risk** in building our own SMART c
 3. **Generic vs per-vendor client** — *DECIDED: one generic SMART-R4 client* driven by `.well-known` discovery + per-provider config. Vendor quirks (Veradigm non-US-Core) belong in the display/normalization layer (upstream #428 / #431 / #347), not the auth client.
 4. **Distribution model** — *DECIDED: per-user / BYO `client_id` + a configurable dumb relay* (not a shared registered-app relay). See [Method options](#method-options-be-open).
 5. **First provider target** — *DECIDED: Veradigm/FollowMyHealth* (the primary source; FHIR R4, non-US-Core, `$everything` supported). A SMART sandbox is the first integration target regardless, before real Veradigm.
-6. **Sequencing vs display bugs** — the ecosystem doc prioritizes non-US-Core display fixes before sync; confirm SMART is the near-term priority.
+6. **Sequencing vs display bugs** — *DECIDED: SMART-now.* Build SMART sync now; **defer non-US-Core display polish** (#54) as volunteer-driven. SMART stores the records regardless (the mission is access); rendering refinement for non-US-Core resources is separate and not on the near-term roadmap.
 
 ## Files likely to change (in `jwilleke/yourphr`)
 
@@ -236,3 +242,4 @@ Append dated entries as decisions are made.
 - **2026-06-04 — DECIDED: one generic SMART-R4 client.** A single generic client driven by `.well-known/smart-configuration` discovery + per-provider config, not per-vendor auth code. Vendor data quirks (Veradigm non-US-Core) are handled in the display/normalization layer (#428 / #431 / #347). Resolves open decision 3.
 - **2026-06-04 — DECIDED: first provider = Veradigm/FollowMyHealth.** The primary source (FHIR R4, non-US-Core, `$everything`). A SMART sandbox (`launch.smarthealthit.org`, etc.) is the first integration target regardless, before real Veradigm. Resolves open decision 5.
 - **2026-06-04 — Rename "Lighthouse" identifiers (trademark hygiene).** Audit found "Lighthouse" only in internal `.ts` identifiers, never user-facing — so legal risk is low, but since we build our own relay we will rename relay-specific identifiers (e.g. `LighthouseService`, `lighthouse_api_endpoint_base`) to neutral terms during the relay refactor. Keep deep upstream-interface identifiers (`fasten-sources`, `FastenDisplayModel`) per `CLAUDE.md`. This is a scoped exception to the "do not rename internal identifiers" guidance, justified because we are replacing the component they name.
+- **2026-06-04 — DECIDED: SMART-now; defer non-US-Core display.** Build SMART sync now; non-US-Core display polish is deferred and volunteer-driven (#54) — possibly never unless a contributor takes it. SMART stores the records regardless, so this does not block access. Resolves open decision 6. Execution tracked in EPIC #20 (children #48–#53).
