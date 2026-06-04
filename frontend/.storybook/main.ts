@@ -3,16 +3,14 @@ const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   staticDirs: [{ from: '../src/assets', to: '/assets' }],
   addons: [
+    // SB9: addon-essentials (controls, actions, viewport, …) and addon-interactions
+    // are built into core. addon-docs provides docs/autodocs and the MDX blocks.
     "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
+    "@storybook/addon-docs",
   ],
   framework: {
     name: "@storybook/angular",
     options: {},
-  },
-  docs: {
-    autodocs: "tag",
   },
 };
 export default config;
