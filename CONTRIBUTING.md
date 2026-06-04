@@ -6,15 +6,18 @@
 
 Fasten is made up of a handful of different components. Here's a summary of the technologies & languages used in Fasten:
 
-**Frontend**
+## Frontend
+
 - NodeJS `v18.9.0`
 - Yarn `1.22.19`
 - Angular `v14.1.3`
 
-**Backend**
+## Backend
+
 - Go `v1.22.1`
 
-**Misc**
+## Misc
+
 - Docker `v20.10.17`
 
 # Development Environment Setup
@@ -114,7 +117,7 @@ Now you can open a browser to `http://localhost:4200` to see the Fasten UI.
 
 _Note_: By default in `dev` mode, you view the frontend server and that will proxy API requests to the backend. It is also possible to build the frontend and serve it from the backend server, but this is much slower to make changes to the frontend.
 
-### Credentials
+## Credentials
 
 Fasten stores all user data locally, including your account information. That means on first start you'll need to register a new account.
 Once you've done that, you'll want to go to the Sources tab and connect a healthcare provider.
@@ -169,7 +172,6 @@ The Fasten source code is organized into a handful of important folders, which w
 
 ## Backend
 
-
 ```tree
 
 backend
@@ -222,7 +224,7 @@ backend
 
 # FAQ
 
-### How do I run individual frontend tests?
+## How do I run individual frontend tests?
 
 From the `frontend` directory, you can run `ng test` with the `--include` argument.
 
@@ -232,10 +234,11 @@ ng test --include='lib/**/*.spec.ts'
 ```
 
 ### How do I change the default encryption key and admin credentials
+
 - FASTEN_ISSUER_JWT_KEY
 
-
 ### Generate JWT for local use
+
 ```bash
 curl -X POST http://localhost:9090/api/auth/signup -H 'Content-Type: application/json' -d '{"username":"user1","password":"user1"}'
 
@@ -245,7 +248,6 @@ curl -X POST http://localhost:9090/api/auth/signin -H 'Content-Type: application
 curl -H "Authorization: Bearer ${JWT_TOKEN_HERE}" http://localhost:5984/_session
 
 ```
-
 
 # How do I work with Storybook?
 
@@ -264,10 +266,9 @@ If you only want to verify that all stories build properly (a check that is run 
 make build-storybook
 ```
 
-
 # Access Encrypted SQLite Database with IntelliJ
 
-- Download the latest `sqlite-jdbc-crypt` jar from https://github.com/Willena/sqlite-jdbc-crypt/releases
+- Download the latest `sqlite-jdbc-crypt` jar from <https://github.com/Willena/sqlite-jdbc-crypt/releases>
 - Open IntelliJ -> Data Source Properties -> Driver Tab
 - Find & Select `Sqlite` -> Right Click -> Duplicate
 - Rename to `Sqlite (Encrypted)`
@@ -286,5 +287,5 @@ make build-storybook
 PRAGMA wal_checkpoint(TRUNCATE);
 ```
 
-See: https://sqlite.org/forum/info/fefd56014e2135589ea57825b0e2aa3e2df5daf53b5e41aa6a9d8f0c29d0b8e5
-TODO: check if https://www.sqlite.org/pragma.html#pragma_wal_checkpoint can be used to do this automatically.
+See: <https://sqlite.org/forum/info/fefd56014e2135589ea57825b0e2aa3e2df5daf53b5e41aa6a9d8f0c29d0b8e5>
+TODO: check if <https://www.sqlite.org/pragma.html#pragma_wal_checkpoint> can be used to do this automatically.

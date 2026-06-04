@@ -6,7 +6,8 @@ Standalone, community-maintained continuation of [Fasten OnPrem](https://github.
 
 **Goal:** a complete self-hosted PHR with working display for non-US-Core FHIR data and live provider sync via a personal OAuth relay.
 
-> ### 🎯 Staying focused
+> ## 🎯 Staying focused
+>
 > Prioritize work that gets patients **more complete records, faster, in their own hands** — robust patient-portal/FHIR import (incl. non-US-Core), provider sync, and reliable display of real-world data. When weighing a feature, ask: *does this advance immediate patient access (the Cures Act mission)?* If not, defer it. Avoid scope creep and rabbit-holes.
 
 ---

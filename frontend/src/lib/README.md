@@ -1,7 +1,7 @@
 # lib
 
 This directory contains Typescript libraries/packages that are intended to be used in both Angular & WebWorkers (and potentially NodeJS).
-That means they cannot contain any browser context/DOM specific code, as they will break in Web Workers. 
+That means they cannot contain any browser context/DOM specific code, as they will break in Web Workers.
 
 ## conduit
 
@@ -16,4 +16,4 @@ ones that Fasten supports
 
 ## database
 
-the database library is (currently) wrapper around PouchDB, with code allowing it to sync with an external/hosted CouchDB instance. 
+the database library is (currently) wrapper around PouchDB, with code allowing it to sync with an external/hosted CouchDB instance.

@@ -16,11 +16,11 @@ assignees: []
 
 ## Scope
 
-**In scope**
+### In scope
 
 <!-- Bullet the work this epic covers. -->
 
-**Out of scope**
+### Out of scope
 
 <!-- Explicitly list what this epic does NOT cover, to avoid scope creep. -->
 

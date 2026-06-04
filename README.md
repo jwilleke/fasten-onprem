@@ -6,7 +6,7 @@
 
 **YourPHR lets you create a secure, private personal health record that never leaves your hands** — self-hosted, open source, and yours. Project home: [yourphr.org](https://yourphr.org)
 
-> **Mission: Your medical records, immediately and in your hands — for free.** Fulfilling the [21st Century Cures Act](https://www.healthit.gov/topic/oncs-cures-act-final-rule) (2016).
+**Mission: Your medical records, immediately and in your hands — for free.** Fulfilling the [21st Century Cures Act](https://www.healthit.gov/topic/oncs-cures-act-final-rule) (2016).
 
 > [!NOTE]
 > **YourPHR is a standalone, community-maintained continuation of [Fasten OnPrem](https://github.com/fastenhealth/fasten-onprem)**, carried forward by [@jwilleke](https://github.com/jwilleke) after upstream development stalled.
@@ -14,6 +14,8 @@
 > The original work is by **Jason Kulatunga ([@AnalogJ](https://github.com/AnalogJ))** and **Alex Szilagyi ([@alexszilagyi](https://github.com/alexszilagyi))** under the [GNU GPL v3 license](LICENSE.md). YourPHR remains GPL v3 and retains full attribution.
 >
 > **Focus:** a free, self-hosted Personal Health Record anyone can run — including improved display support for non-US-Core FHIR R4 exports (e.g. Veradigm/FollowMyHealth). See [`docs/Roadmap.md`](docs/Roadmap.md).
+
+---
 
 > [!IMPORTANT]  
 > **YourPHR is an open-source, self-hosted [Personal Health Record](https://en.wikipedia.org/wiki/Personal_health_record) app** for managing and viewing your own medical data. It does not integrate with EHRs directly — you import FHIR R4 bundles exported from patient portals, or enter data manually.
@@ -26,8 +28,7 @@
 
 [See more screenshots](https://imgur.com/a/vfgojBD)
 
-
-# Introduction
+## Introduction
 
 Like many of you, I've worked for many companies over my career. In that time, I've had multiple health, vision and dental
 insurance providers, and visited many different clinics, hospitals and labs to get procedures & tests done.
@@ -44,7 +45,7 @@ So, I built it.
 
 **YourPHR is an open-source, self-hosted, personal/family electronic medical record viewer.** It continues the original project's vision (described above by its original author) as a community-maintained, standalone app.
 
-# Features
+## Features
 
 It's pretty basic right now, but it's designed with a easily extensible core around a solid foundation:
 
@@ -67,7 +68,6 @@ First, if you don't have Docker installed on your computer, get Docker by follow
 
 Next, run the following commands from the Windows command line or Mac/Linux terminal in order to download and start the YourPHR docker container.
 
-
 ### 🚀 Launch
 
 Launch the application. Please choose a location where `docker-compose.yml` and `set_env.sh` will be downloaded.
@@ -76,39 +76,45 @@ To make your YourPHR instance discoverable by companion mobile apps and other de
 
 Here are the step-by-step instructions:
 
-1.  **Download necessary files:**
+1. **Download necessary files:**
+
     ```bash
     curl https://raw.githubusercontent.com/jwilleke/yourphr/refs/heads/main/docker-compose-prod.yml -o docker-compose.yml
     curl https://raw.githubusercontent.com/jwilleke/yourphr/refs/heads/main/set_env.sh -o set_env.sh
     ```
 
-2.  **Prepare and run the environment setup script:**
+2. **Prepare and run the environment setup script:**
     Make the script executable and run it to generate your `.env` file. This will configure network variables required for Docker Compose.
+
     ```bash
     chmod +x ./set_env.sh
     ./set_env.sh
     ```
 
-3.  **Start the application:**
+3. **Start the application:**
+
     ```bash
     docker compose up -d
     ```
 
-**Manual Configuration (Optional)**
+### Manual Configuration (Optional)
 
 If you prefer not to run the `set_env.sh` script, you can configure the `.env` file manually. You will need to create a `.env` file and add the following variables:
 
-1.  **Find your hostname:**
+1. **Find your hostname:**
+
     ```bash
     hostname
     ```
-2.  **Find your local IP address:**
-    *   **macOS:** `ifconfig | grep "inet " | grep -v 127.0.0.1 | cut -d' ' -f2`
-    *   **Linux:** `hostname -I | awk '{print $1}'`
-    *   **Windows (Command Prompt):** `ipconfig | findstr /i "ipv4"`
 
-3.  **Create and edit the `.env` file:**
+2. **Find your local IP address:**
+    - **macOS:** `ifconfig | grep "inet " | grep -v 127.0.0.1 | cut -d' ' -f2`
+    - **Linux:** `hostname -I | awk '{print $1}'`
+    - **Windows (Command Prompt):** `ipconfig | findstr /i "ipv4"`
+
+3. **Create and edit the `.env` file:**
     Create a file named `.env` in the same directory as your `docker-compose.yml` and add the following lines, replacing `<your_hostname>` and `<your_ip_address>` with the values you found:
+
     ```
     HOSTNAME=<your_hostname>
     IP=<your_ip_address>
@@ -125,9 +131,9 @@ By default, YourPHR runs with HTTPS enabled to ensure your data is secure. It us
 
 To establish a secure connection, your browser needs to trust the server's TLS certificate. Here’s how the process works in YourPHR:
 
-1.  **Root Certificate Authority (CA):** When the application first starts, it generates its own self-contained Certificate Authority, called `"Fasten Health CA"`. Think of this as the highest level of trust. The public part of this CA is the `rootCA.pem` file.
-2.  **Server Certificate:** The application then uses the `"Fasten Health CA"` to issue and sign a specific certificate for the web server (e.g., for `localhost`).
-3.  **Browser Verification:** When you connect to the server, it presents the server certificate to your browser. Your browser checks who signed it and sees it was `"Fasten Health CA"`. The browser then asks, "Do I trust the 'Fasten Health CA'?"
+1. **Root Certificate Authority (CA):** When the application first starts, it generates its own self-contained Certificate Authority, called `"Fasten Health CA"`. Think of this as the highest level of trust. The public part of this CA is the `rootCA.pem` file.
+2. **Server Certificate:** The application then uses the `"Fasten Health CA"` to issue and sign a specific certificate for the web server (e.g., for `localhost`).
+3. **Browser Verification:** When you connect to the server, it presents the server certificate to your browser. Your browser checks who signed it and sees it was `"Fasten Health CA"`. The browser then asks, "Do I trust the 'Fasten Health CA'?"
 
 Initially, the answer is no, which is why you see a security warning. By following the steps below to import the `rootCA.pem` file, you are telling your browser or operating system to trust our self-generated CA. Once the CA is trusted, any certificates it signs—including the server certificate—will also be trusted, and the connection will be secure without any warnings.
 
@@ -135,49 +141,52 @@ Initially, the answer is no, which is why you see a security warning. By followi
 
 When you run the application using the production Docker Compose file (`docker-compose-prod.yml`), it automatically generates a `rootCA.pem` file. This file is located in the `certs` directory on your host machine.
 
--   **Certificate Path:** `certs/rootCA.pem`
+- **Certificate Path:** `certs/rootCA.pem`
 
 #### 2. Import the Certificate
 
 You will need to import this certificate into your operating system's or browser's trust store. Here are general instructions for different platforms:
 
-**macOS**
+##### macOS
 
-1.  Open the **Keychain Access** application.
-2.  Select the **System** keychain.
-3.  Go to **File > Import Items** and select the `certs/rootCA.pem` file.
-4.  Find the "Fasten Health CA" certificate in the list, double-click it, and under the **Trust** section, set "When using this certificate" to **Always Trust**.
+1. Open the **Keychain Access** application.
+2. Select the **System** keychain.
+3. Go to **File > Import Items** and select the `certs/rootCA.pem` file.
+4. Find the "Fasten Health CA" certificate in the list, double-click it, and under the **Trust** section, set "When using this certificate" to **Always Trust**.
 
-**Windows**
+##### Windows
 
-1.  Double-click the `certs/rootCA.pem` file.
-2.  Click **Install Certificate...** and choose **Local Machine**.
-3.  Select **Place all certificates in the following store**, click **Browse**, and choose **Trusted Root Certification Authorities**.
-4.  Complete the wizard to finish the import process.
+1. Double-click the `certs/rootCA.pem` file.
+2. Click **Install Certificate...** and choose **Local Machine**.
+3. Select **Place all certificates in the following store**, click **Browse**, and choose **Trusted Root Certification Authorities**.
+4. Complete the wizard to finish the import process.
 
-**Linux (Ubuntu/Debian)**
+##### Linux (Ubuntu/Debian)
 
-1.  Copy the certificate to the trusted certificates directory:
+1. Copy the certificate to the trusted certificates directory:
+
     ```bash
     sudo cp certs/rootCA.pem /usr/local/share/ca-certificates/fasten-health-ca.crt
     ```
-2.  Update the system's certificate store:
+
+2. Update the system's certificate store:
+
     ```bash
     sudo update-ca-certificates
     ```
 
-**Firefox**
+##### Firefox
 
 Firefox has its own trust store. To import the certificate:
 
-1.  Go to **Settings > Privacy & Security**.
-2.  Scroll down to **Certificates** and click **View Certificates...**.
-3.  In the **Authorities** tab, click **Import...** and select the `certs/rootCA.pem` file.
-4.  Check the box for **Trust this CA to identify websites** and click **OK**.
+1. Go to **Settings > Privacy & Security**.
+2. Scroll down to **Certificates** and click **View Certificates...**.
+3. In the **Authorities** tab, click **Import...** and select the `certs/rootCA.pem` file.
+4. Check the box for **Trust this CA to identify websites** and click **OK**.
 
 ### 🧪 Develop
 
-Use local development settings for testing and iteration. 
+Use local development settings for testing and iteration.
 
 ```bash
 docker compose up -d
@@ -212,9 +221,9 @@ At this point you'll be redirected to the login page.
 Before you can use the YourPHR BETA, you'll need to [Create an Account](https://localhost:9090/web/auth/signup).
 
 It can be as simple as
+
 - **Username:** `testuser`
 - **Password:** `testuser`
-
 
 ## Using with multiple people
 
@@ -235,17 +244,15 @@ This allows for a more complex example:
 - both parents need to be able to access both children's records, and maybe each-others
 - the caregiver should have view-only access to 1 or both children, but not the parents.
 
-
-# FAQ's
+## FAQ's
 
 Have a question? Search [existing issues](https://github.com/jwilleke/yourphr/issues) or open a new one. (A project FAQ will live at [yourphr.org](https://yourphr.org) as YourPHR grows.)
 
-# Support
+## Support
 
 Have questions? Need help? Found a bug? [Create an issue](https://github.com/jwilleke/yourphr/issues/new) and we'll do our best to help you out.
 
-
-# Contributing
+## Contributing
 
 [![CI](https://github.com/jwilleke/yourphr/actions/workflows/ci.yaml/badge.svg)](https://github.com/jwilleke/yourphr/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/jwilleke/yourphr/branch/main/graph/badge.svg?style=flat-square)](https://codecov.io/gh/jwilleke/yourphr)
@@ -256,15 +263,15 @@ Work your magic and then submit a pull request. We love pull requests!
 
 If you find the documentation lacking, help us out and update this README.md. If you don't have the time to work on YourPHR, but found something we should know about, please submit an issue.
 
-# Versioning
+## Versioning
 
 We use SemVer for versioning. For the versions available, see the tags on this repository.
 
-# Authors
+## Authors
 
 - Jason Kulatunga - Initial Development - @AnalogJ
 - Alex Szilagyi - Co-Author - @alexszilagyi
 
-# Licenses
+## Licenses
 
 [![GitHub license](https://img.shields.io/github/license/jwilleke/yourphr?style=flat-square)](https://github.com/jwilleke/yourphr/blob/main/LICENSE.md)
