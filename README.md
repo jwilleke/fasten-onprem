@@ -1,10 +1,6 @@
-<p align="center">
-  <a href="https://github.com/jwilleke/yourphr">
-  <img width="400" alt="YourPHR" src="frontend/src/assets/logo/yourphr-logo.svg">
-  </a>
-</p>
-
 # YourPHR — Self-Hosted Personal Health Record
+
+[![YourPHR](frontend/src/assets/logo/yourphr-logo.svg)](https://github.com/jwilleke/yourphr)
 
 [![CI](https://github.com/jwilleke/yourphr/actions/workflows/ci.yaml/badge.svg)](https://github.com/jwilleke/yourphr/actions/workflows/ci.yaml)
 
@@ -24,17 +20,11 @@
 >
 > YourPHR is **not affiliated with** Fasten Health, Inc. or its commercial *Fasten Connect* product.
 
-<p align="center">
-  <a target="_blank" href="https://yourphr.org"><strong>yourphr.org</strong></a>
-</p>
+**[yourphr.org](https://yourphr.org)**
 
-<p align="center">
-  <a href="https://imgur.com/a/vfgojBD">
-  <img alt="fasten_view" src="https://i.imgur.com/jfqv5Q5.png">
-  </a>
-  <br/>
-  <a href="https://imgur.com/a/vfgojBD">See more screenshots</a>
-</p>
+[![YourPHR screenshots](https://i.imgur.com/jfqv5Q5.png)](https://imgur.com/a/vfgojBD)
+
+[See more screenshots](https://imgur.com/a/vfgojBD)
 
 
 # Introduction
@@ -127,7 +117,7 @@ If you prefer not to run the `set_env.sh` script, you can configure the `.env` f
 
 Next, open a browser to `https://localhost:9090`
 
-### <a name="using-https"></a>🔒 Using HTTPS and Trusting the Self-Signed Certificate
+### 🔒 Using HTTPS and Trusting the Self-Signed Certificate
 
 By default, YourPHR runs with HTTPS enabled to ensure your data is secure. It uses a self-signed **TLS** certificate, which offers the same level of encryption as a commercially issued certificate. The first time you connect, your browser will display a security warning because it doesn't yet trust the certificate's issuer. The steps below will guide you through the simple, one-time process of telling your browser to trust the certificate, ensuring a secure connection without future warnings. Please note that the generated certificates can be replaced at any time with your own valid TLS certificates.
 
