@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {BaseChartDirective} from 'ng2-charts';
 import {CommonModule} from '@angular/common';
 import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
-import {ChartConfiguration} from 'chart.js/dist/types';
+import {ChartConfiguration} from 'chart.js';
 import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
 import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 import {PipesModule} from '../../pipes/pipes.module';

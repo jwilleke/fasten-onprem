@@ -1,0 +1,5 @@
+{
+  "tsconfig": ".storybook/tsconfig.json",
+  "exportFormat": "json",
+  "output": "."
+}

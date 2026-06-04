@@ -15,7 +15,7 @@ const decorators = [
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    // SB9 removed actions.argTypesRegex; actions are inferred from argTypes / the `fn` spy.
     controls: {
       matchers: {
         color: /(background|color)$/i,
