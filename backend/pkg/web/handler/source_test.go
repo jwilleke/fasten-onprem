@@ -116,6 +116,13 @@ func TestSourceHandlerTestSuite(t *testing.T) {
 func TestAuthorizeSource(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
+	// The stub provider runs on loopback, which the real SSRF guard rejects; bypass it here so
+	// the happy path exercises discovery + authorize-URL construction. (The guard itself is
+	// covered by backend/pkg/ssrf tests.)
+	orig := validatePublicHTTPSURL
+	validatePublicHTTPSURL = func(string) error { return nil }
+	defer func() { validatePublicHTTPSURL = orig }()
+
 	// Stub provider: serve .well-known/smart-configuration with authorize/token endpoints.
 	var provider *httptest.Server
 	provider = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -170,6 +177,31 @@ func TestAuthorizeSource(t *testing.T) {
 	require.Equal(t, "S256", q.Get("code_challenge_method"))
 	require.NotEmpty(t, q.Get("code_challenge"))
 	require.Equal(t, provider.URL, q.Get("aud"))
+}
+
+// TestAuthorizeSourceRejectsSSRF confirms the handler wires the SSRF guard: a non-public
+// (loopback) api_endpoint_base_url is rejected with 400 before any server-side request.
+func TestAuthorizeSourceRejectsSSRF(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", t.Name()))
+
+	body, _ := json.Marshal(SmartAuthorizeRequest{
+		ApiEndpointBaseUrl: "https://127.0.0.1/fhir",
+		ClientId:           "c",
+		Scopes:             "patient/*.read",
+		RedirectUri:        "https://relay.nerdsbythehour.com/callback",
+	})
+	req, _ := http.NewRequest("POST", "/source/authorize", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	ctx.Request = req
+
+	AuthorizeSource(ctx)
+
+	require.Equal(t, http.StatusBadRequest, w.Code, w.Body.String())
+	require.Contains(t, w.Body.String(), "invalid api_endpoint_base_url")
 }
 
 func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler() {

@@ -14,6 +14,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/relay"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/ssrf"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/fastenhealth/fasten-sources/clients/smart"
@@ -23,6 +24,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
+
+// validatePublicHTTPSURL guards the user-supplied FHIR base URL against SSRF before the backend
+// fetches it. It is a package var so tests can point discovery at an httptest loopback server.
+var validatePublicHTTPSURL = ssrf.ValidatePublicHTTPSURL
 
 // SmartConnectRequest is the payload to complete a SMART on FHIR connection: the self-describing
 // provider config plus the authorization code (and its PKCE verifier).
@@ -57,6 +62,12 @@ func ConnectSource(c *gin.Context) {
 	}
 	if req.ApiEndpointBaseUrl == "" || req.ClientId == "" || req.CodeVerifier == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "api_endpoint_base_url, client_id, and code_verifier are required"})
+		return
+	}
+	// SSRF guard: the backend fetches this user-supplied URL (discovery + token exchange).
+	// Reject non-public targets (metadata/loopback/LAN) before any server-side request. (#51)
+	if err := validatePublicHTTPSURL(req.ApiEndpointBaseUrl); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": fmt.Sprintf("invalid api_endpoint_base_url: %s", err)})
 		return
 	}
 	if req.Code == "" && req.State == "" {
@@ -158,6 +169,12 @@ func AuthorizeSource(c *gin.Context) {
 	}
 	if req.ApiEndpointBaseUrl == "" || req.ClientId == "" || req.RedirectUri == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "api_endpoint_base_url, client_id, and redirect_uri are required"})
+		return
+	}
+	// SSRF guard: the backend is about to fetch this user-supplied URL (discovery). Reject
+	// non-public targets (metadata/loopback/LAN) before any server-side request. (#51)
+	if err := validatePublicHTTPSURL(req.ApiEndpointBaseUrl); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": fmt.Sprintf("invalid api_endpoint_base_url: %s", err)})
 		return
 	}
 
