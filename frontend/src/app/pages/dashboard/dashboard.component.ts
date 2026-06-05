@@ -4,7 +4,7 @@ import {Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {forkJoin} from 'rxjs';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {LighthouseService} from '../../services/lighthouse.service';
+import {ConnectGatewayService} from '../../services/connect-gateway.service';
 import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
 import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack/gridstack.component';
 import {DashboardConfig} from '../../models/widget/dashboard-config';
@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild(GridstackComponent) gridComp?: GridstackComponent;
 
   constructor(
-    private lighthouseApi: LighthouseService,
+    private connectGatewayApi: ConnectGatewayService,
     private fastenApi: FastenApiService,
     private router: Router,
     private componentFactoryResolver: ComponentFactoryResolver,

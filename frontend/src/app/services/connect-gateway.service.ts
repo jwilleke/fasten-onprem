@@ -4,11 +4,11 @@ import {Observable, of, throwError, bindCallback} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {concatMap, delay, retryWhen, timeout, first, map, filter, catchError, tap} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
-import {LighthouseSourceMetadata} from '../models/lighthouse/lighthouse-source-metadata';
+import {ConnectGatewaySourceMetadata} from '../models/connect-gateway/connect-gateway-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
 import {uuidV4} from '../../lib/utils/uuid';
-import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-search';
+import {ConnectGatewaySourceSearch} from '../models/connect-gateway/connect-gateway-source-search';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 import {MedicalSourcesFilter} from './medical-sources-filter.service';
 import {OpenExternalLink} from '../../lib/utils/external_link';
@@ -22,7 +22,7 @@ export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 12
 @Injectable({
   providedIn: 'root'
 })
-export class LighthouseService {
+export class ConnectGatewayService {
 
   constructor(
     @Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient,
@@ -39,7 +39,7 @@ export class LighthouseService {
     return JSON.parse(localStorage.getItem(state))
   }
 
-  public searchLighthouseSources(filter: MedicalSourcesFilter): Observable<LighthouseSourceSearch> {
+  public searchConnectGatewaySources(filter: MedicalSourcesFilter): Observable<ConnectGatewaySourceSearch> {
     if((typeof filter.searchAfter === 'string' || filter.searchAfter instanceof String) && (filter.searchAfter as string).length > 0){
       filter.searchAfter = (filter.searchAfter as string).split(',')
     } else {
@@ -49,26 +49,26 @@ export class LighthouseService {
       filter.app = "fastenhealth.desktop"
     }
 
-    const endpointUrl = new URL(`${environment.lighthouse_api_endpoint_base}/search`);
+    const endpointUrl = new URL(`${environment.connect_gateway_api_endpoint_base}/search`);
     return this._httpClient.post<ResponseWrapper>(endpointUrl.toString(), filter)
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("Metadata RESPONSE", response)
-          return response.data as LighthouseSourceSearch
+          return response.data as ConnectGatewaySourceSearch
         })
       );
   }
 
-  async getLighthouseSource(endpointId: string): Promise<LighthouseSourceMetadata> {
-    return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/connect/${endpointId}`)
+  async getConnectGatewaySource(endpointId: string): Promise<ConnectGatewaySourceMetadata> {
+    return this._httpClient.get<any>(`${environment.connect_gateway_api_endpoint_base}/connect/${endpointId}`)
       .pipe(
         map((response: ResponseWrapper) => {
-          return response.data as LighthouseSourceMetadata
+          return response.data as ConnectGatewaySourceMetadata
         })
       ).toPromise();
   }
 
-  async getLighthouseCatalogBrand(brandIdOrPlatformType: string): Promise<PatientAccessBrand> {
+  async getConnectGatewayCatalogBrand(brandIdOrPlatformType: string): Promise<PatientAccessBrand> {
     if(brandIdOrPlatformType === 'fasten'){
       return of({
         id: 'fasten',
@@ -87,7 +87,7 @@ export class LighthouseService {
       }).toPromise()
     }
 
-    const catalogUrl = new URL(`${environment.lighthouse_api_endpoint_base}/catalog`);
+    const catalogUrl = new URL(`${environment.connect_gateway_api_endpoint_base}/catalog`);
     catalogUrl.searchParams.set('brand_id', brandIdOrPlatformType);
     return this._httpClient.get<any>(catalogUrl.toString())
       .pipe(
@@ -97,8 +97,8 @@ export class LighthouseService {
       ).toPromise();
   }
 
-  async getLighthouseCatalogPortal(portalId: string): Promise<PatientAccessPortal> {
-    const catalogUrl = new URL(`${environment.lighthouse_api_endpoint_base}/catalog`);
+  async getConnectGatewayCatalogPortal(portalId: string): Promise<PatientAccessPortal> {
+    const catalogUrl = new URL(`${environment.connect_gateway_api_endpoint_base}/catalog`);
     catalogUrl.searchParams.set('portal_id', portalId);
     return this._httpClient.get<any>(catalogUrl.toString())
       .pipe(
@@ -108,8 +108,8 @@ export class LighthouseService {
       ).toPromise();
   }
 
-  async getLighthouseCatalogEndpoint(endpointId: string): Promise<PatientAccessEndpoint> {
-    const catalogUrl = new URL(`${environment.lighthouse_api_endpoint_base}/catalog`);
+  async getConnectGatewayCatalogEndpoint(endpointId: string): Promise<PatientAccessEndpoint> {
+    const catalogUrl = new URL(`${environment.connect_gateway_api_endpoint_base}/catalog`);
     catalogUrl.searchParams.set('endpoint_id', endpointId);
     return this._httpClient.get<any>(catalogUrl.toString())
       .pipe(
@@ -122,40 +122,40 @@ export class LighthouseService {
 
   //DEPRECATED
   // TODO: use the fasten-sources js library
-  async generateSourceAuthorizeUrl(lighthouseSource: LighthouseSourceMetadata, reconnectSourceId?: string): Promise<URL> {
+  async generateSourceAuthorizeUrl(connectGatewaySource: ConnectGatewaySourceMetadata, reconnectSourceId?: string): Promise<URL> {
     const state = uuidV4()
     const sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
-    sourceStateInfo.endpoint_id = lighthouseSource.id
-    sourceStateInfo.portal_id = lighthouseSource.portal_id
-    sourceStateInfo.brand_id = lighthouseSource.brand_id
+    sourceStateInfo.endpoint_id = connectGatewaySource.id
+    sourceStateInfo.portal_id = connectGatewaySource.portal_id
+    sourceStateInfo.brand_id = connectGatewaySource.brand_id
     if(reconnectSourceId){
       //if the source already exists, and we want to re-connect it (because of an expiration), we need to pass the existing source id
       sourceStateInfo.reconnect_source_id = reconnectSourceId
     }
 
     // generate the authorization url
-    const authorizationUrl = new URL(lighthouseSource.authorization_endpoint);
-    authorizationUrl.searchParams.set('redirect_uri', lighthouseSource.redirect_uri);
-    authorizationUrl.searchParams.set('response_type', lighthouseSource.response_types_supported[0]);
-    authorizationUrl.searchParams.set('response_mode', lighthouseSource.response_modes_supported[0]);
+    const authorizationUrl = new URL(connectGatewaySource.authorization_endpoint);
+    authorizationUrl.searchParams.set('redirect_uri', connectGatewaySource.redirect_uri);
+    authorizationUrl.searchParams.set('response_type', connectGatewaySource.response_types_supported[0]);
+    authorizationUrl.searchParams.set('response_mode', connectGatewaySource.response_modes_supported[0]);
     authorizationUrl.searchParams.set('state', state);
-    authorizationUrl.searchParams.set('client_id', lighthouseSource.client_id);
-    if(lighthouseSource.scopes_supported && lighthouseSource.scopes_supported.length){
-      authorizationUrl.searchParams.set('scope', lighthouseSource.scopes_supported.join(' '));
+    authorizationUrl.searchParams.set('client_id', connectGatewaySource.client_id);
+    if(connectGatewaySource.scopes_supported && connectGatewaySource.scopes_supported.length){
+      authorizationUrl.searchParams.set('scope', connectGatewaySource.scopes_supported.join(' '));
     } else {
       authorizationUrl.searchParams.set('scope', '');
     }
-    if (lighthouseSource.aud) {
-      authorizationUrl.searchParams.set('aud', lighthouseSource.aud);
+    if (connectGatewaySource.aud) {
+      authorizationUrl.searchParams.set('aud', connectGatewaySource.aud);
     }
 
     //this is for providers that support CORS and PKCE (public client auth)
-    if(!lighthouseSource.confidential || (lighthouseSource.code_challenge_methods_supported || []).length > 0){
+    if(!connectGatewaySource.confidential || (connectGatewaySource.code_challenge_methods_supported || []).length > 0){
       // https://github.com/panva/oauth4webapi/blob/8eba19eac408bdec5c1fe8abac2710c50bfadcc3/examples/public.ts
       const codeVerifier = Oauth.generateRandomCodeVerifier();
       const codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
-      const codeChallengeMethod = lighthouseSource.code_challenge_methods_supported?.[0] || 'S256'
+      const codeChallengeMethod = connectGatewaySource.code_challenge_methods_supported?.[0] || 'S256'
 
       sourceStateInfo.code_verifier = codeVerifier
       sourceStateInfo.code_challenge = codeChallenge
@@ -211,7 +211,7 @@ export class LighthouseService {
       originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${state}`])
     }
 
-    const redirectUrl = this.pathJoin([environment.lighthouse_api_endpoint_base, `redirect/${state}`])
+    const redirectUrl = this.pathJoin([environment.connect_gateway_api_endpoint_base, `redirect/${state}`])
 
     const redirectUrlParts = new URL(redirectUrl);
     const redirectParams = new URLSearchParams()
@@ -242,7 +242,7 @@ export class LighthouseService {
 
   }
 
-  async swapOauthToken(sourceMetadata: LighthouseSourceMetadata, expectedSourceStateInfo: SourceState, code: string): Promise<any>{
+  async swapOauthToken(sourceMetadata: ConnectGatewaySourceMetadata, expectedSourceStateInfo: SourceState, code: string): Promise<any>{
     // @ts-expect-error
     const client: oauth.Client = {
       client_id: sourceMetadata.client_id
@@ -254,10 +254,10 @@ export class LighthouseService {
 
     if(sourceMetadata.confidential) {
       console.log("This is a confidential client, using lighthouse token endpoint.")
-      //if this is a confidential client, we need to "override" token endpoint, and use the Fasten Lighthouse to complete the swap
-      tokenEndpointUrl = this.pathJoin([environment.lighthouse_api_endpoint_base, `token/${expectedSourceStateInfo.endpoint_id}`])
+      //if this is a confidential client, we need to "override" token endpoint, and use the Fasten ConnectGateway to complete the swap
+      tokenEndpointUrl = this.pathJoin([environment.connect_gateway_api_endpoint_base, `token/${expectedSourceStateInfo.endpoint_id}`])
 
-      //use a placeholder client_secret (the actual secret is stored in Lighthouse)
+      //use a placeholder client_secret (the actual secret is stored in ConnectGateway)
       client.client_secret = "placeholder"
       client.token_endpoint_auth_method = "client_secret_basic"
       if((sourceMetadata.code_challenge_methods_supported || []).length > 0){

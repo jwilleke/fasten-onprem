@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {
-  LighthouseSourceSearchAggregation,
-} from '../../models/lighthouse/lighthouse-source-search';
+  ConnectGatewaySourceSearchAggregation,
+} from '../../models/connect-gateway/connect-gateway-source-search';
 import {MedicalSourcesFilterService} from '../../services/medical-sources-filter.service';
 
 @Component({
@@ -12,8 +12,8 @@ import {MedicalSourcesFilterService} from '../../services/medical-sources-filter
 })
 export class MedicalSourcesFilterComponent implements OnInit {
 
-  @Input() categories: LighthouseSourceSearchAggregation = {buckets: [], sum_other_doc_count: 0}
-  @Input() platformTypes: LighthouseSourceSearchAggregation = {buckets: [], sum_other_doc_count: 0}
+  @Input() categories: ConnectGatewaySourceSearchAggregation = {buckets: [], sum_other_doc_count: 0}
+  @Input() platformTypes: ConnectGatewaySourceSearchAggregation = {buckets: [], sum_other_doc_count: 0}
 
   constructor(
     public filterService: MedicalSourcesFilterService,
@@ -30,7 +30,7 @@ export class MedicalSourcesFilterComponent implements OnInit {
     this.filterService.filterForm.patchValue({'platformTypes': {[platformType]: true}})
   }
 
-  bucketDocCount(aggregationData: LighthouseSourceSearchAggregation, key): number {
+  bucketDocCount(aggregationData: ConnectGatewaySourceSearchAggregation, key): number {
     return aggregationData?.buckets?.find(bucket => bucket.key === key)?.doc_count
   }
 

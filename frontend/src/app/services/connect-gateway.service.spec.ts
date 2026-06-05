@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LighthouseService } from './lighthouse.service';
+import { ConnectGatewayService } from './connect-gateway.service';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {RouterModule} from '@angular/router';
 import {HTTP_CLIENT_TOKEN} from '../dependency-injection';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
-describe('LighthouseService', () => {
-  let service: LighthouseService;
+describe('ConnectGatewayService', () => {
+  let service: ConnectGatewayService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -22,7 +22,7 @@ describe('LighthouseService', () => {
         provideHttpClientTesting(),
     ]
 });
-    service = TestBed.inject(LighthouseService);
+    service = TestBed.inject(ConnectGatewayService);
   });
 
   it('should be created', () => {

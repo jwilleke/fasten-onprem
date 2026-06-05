@@ -1,4 +1,4 @@
-import {LighthouseSourceMetadata} from '../lighthouse/lighthouse-source-metadata';
+import {ConnectGatewaySourceMetadata} from '../connect-gateway/connect-gateway-source-metadata';
 import {BackgroundJob} from './background-job';
 
 export class Source {

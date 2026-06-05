@@ -4,8 +4,8 @@ import {SourceListItem} from '../../pages/medical-sources/medical-sources.compon
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {forkJoin, of} from 'rxjs';
-import {LighthouseService} from '../../services/lighthouse.service';
-import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
+import {ConnectGatewayService} from '../../services/connect-gateway.service';
+import {ConnectGatewaySourceMetadata} from '../../models/connect-gateway/connect-gateway-source-metadata';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {ToastService} from '../../services/toast.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -33,7 +33,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   connectedSourceList: SourceListItem[] = [] //source's are populated for this list
 
   constructor(
-    private lighthouseApi: LighthouseService,
+    private connectGatewayApi: ConnectGatewayService,
     private fastenApi: FastenApiService,
     private modalService: NgbModal,
     private toastService: ToastService,
@@ -53,7 +53,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       forkJoin(connectedSources.map((source) => {
         //TODO: remove this, and similar code in explore.component.ts
         if(source.platform_type == 'fasten' || source.platform_type == 'manual') {
-          return this.lighthouseApi.getLighthouseCatalogBrand(source.platform_type)
+          return this.connectGatewayApi.getConnectGatewayCatalogBrand(source.platform_type)
         } else {
           return of(null)
         }
@@ -75,14 +75,14 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     const callbackState = this.activatedRoute.snapshot.paramMap.get('state')
     if(callbackState) {
 
-      const sourceInfo = this.lighthouseApi.getSourceState(callbackState)
+      const sourceInfo = this.connectGatewayApi.getSourceState(callbackState)
 
       console.log("handle callback redirect from source", callbackState, sourceInfo)
       this.status[sourceInfo.brand_id] = "token"
 
       //the structure of "availableSourceList" vs "connectedSourceList" sources is slightly different,
       //connectedSourceList contains a "source" field. The this.fastenApi.createSource() call in the callback function will set it.
-      this.lighthouseApi.getLighthouseCatalogBrand(sourceInfo.brand_id)
+      this.connectGatewayApi.getConnectGatewayCatalogBrand(sourceInfo.brand_id)
         .then((brandInfo) => {
           this.connectedSourceList.push({brand: brandInfo})
           return this.callback(sourceInfo)
@@ -103,8 +103,8 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   public async callback(expectedSourceStateInfo: SourceState) {
 
     //get the source metadata again
-    await this.lighthouseApi.getLighthouseSource(expectedSourceStateInfo.endpoint_id)
-      .then(async (sourceMetadata: LighthouseSourceMetadata) => {
+    await this.connectGatewayApi.getConnectGatewaySource(expectedSourceStateInfo.endpoint_id)
+      .then(async (sourceMetadata: ConnectGatewaySourceMetadata) => {
 
         //get required parameters from the URI and local storage
         const callbackUrlParts = new URL(window.location.href)
@@ -133,7 +133,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         this.status[expectedSourceStateInfo.brand_id] = "token"
 
         let payload: any
-        payload = await this.lighthouseApi.swapOauthToken(sourceMetadata,expectedSourceStateInfo, callbackCode)
+        payload = await this.connectGatewayApi.swapOauthToken(sourceMetadata,expectedSourceStateInfo, callbackCode)
 
         if(!payload.access_token || payload.error){
           //if the access token is not set, then something is wrong,
@@ -170,7 +170,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
 
         //get the portal information
-        const portalInfo = await this.lighthouseApi.getLighthouseCatalogPortal(expectedSourceStateInfo.portal_id)
+        const portalInfo = await this.connectGatewayApi.getConnectGatewayCatalogPortal(expectedSourceStateInfo.portal_id)
 
         //Create FHIR Client
 
@@ -178,7 +178,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           id: expectedSourceStateInfo.reconnect_source_id,
 
           display: portalInfo.name,
-          lighthouse_env_type: environment.lighthouse_api_endpoint_base == 'https://lighthouse.fastenhealth.com/v1' ? 'prod' : 'sandbox',
+          lighthouse_env_type: environment.connect_gateway_api_endpoint_base == 'https://lighthouse.fastenhealth.com/v1' ? 'prod' : 'sandbox',
           brand_id: expectedSourceStateInfo.brand_id,
           portal_id: expectedSourceStateInfo.portal_id,
           endpoint_id: expectedSourceStateInfo.endpoint_id,
@@ -448,8 +448,8 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   public sourceReconnectHandler(selectedSourceListItem: SourceListItem){
 
     const endpointId = selectedSourceListItem?.source?.endpoint_id
-    this.lighthouseApi.getLighthouseSource(endpointId)
-      .then(async (sourceMetadata: LighthouseSourceMetadata) => {
+    this.connectGatewayApi.getConnectGatewaySource(endpointId)
+      .then(async (sourceMetadata: ConnectGatewaySourceMetadata) => {
 
         if(selectedSourceListItem?.source){
           sourceMetadata.brand_id = selectedSourceListItem.source.brand_id
@@ -457,11 +457,11 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         }
 
         console.log(sourceMetadata);
-        const authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata, selectedSourceListItem.source.id)
+        const authorizationUrl = await this.connectGatewayApi.generateSourceAuthorizeUrl(sourceMetadata, selectedSourceListItem.source.id)
 
         console.log('authorize url:', authorizationUrl.toString());
         // redirect to lighthouse with uri's (or open a new window in desktop mode)
-        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
+        this.connectGatewayApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
           if(!desktopRedirectData){
             return //wait for redirect
           }
@@ -473,7 +473,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           this.modalService.dismissAll()
 
           //redirect the browser back to this page with the code in the query string parameters
-          this.lighthouseApi.redirectWithDesktopCode(desktopRedirectData.state, desktopRedirectData.codeData)
+          this.connectGatewayApi.redirectWithDesktopCode(desktopRedirectData.state, desktopRedirectData.codeData)
         })
       });
   }
