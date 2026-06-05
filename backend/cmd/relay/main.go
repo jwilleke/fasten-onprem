@@ -132,7 +132,7 @@ func newServer(secret string, ttl time.Duration) (http.Handler, *store, *metrics
 		q := r.URL.Query()
 		if e := q.Get("error"); e != "" {
 			m.callbackErrors.Add(1)
-			log.Printf("relay: /callback provider error for state=%q: %s", q.Get("state"), e)
+			log.Printf("relay: /callback provider error for state=%q: %s — %s", q.Get("state"), e, q.Get("error_description"))
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte("<!doctype html><h1>Authorization failed</h1><p>" +
