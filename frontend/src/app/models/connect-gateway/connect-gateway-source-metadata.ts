@@ -1,6 +1,6 @@
 import {PatientAccessEndpoint} from '../patient-access-brands';
 
-export class LighthouseSourceMetadata extends PatientAccessEndpoint {
+export class ConnectGatewaySourceMetadata extends PatientAccessEndpoint {
   brand_id: string
   portal_id: string
 //  endpoint_id = embedded PatientAccessEndpoint.id

@@ -1,17 +1,17 @@
 import {Component, EventEmitter, OnInit, Optional, Output, ViewChild} from '@angular/core';
-import {LighthouseService} from '../../services/lighthouse.service';
+import {ConnectGatewayService} from '../../services/connect-gateway.service';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
+import {ConnectGatewaySourceMetadata} from '../../models/connect-gateway/connect-gateway-source-metadata';
 import {Source} from '../../models/fasten/source';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {BehaviorSubject, forkJoin, Observable, of, Subject} from 'rxjs';
 import {
-  LighthouseSourceSearch,
-  LighthouseSourceSearchAggregation,
-  LighthouseBrandListDisplayItem
-} from '../../models/lighthouse/lighthouse-source-search';
+  ConnectGatewaySourceSearch,
+  ConnectGatewaySourceSearchAggregation,
+  ConnectGatewayBrandListDisplayItem
+} from '../../models/connect-gateway/connect-gateway-source-search';
 import {debounceTime, distinctUntilChanged, pairwise, startWith} from 'rxjs/operators';
 import {MedicalSourcesFilter, MedicalSourcesFilterService} from '../../services/medical-sources-filter.service';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -25,7 +25,7 @@ export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120
 
 export class SourceListItem {
   source?: Source
-  brand: LighthouseBrandListDisplayItem | PatientAccessBrand
+  brand: ConnectGatewayBrandListDisplayItem | PatientAccessBrand
   searchHighlights?: string[]
 }
 
@@ -49,7 +49,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   //aggregation/filter data & limits
   globalLimits: {
-    // aggregations: LighthouseSourceSearchAggregations | undefined,
+    // aggregations: ConnectGatewaySourceSearchAggregations | undefined,
   } = {
     // categories: [],
     // aggregations: undefined,
@@ -63,7 +63,7 @@ export class MedicalSourcesComponent implements OnInit {
   filterForm = this.filterService.filterForm;
 
   //modal
-  modalSelectedBrandListItem: LighthouseBrandListDisplayItem | PatientAccessBrand = null;
+  modalSelectedBrandListItem: ConnectGatewayBrandListDisplayItem | PatientAccessBrand = null;
   modalCloseResult = '';
 
 
@@ -71,7 +71,7 @@ export class MedicalSourcesComponent implements OnInit {
   @ViewChild('ccdaWarningModalRef') ccdaWarningModalRef : any;
 
   constructor(
-    private lighthouseApi: LighthouseService,
+    private connectGatewayApi: ConnectGatewayService,
     private fastenApi: FastenApiService,
     private platformApi: PlatformService,
     private activatedRoute: ActivatedRoute,
@@ -90,7 +90,7 @@ export class MedicalSourcesComponent implements OnInit {
   //OLD FUNCTIONS
   //
   //
-  // private populateAvailableSourceList(results: LighthouseSourceSearch): void {
+  // private populateAvailableSourceList(results: ConnectGatewaySourceSearch): void {
   //   console.log("AGGREGATIONS!!!!!", results.aggregations)
   //   this.totalAvailableSourceList = results.hits.total.value
   //   if(results.hits.hits.length == 0){
@@ -137,15 +137,15 @@ export class MedicalSourcesComponent implements OnInit {
     this.status[brandId] = "authorize"
     this.status[endpointId] = "authorize"
 
-    this.lighthouseApi.getLighthouseSource(endpointId)
-      .then(async (sourceMetadata: LighthouseSourceMetadata) => {
+    this.connectGatewayApi.getConnectGatewaySource(endpointId)
+      .then(async (sourceMetadata: ConnectGatewaySourceMetadata) => {
         sourceMetadata.brand_id = brandId
         sourceMetadata.portal_id = portalId
 
-        const authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata)
+        const authorizationUrl = await this.connectGatewayApi.generateSourceAuthorizeUrl(sourceMetadata)
 
         // redirect to lighthouse with uri's (or open a new window in desktop mode)
-        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
+        this.connectGatewayApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
           if(!desktopRedirectData){
             return //wait for redirect
           }
@@ -157,7 +157,7 @@ export class MedicalSourcesComponent implements OnInit {
           this.modalService.dismissAll()
 
           //redirect the browser back to this page with the code in the query string parameters
-          this.lighthouseApi.redirectWithDesktopCode(desktopRedirectData.state, desktopRedirectData.codeData)
+          this.connectGatewayApi.redirectWithDesktopCode(desktopRedirectData.state, desktopRedirectData.codeData)
         })
       });
   }

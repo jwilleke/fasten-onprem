@@ -34,12 +34,12 @@ export class AuthInterceptorService implements HttpInterceptor {
 
     //only intercept requests to the fasten API & lighthouse, all other requests should be sent as-is
     const reqUrl = req.url.startsWith('http') ? new URL(req.url) : new URL(req.url, window.location.origin)
-    const lighthouseUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.lighthouse_api_endpoint_base))
+    const connectGatewayUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.connect_gateway_api_endpoint_base))
     const apiUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base))
 
     if(
       !((reqUrl.origin == apiUrl.origin && reqUrl.pathname.startsWith(apiUrl.pathname)) ||
-        (reqUrl.origin == lighthouseUrl.origin && reqUrl.pathname.startsWith(lighthouseUrl.pathname)))
+        (reqUrl.origin == connectGatewayUrl.origin && reqUrl.pathname.startsWith(connectGatewayUrl.pathname)))
     ){
       return next.handle(req)
     }
@@ -56,16 +56,16 @@ export class AuthInterceptorService implements HttpInterceptor {
     //   return next.handle(req)
     // }
     //
-    // //only intercept requests to the Fasten API, Database & Lighthouse, all other requests should be sent as-is
+    // //only intercept requests to the Fasten API, Database & ConnectGateway, all other requests should be sent as-is
     // let reqUrl = new URL(req.url)
-    // let lighthouseUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.lighthouse_api_endpoint_base))
+    // let connectGatewayUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.connect_gateway_api_endpoint_base))
     // let apiUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base))
     //
     // //skip database, header is sent automatically via PouchDB
     // // let databaseUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.couchdb_endpoint_base))
     //
     // if(
-    //   (reqUrl.origin == lighthouseUrl.origin && reqUrl.pathname.startsWith(lighthouseUrl.pathname))
+    //   (reqUrl.origin == connectGatewayUrl.origin && reqUrl.pathname.startsWith(connectGatewayUrl.pathname))
     // ){
     //   //all requests to the lighthouse require the JWT
     //   console.log("making authorized request...")
@@ -77,7 +77,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     // // else if(){
     // //   //TODO: only CORS requests to the API endpoint require JWT, but they also require a custom header.
     // //
-    // //   //(reqUrl.origin == lighthouseUrl.origin && reqUrl.pathname.startsWith(lighthouseUrl.pathname)) ||
+    // //   //(reqUrl.origin == connectGatewayUrl.origin && reqUrl.pathname.startsWith(connectGatewayUrl.pathname)) ||
     // //   //       () ||
     // //   //       (reqUrl.origin == apiUrl.origin && reqUrl.pathname.startsWith(apiUrl.pathname))
     // //

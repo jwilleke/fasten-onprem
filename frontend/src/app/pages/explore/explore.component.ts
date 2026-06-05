@@ -3,10 +3,10 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Source} from '../../models/fasten/source';
 import {forkJoin, of} from 'rxjs';
-import {LighthouseService} from '../../services/lighthouse.service';
+import {ConnectGatewayService} from '../../services/connect-gateway.service';
 import {Router} from '@angular/router';
-import {LighthouseBrandListDisplayItem} from '../../models/lighthouse/lighthouse-source-search';
-import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
+import {ConnectGatewayBrandListDisplayItem} from '../../models/connect-gateway/connect-gateway-source-search';
+import {ConnectGatewaySourceMetadata} from '../../models/connect-gateway/connect-gateway-source-metadata';
 import {SourceListItem} from '../medical-sources/medical-sources.component';
 
 
@@ -21,7 +21,7 @@ export class ExploreComponent implements OnInit {
   connectedSources: SourceListItem[] = []
   constructor(
     private fastenApi: FastenApiService,
-    private lighthouseApi: LighthouseService,
+    private connectGatewayApi: ConnectGatewayService,
     private router: Router
   ) { }
 
@@ -34,7 +34,7 @@ export class ExploreComponent implements OnInit {
       forkJoin(connectedSources.map((source) => {
         //TODO: remove this, and similar code in medical-sources-card.component.ts
         if(source.platform_type == 'fasten' || source.platform_type == 'manual') {
-          return this.lighthouseApi.getLighthouseCatalogBrand(source.platform_type)
+          return this.connectGatewayApi.getConnectGatewayCatalogBrand(source.platform_type)
         } else {
           return of(null)
         }

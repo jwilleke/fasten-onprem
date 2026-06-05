@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import {AuthService} from './auth.service';
 import {MedicalSourcesFilter} from './medical-sources-filter.service';
 import {Observable} from 'rxjs';
-import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-search';
+import {ConnectGatewaySourceSearch} from '../models/connect-gateway/connect-gateway-source-search';
 import {environment} from '../../environments/environment';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {map} from 'rxjs/operators';
