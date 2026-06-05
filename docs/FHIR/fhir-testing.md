@@ -135,6 +135,7 @@ fallback is needed. If `.well-known` ever 404s, the OAuth URIs are also in `{bas
 | `FHIR base URL, Client ID and Scopes are all required` | The grey text is a *placeholder*, not a value — actually type into each box (text turns dark). |
 | Veradigm app won't approve | Don't request both v1 `.read` and v2 `.rs` scopes; pick v1 only. |
 | Token exchange fails / `redirect_uri` mismatch | The registered redirect URI must exactly equal `https://relay.nerdsbythehour.com/callback`. |
+| Token exchange fails with `client authentication required` (or similar) | FollowMyHealth's discovery advertises `token_endpoint_auth_methods` of only `client_secret_post`/`client_secret_basic` (not `none`), yet its `capabilities` include `client-public`. The **authorize** step accepts our public/PKCE client, so PKCE-public *should* be fine for the token exchange too — but if the token call is rejected for missing client auth, this is the cause. Revisit then (e.g. confirm FMH's public-client handling, or register a confidential client + secret). **Not a blocker for the authorize flow.** |
 
 ## Reference
 
