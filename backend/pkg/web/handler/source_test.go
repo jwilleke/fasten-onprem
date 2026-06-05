@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -293,4 +294,95 @@ func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler_ShouldExtract
 		"source_id":     respWrapper.Source.ID.String(),
 	}, summary.ResourceTypeCounts[3])
 
+}
+
+// TestConnectSourceHandler is a full backend integration test of the SMART connect → sync
+// pipeline against a fake SMART on FHIR provider — no network, no relay, no browser, no human.
+// It drives handler.ConnectSource with a direct authorization code and asserts: token exchange,
+// SourceCredential stored (platform=ehr, patient set), and Patient/$everything resources synced
+// into the DB. (yourphr#82, layer 1)
+func (suite *SourceHandlerTestSuite) TestConnectSourceHandler() {
+	// The fake provider runs on loopback, which the real SSRF guard rejects; bypass it here.
+	origValidate := validatePublicHTTPSURL
+	validatePublicHTTPSURL = func(string) error { return nil }
+	defer func() { validatePublicHTTPSURL = origValidate }()
+
+	const patientID = "test-patient-1"
+
+	// Fake SMART provider: .well-known discovery, token exchange, and Patient/$everything.
+	var provider *httptest.Server
+	provider = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.URL.Path == "/.well-known/smart-configuration":
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"authorization_endpoint":%q,"token_endpoint":%q,"code_challenge_methods_supported":["S256"]}`,
+				provider.URL+"/authorize", provider.URL+"/token")
+		case r.URL.Path == "/token":
+			// Access token valid for an hour so the sync's ensureValidToken skips refresh.
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"access_token":"fake-access","token_type":"Bearer","expires_in":3600,"refresh_token":"fake-refresh","patient":%q}`, patientID)
+		case strings.HasSuffix(r.URL.Path, "everything"):
+			if got := r.Header.Get("Authorization"); got != "Bearer fake-access" {
+				suite.T().Errorf("$everything Authorization = %q, want \"Bearer fake-access\"", got)
+			}
+			w.Header().Set("Content-Type", "application/fhir+json")
+			fmt.Fprintf(w, `{"resourceType":"Bundle","type":"searchset","entry":[
+				{"resource":{"resourceType":"Patient","id":%q,"name":[{"family":"Tester","given":["Pat"]}]}},
+				{"resource":{"resourceType":"Condition","id":"cond-1","subject":{"reference":"Patient/%s"},"code":{"text":"Test condition"}}},
+				{"resource":{"resourceType":"Observation","id":"obs-1","status":"final","subject":{"reference":"Patient/%s"},"code":{"text":"Test obs"}}}
+			]}`, patientID, patientID, patientID)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer provider.Close()
+
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	body, _ := json.Marshal(SmartConnectRequest{
+		ApiEndpointBaseUrl: provider.URL,
+		ClientId:           "test-client",
+		Scopes:             "launch/patient patient/*.read openid fhirUser offline_access",
+		RedirectUri:        "https://relay.nerdsbythehour.com/callback",
+		Code:               "test-auth-code",
+		CodeVerifier:       "test-verifier-0123456789012345678901234567890123",
+	})
+	req, _ := http.NewRequest("POST", "/source/connect", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	ctx.Request = req
+
+	ConnectSource(ctx)
+
+	require.Equal(suite.T(), http.StatusOK, w.Code, w.Body.String())
+
+	var resp struct {
+		Success bool                    `json:"success"`
+		Source  models.SourceCredential `json:"source"`
+		Data    struct {
+			TotalResources   int      `json:"TotalResources"`
+			UpdatedResources []string `json:"UpdatedResources"`
+		} `json:"data"`
+	}
+	require.NoError(suite.T(), json.Unmarshal(w.Body.Bytes(), &resp))
+	require.True(suite.T(), resp.Success)
+	require.Equal(suite.T(), "ehr", string(resp.Source.PlatformType))
+	require.Equal(suite.T(), patientID, resp.Source.Patient)
+	require.Equal(suite.T(), 3, resp.Data.TotalResources)
+
+	// Confirm the resources were extracted + persisted (not just upserted raw).
+	summary, err := suite.AppRepository.GetSourceSummary(ctx, resp.Source.ID.String())
+	require.NoError(suite.T(), err)
+	stored := 0
+	for _, rc := range summary.ResourceTypeCounts {
+		if cnt, ok := rc["count"].(int64); ok {
+			stored += int(cnt)
+		}
+	}
+	require.Equal(suite.T(), 3, stored, "expected 3 stored resources across types")
 }
