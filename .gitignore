@@ -120,3 +120,8 @@ secrets.*
 /sample-data/
 /phi/
 /patient-data/
+
+# Compiled Go binaries left at the repo root by `go build ./backend/cmd/...`
+# (e.g. `go build ./backend/cmd/relay` writes ./relay). Never commit build artifacts.
+/relay
+/fasten
