@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/relay"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/fastenhealth/fasten-sources/clients/smart"
@@ -23,13 +25,18 @@ import (
 )
 
 // SmartConnectRequest is the payload to complete a SMART on FHIR connection: the self-describing
-// provider config plus the authorization code (and its PKCE verifier) obtained via the relay.
+// provider config plus the authorization code (and its PKCE verifier).
+//
+// The code can arrive two ways: supplied directly in Code, or fetched by the backend from the
+// relay (#50) by State. Exactly one of Code/State is required; State is preferred (the code never
+// touches the browser).
 type SmartConnectRequest struct {
 	ApiEndpointBaseUrl string `json:"api_endpoint_base_url"`
 	ClientId           string `json:"client_id"`
 	Scopes             string `json:"scopes"`
 	RedirectUri        string `json:"redirect_uri"`
 	Code               string `json:"code"`
+	State              string `json:"state"`
 	CodeVerifier       string `json:"code_verifier"`
 	Display            string `json:"display"`
 }
@@ -48,9 +55,31 @@ func ConnectSource(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": fmt.Sprintf("invalid request: %s", err)})
 		return
 	}
-	if req.ApiEndpointBaseUrl == "" || req.ClientId == "" || req.Code == "" || req.CodeVerifier == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "api_endpoint_base_url, client_id, code, and code_verifier are required"})
+	if req.ApiEndpointBaseUrl == "" || req.ClientId == "" || req.CodeVerifier == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "api_endpoint_base_url, client_id, and code_verifier are required"})
 		return
+	}
+	if req.Code == "" && req.State == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "one of code or state is required"})
+		return
+	}
+
+	// When no code is supplied directly, fetch it from the relay (#50) by state. The relay holds
+	// the code for ~60s; poll briefly to absorb the redirect→connect race.
+	if req.Code == "" {
+		relayClient, err := relay.FromEnv()
+		if err != nil {
+			logger.Errorln(err)
+			c.JSON(http.StatusServiceUnavailable, gin.H{"success": false, "error": fmt.Sprintf("relay not configured: %s", err)})
+			return
+		}
+		code, err := relayClient.PollUntil(c, req.State, time.Second, 30*time.Second)
+		if err != nil {
+			logger.Errorln(err)
+			c.JSON(http.StatusBadGateway, gin.H{"success": false, "error": fmt.Sprintf("could not retrieve authorization code from relay: %s", err)})
+			return
+		}
+		req.Code = code
 	}
 
 	cfg := smart.Config{
