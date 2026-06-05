@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
@@ -22,7 +23,7 @@ func do(t *testing.T, h http.Handler, method, target string, secret string) *htt
 }
 
 func TestCallbackThenPending(t *testing.T) {
-	h, _ := newServer(testSecret, defaultTTL)
+	h, _, _ := newServer(testSecret, defaultTTL)
 
 	if rec := do(t, h, http.MethodGet, "/callback?code=ABC&state=S1", ""); rec.Code != http.StatusOK {
 		t.Fatalf("callback: got %d", rec.Code)
@@ -47,7 +48,7 @@ func TestCallbackThenPending(t *testing.T) {
 }
 
 func TestPendingRequiresSecret(t *testing.T) {
-	h, _ := newServer(testSecret, defaultTTL)
+	h, _, _ := newServer(testSecret, defaultTTL)
 	do(t, h, http.MethodGet, "/callback?code=ABC&state=S1", "")
 
 	if rec := do(t, h, http.MethodGet, "/pending?state=S1", ""); rec.Code != http.StatusUnauthorized {
@@ -59,7 +60,7 @@ func TestPendingRequiresSecret(t *testing.T) {
 }
 
 func TestRoot(t *testing.T) {
-	h, _ := newServer(testSecret, defaultTTL)
+	h, _, _ := newServer(testSecret, defaultTTL)
 	// Exact root: friendly 200.
 	if rec := do(t, h, http.MethodGet, "/", ""); rec.Code != http.StatusOK {
 		t.Errorf("root: got %d, want 200", rec.Code)
@@ -71,14 +72,14 @@ func TestRoot(t *testing.T) {
 }
 
 func TestPendingUnknownState(t *testing.T) {
-	h, _ := newServer(testSecret, defaultTTL)
+	h, _, _ := newServer(testSecret, defaultTTL)
 	if rec := do(t, h, http.MethodGet, "/pending?state=nope", testSecret); rec.Code != http.StatusNotFound {
 		t.Errorf("unknown state: got %d, want 404", rec.Code)
 	}
 }
 
 func TestCallbackValidation(t *testing.T) {
-	h, _ := newServer(testSecret, defaultTTL)
+	h, _, _ := newServer(testSecret, defaultTTL)
 	if rec := do(t, h, http.MethodGet, "/callback?state=S1", ""); rec.Code != http.StatusBadRequest {
 		t.Errorf("missing code: got %d, want 400", rec.Code)
 	}
@@ -88,7 +89,7 @@ func TestCallbackValidation(t *testing.T) {
 }
 
 func TestTTLExpiry(t *testing.T) {
-	h, st := newServer(testSecret, defaultTTL)
+	h, st, _ := newServer(testSecret, defaultTTL)
 	base := time.Now()
 	st.now = func() time.Time { return base }
 
@@ -102,7 +103,7 @@ func TestTTLExpiry(t *testing.T) {
 }
 
 func TestHealthz(t *testing.T) {
-	h, _ := newServer(testSecret, defaultTTL)
+	h, _, _ := newServer(testSecret, defaultTTL)
 	if rec := do(t, h, http.MethodGet, "/healthz", ""); rec.Code != http.StatusOK {
 		t.Errorf("healthz: got %d", rec.Code)
 	}
@@ -117,5 +118,51 @@ func TestSecretEqual(t *testing.T) {
 	}
 	if secretEqual("abc", "abd") {
 		t.Error("different secrets should not match")
+	}
+}
+
+func TestMetrics(t *testing.T) {
+	h, _, m := newServer(testSecret, defaultTTL)
+
+	// A code arrives.
+	if rec := do(t, h, http.MethodGet, "/callback?code=ABC&state=S1", ""); rec.Code != http.StatusOK {
+		t.Fatalf("callback: got %d", rec.Code)
+	}
+	// Unauthorized poll.
+	do(t, h, http.MethodGet, "/pending?state=S1", "")
+	// Authorized poll that finds the code.
+	if rec := do(t, h, http.MethodGet, "/pending?state=S1", testSecret); rec.Code != http.StatusOK {
+		t.Fatalf("pending: got %d", rec.Code)
+	}
+	// Authorized poll for an unknown state.
+	do(t, h, http.MethodGet, "/pending?state=missing", testSecret)
+
+	if got := m.callbacks.Load(); got != 1 {
+		t.Errorf("callbacks = %d, want 1", got)
+	}
+	if got := m.pendingUnauthorized.Load(); got != 1 {
+		t.Errorf("pendingUnauthorized = %d, want 1", got)
+	}
+	if got := m.pendingFound.Load(); got != 1 {
+		t.Errorf("pendingFound = %d, want 1", got)
+	}
+	if got := m.pendingNotFound.Load(); got != 1 {
+		t.Errorf("pendingNotFound = %d, want 1", got)
+	}
+
+	// The exposition output reflects the counters and is well-formed.
+	rec := httptest.NewRecorder()
+	m.writeProm(rec)
+	body := rec.Body.String()
+	for _, want := range []string{
+		"yourphr_relay_callbacks_total 1",
+		`yourphr_relay_pending_total{result="found"} 1`,
+		`yourphr_relay_pending_total{result="not_found"} 1`,
+		`yourphr_relay_pending_total{result="unauthorized"} 1`,
+		"# TYPE yourphr_relay_callbacks_total counter",
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("metrics output missing %q\n---\n%s", want, body)
+		}
 	}
 }
