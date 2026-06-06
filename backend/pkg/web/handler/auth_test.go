@@ -32,6 +32,7 @@ func TestAuthSignup(t *testing.T) {
 			assert.Equal(t, pkg.UserRoleAdmin, user.Role)
 		}).Return(nil)
 		mockConfig.EXPECT().GetString("jwt.issuer.key").Return("test_key")
+		mockConfig.EXPECT().GetBool("web.listen.https.enabled").Return(false) // setSessionCookie (#103)
 
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
@@ -66,6 +67,7 @@ func TestAuthSignup(t *testing.T) {
 			assert.Equal(t, pkg.UserRoleUser, user.Role)
 		}).Return(nil)
 		mockConfig.EXPECT().GetString("jwt.issuer.key").Return("test_key")
+		mockConfig.EXPECT().GetBool("web.listen.https.enabled").Return(false) // setSessionCookie (#103)
 
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)

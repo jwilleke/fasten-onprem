@@ -71,6 +71,7 @@ func AuthSignup(c *gin.Context) {
 		utils.JoinNewsletter(userWizard.FullName, userWizard.Email, "", "")
 	}
 
+	setSessionCookie(c, appConfig, userFastenToken)
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": userFastenToken})
 }
 
@@ -104,5 +105,26 @@ func AuthSignin(c *gin.Context) {
 		return
 	}
 
+	setSessionCookie(c, appConfig, userFastenToken)
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": userFastenToken})
+}
+
+// setSessionCookie stores the session JWT as an HttpOnly/Secure/SameSite=Strict cookie for
+// browser clients (#103 / H2). The Authorization: Bearer header remains the primary transport
+// (RFC 6750 / SMART); this cookie is an optional fallback that keeps the token out of JS to
+// shrink the XSS-theft surface. Secure is gated on HTTPS so local http dev still works;
+// SameSite=Strict mitigates CSRF. Max-age matches the 1h token lifetime.
+func setSessionCookie(c *gin.Context, appConfig config.Interface, token string) {
+	c.SetSameSite(http.SameSiteStrictMode)
+	c.SetCookie(pkg.SessionCookieName, token, 3600, "/", "", appConfig.GetBool("web.listen.https.enabled"), true)
+}
+
+// AuthLogout clears the session cookie. The session JWT is otherwise stateless, and an
+// HttpOnly cookie can't be cleared from JavaScript, so this endpoint is what lets a browser
+// fully sign out (the SPA calls it in addition to dropping its localStorage token) (#103).
+func AuthLogout(c *gin.Context) {
+	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+	c.SetSameSite(http.SameSiteStrictMode)
+	c.SetCookie(pkg.SessionCookieName, "", -1, "/", "", appConfig.GetBool("web.listen.https.enabled"), true)
+	c.JSON(http.StatusOK, gin.H{"success": true})
 }

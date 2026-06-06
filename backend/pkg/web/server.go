@@ -157,6 +157,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				authGroup.Use(middleware.RateLimitMiddleware(10, time.Minute))
 				authGroup.POST("/signup", handler.AuthSignup)
 				authGroup.POST("/signin", handler.AuthSignin)
+				authGroup.POST("/logout", handler.AuthLogout) // clears the session cookie (#103)
 
 				//whitelisted CORS PROXY
 				api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
