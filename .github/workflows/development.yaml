@@ -7,6 +7,11 @@ on:
       - edited
       - synchronize
       - reopened
+    # Docs-only PRs don't need the Go/Angular test suite. (A mixed code+docs PR still runs.)
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
   workflow_call:
 
 jobs:

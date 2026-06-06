@@ -3,6 +3,11 @@ name: CI
 on:
   push:
     branches: [ main, beta ]
+    # Docs-only pushes don't need the test suite + coverage upload (this calls development.yaml).
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
     # Publish semver tags as releases.
   release:
     types: [published]
