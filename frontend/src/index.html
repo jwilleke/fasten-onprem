@@ -18,30 +18,12 @@
   <title>YourPHR</title>
   <link href="./assets/lforms/styles.css" rel="stylesheet">
   <script src="./assets/js/asmcrypto-2.3.2.all.es5.min.js"></script>
-  <script>
-    var baseHref = "/"
-
-    // if the pathname includes /web, everthing before `/web` (and including web) should be set as the base path.
-    if(window.location.pathname.includes('/web')){
-      baseHref = "/web/"
-      // probably running locally, and *may* include a subpath
-      var subPath = window.location.pathname.split('/web').slice(0, 1)[0]
-      if(subPath != "/"){
-        //subpath, so we need to update the absolutePath with the subpath before adding the relative path to the end
-        baseHref = subPath + '/web/'
-      }
-    }
-
-    document.write(`<base href="${baseHref}"/>`);  </script>
+  <script src="./assets/js/base-href.js"></script>
 
   <!-- required for lhncbc/lforms -->
   <script src="./assets/js/webcomponents/webcomponents-loader.js"></script>
 
-  <script>
-    if (!window.customElements) {
-      document.write('<!--');
-    }
-  </script>
+  <script src="./assets/js/lforms-guard.js"></script>
   <!-- ! DO NOT REMOVE THIS COMMENT, WE NEED ITS CLOSING MARKER -->
 </head>
 <body>
