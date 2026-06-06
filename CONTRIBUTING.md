@@ -24,7 +24,7 @@ YourPHR is made up of a handful of different components. Here's a summary of the
 
 # Versioning
 
-YourPHR follows [SemVer](https://semver.org/): releases are cut on demand by a maintainer running the **release-please** workflow (it is not triggered per commit), and **every release bumps at least the minor** version (e.g. `1.1.3` → `1.2.0`) — so we don't publish a release for each fix. Write commits as [Conventional Commits](https://www.conventionalcommits.org/) (they drive the auto-generated `CHANGELOG.md`); for a breaking **major** bump, add a `Release-As: 2.0.0` footer. Never hand-edit `backend/pkg/version/version.go` or `CHANGELOG.md`.
+YourPHR follows [SemVer](https://semver.org/): releases are cut on demand by a maintainer running the **release-please** workflow (it is not triggered per commit), and each release is a **patch** bump by default (e.g. `1.1.3` → `1.1.4`) — so we don't publish a release for each fix. Write commits as [Conventional Commits](https://www.conventionalcommits.org/) (they drive the auto-generated `CHANGELOG.md`); for a **minor** or **major** release, add a `Release-As: 1.2.0` (or `2.0.0`) footer. Never hand-edit `backend/pkg/version/version.go` or `CHANGELOG.md`.
 
 # Development Environment Setup
 
