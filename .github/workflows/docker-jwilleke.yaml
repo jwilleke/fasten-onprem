@@ -8,6 +8,11 @@ name: Docker (YourPHR)
 on:
   push:
     branches: [main]
+    # Docs-only pushes don't change the image — skip the build/push (and the Flux redeploy).
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
 
 env:
   REGISTRY: ghcr.io
