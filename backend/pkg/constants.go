@@ -26,6 +26,11 @@ const (
 	ContextKeyTypeAuthToken       string = "AUTH_TOKEN"
 	ContextKeyTypeBackgroundJobID string = "BACKGROUND_JOB_ID"
 
+	// SessionCookieName is the HttpOnly/Secure/SameSite cookie that carries YourPHR's
+	// own session JWT for browser clients. The Authorization: Bearer header remains the
+	// primary transport (RFC 6750 / SMART); this cookie is an optional fallback (#103).
+	SessionCookieName string = "fasten_session"
+
 	FhirResourceTypeComposition string = "Composition"
 
 	ResourceGraphTypeMedicalHistory ResourceGraphType = "MedicalHistory"

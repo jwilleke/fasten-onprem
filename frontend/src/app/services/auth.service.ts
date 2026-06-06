@@ -202,6 +202,14 @@ export class AuthService {
 
   public async Logout(): Promise<any> {
     this.publishAuthenticationState(false)
+    // Clear the HttpOnly session cookie server-side — it can't be cleared from JS (#103).
+    // Best-effort: never let a failed request block sign-out.
+    try {
+      const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)
+      await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/logout`, {}).toPromise()
+    } catch (e) {
+      // ignore — still clear the local token below
+    }
     return localStorage.removeItem(this.FASTEN_JWT_LOCALSTORAGE_KEY)
     // // let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
     // if(this.pouchDb){

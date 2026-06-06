@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -16,20 +15,24 @@ func RequireAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 
-		authHeader := c.GetHeader("Authorization")
-		authHeaderParts := strings.Split(authHeader, " ")
-
-		if len(authHeaderParts) != 2 {
-			log.Println("Authentication header is invalid: " + authHeader)
-			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "request does not contain a valid token"})
-			c.Abort()
-			return
+		// Token transport: Authorization: Bearer is primary (RFC 6750 / SMART App Launch);
+		// fall back to the HttpOnly session cookie for browser clients. The header wins if
+		// both are present, so non-browser/desktop/CLI clients are unaffected (#103 / H2).
+		tokenString := ""
+		if authHeader := c.GetHeader("Authorization"); authHeader != "" {
+			parts := strings.Split(authHeader, " ")
+			if len(parts) == 2 && strings.EqualFold(parts[0], "Bearer") {
+				tokenString = parts[1]
+			}
+		}
+		if tokenString == "" {
+			if cookieVal, err := c.Cookie(pkg.SessionCookieName); err == nil {
+				tokenString = cookieVal
+			}
 		}
 
-		tokenString := authHeaderParts[1]
-
 		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "request does not contain an access token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "request does not contain a valid token"})
 			c.Abort()
 			return
 		}
