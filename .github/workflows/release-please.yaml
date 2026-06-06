@@ -1,22 +1,25 @@
 name: release-please
 
-# Automated SemVer releases driven by Conventional Commits (closes #91).
+# Manually-triggered SemVer releases driven by Conventional Commits (closes #91).
 #
-# On every push to main, release-please opens/updates a "release PR" that bumps the
-# version and rolls all conventional commits since the last release into CHANGELOG.md.
-# Merging that PR creates the git tag (vX.Y.Z) AND a GitHub Release with the notes.
-#   fix:            -> patch   (1.1.3 -> 1.1.4)
-#   feat:           -> minor   (1.1.3 -> 1.2.0)
-#   feat!/BREAKING  -> major   (1.1.3 -> 2.0.0)
+# This does NOT run on push. A maintainer runs it on demand (Actions tab ->
+# release-please -> "Run workflow"). It then opens/updates a single "release PR"
+# that rolls every conventional commit since the last release into CHANGELOG.md.
+# Merging that PR creates the git tag (vX.Y.Z) AND a GitHub Release. Nothing is
+# released until you merge the PR, so release cadence is entirely in your hands.
+#
+# Bump policy: `versioning: always-bump-minor` in release-please-config.json means
+# every release bumps AT LEAST the minor version (e.g. 1.1.3 -> 1.2.0), even a
+# fix-only release. We deliberately do not cut a release per fix. A MAJOR bump for
+# a breaking change is NOT automatic under this policy — make a commit with a
+# `Release-As: 2.0.0` footer when you intend a major.
 #
 # NOTE (one-time repo setting): Settings -> Actions -> General -> Workflow permissions
-# must have "Allow GitHub Actions to create and approve pull requests" enabled, or the
-# release PR cannot be opened.
+# must have "Allow GitHub Actions to create and approve pull requests" enabled (done),
+# or the release PR cannot be opened.
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
