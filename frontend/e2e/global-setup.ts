@@ -34,15 +34,10 @@ export default async function globalSetup(_config: FullConfig) {
         multipart: { file: { name: 'synthea.json', mimeType: 'application/json', buffer: readFileSync(SEED_BUNDLE) } },
         timeout: 120_000,
       });
-      console.log(`[e2e] seed bundle import -> HTTP ${res.status()}`);
-      // #148 diagnostic: the import summary enumerates stored resources — log whether a
-      // Patient was actually stored (its absence here would explain the IPS "no patients").
-      try {
-        const summary = (await res.json())?.data;
-        const refs: string[] = summary?.UpdatedResources ?? [];
-        const patients = refs.filter((r) => typeof r === 'string' && r.startsWith('Patient/'));
-        console.log(`[e2e] import stored total=${summary?.TotalResources}; Patient refs=${JSON.stringify(patients)}`);
-      } catch { /* non-JSON response — ignore */ }
+      // #148 diagnostic: log the raw seed response body. On 500 it carries the import's error
+      // message (the actual root cause — the import, not the IPS render, is what fails in CI);
+      // on 200 it's the summary (shows whether a Patient was stored + the real JSON shape).
+      console.log(`[e2e] seed bundle import -> HTTP ${res.status()}; body: ${(await res.text()).slice(0, 800)}`);
 
       // Readiness gate: the import processes resources (related-resources / search params)
       // asynchronously after returning 200, so a too-early IPS summary query can 500. Wait
