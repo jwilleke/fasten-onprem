@@ -69,6 +69,48 @@ jobs:
           name: backend-coverage
           path: ${{ github.workspace }}/backend-coverage.txt
           retention-days: 1
+  test-e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: frontend/.nvmrc
+      # Cache the Go module + build cache so the webServer's `go run` of the backend is fast.
+      - name: Cache Go modules + build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-e2e-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-e2e-
+            ${{ runner.os }}-go-
+      - name: Install frontend deps
+        run: make dep-frontend
+      # Browser binary + its OS libs (chromium only for Phase 1; Firefox added in Phase 3, #131).
+      - name: Install Playwright chromium
+        run: cd frontend && npx playwright install --with-deps chromium
+      # Builds the frontend, then Playwright boots the Go backend (config.e2e.yaml, fresh
+      # ./db/fasten-e2e.db, :9191) serving dist under /web and runs the smoke suite.
+      - name: Run E2E
+        run: make test-e2e
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
+
   compile-storybook:
     name: Compile Storybook
     runs-on: ubuntu-latest

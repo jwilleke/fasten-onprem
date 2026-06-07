@@ -105,7 +105,7 @@ test-frontend: dep-frontend
 # :9191) serving ./dist and drives a real browser. See frontend/e2e/.
 .PHONY: test-e2e
 test-e2e: dep-frontend
-	cd frontend && npx yarn run build -- --configuration sandbox && npx yarn run e2e
+	cd frontend && yarn run build -- --configuration sandbox && yarn run e2e
 
 .PHONY: test-frontend-coverage
 # reduce logging, disable angular-cli analytics for ci environment
