@@ -25,3 +25,21 @@ test('seeded FHIR data: source present + records pages render clean', async ({ p
   expect(health.cspViolations, `CSP violations:\n${health.cspViolations.join('\n')}`).toEqual([]);
   expect(health.pageErrors, `uncaught page errors:\n${health.pageErrors.join('\n')}`).toEqual([]);
 });
+
+// Phase 3 (#131): the "Export to PDF" path — GET /api/secure/summary/ips?format=pdf renders the
+// International Patient Summary from the seeded data through the ips_pdf renderer. Exercises the
+// print/PDF flow end-to-end (which can't be checked from the empty-account smoke suite).
+test('IPS export renders a PDF (and HTML) from seeded data', async ({ page }) => {
+  await login(page); // page.request inherits the browser session cookie
+
+  const pdf = await page.request.get(`${API_BASE}/secure/summary/ips?format=pdf`);
+  expect(pdf.ok(), `IPS pdf export -> ${pdf.status()}`).toBeTruthy();
+  expect(pdf.headers()['content-type']).toContain('application/pdf');
+  const bytes = await pdf.body();
+  expect(bytes.length, 'PDF should be non-trivial').toBeGreaterThan(1000);
+  expect(bytes.subarray(0, 5).toString('latin1'), 'PDF magic bytes').toBe('%PDF-');
+
+  const html = await page.request.get(`${API_BASE}/secure/summary/ips?format=html`);
+  expect(html.ok(), `IPS html export -> ${html.status()}`).toBeTruthy();
+  expect(html.headers()['content-type']).toContain('text/html');
+});
