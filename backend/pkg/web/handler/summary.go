@@ -2,6 +2,7 @@ package handler
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -32,10 +33,17 @@ func GetIPSSummary(c *gin.Context) {
 
 	ipsData, err := databaseRepo.GetInternationalPatientSummaryExport(c)
 	if err != nil {
+		// No Patient resource for this user (e.g. nothing imported yet) is a "no data"
+		// condition, not a server fault — return 404, not 500 (#148).
+		if errors.Is(err, database.ErrIPSNoPatientData) {
+			logger.Warnln("IPS summary requested but no patient data available")
+			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "no patient data available to summarize"})
+			return
+		}
 		logger.Errorln("An error occurred while retrieving IPS summary", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
-	}	
+	}
 
 	format := c.Query("format")
 	if format == "" {

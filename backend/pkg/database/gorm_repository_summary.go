@@ -3,8 +3,8 @@ package database
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -689,10 +689,14 @@ func stringPtr(s string) *string {
 	return &s
 }
 
+// ErrIPSNoPatientData is returned when an IPS summary is requested but no Patient resource
+// exists for the user (e.g. nothing imported yet). It's a "no data" condition, not a server
+// fault — callers (the HTTP handler) should map it to a 4xx, not a 500 (#148).
+var ErrIPSNoPatientData = errors.New("no patient data to summarize")
+
 func mergePatients(patients []database.FhirPatient) (*database.FhirPatient, error) {
 	if len(patients) == 0 {
-		log.Printf("no patients to merge, ignoring")
-		return nil, fmt.Errorf("no patients to merge, ignoring")
+		return nil, ErrIPSNoPatientData
 	}
 	mergedPatientResource := `{}`
 	for _, patient := range patients {
