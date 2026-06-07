@@ -18,3 +18,7 @@ export const PASS_FILE = path.resolve('e2e/.e2e-pass');
 export function getE2EPass(): string {
   return process.env.E2E_PASS || readFileSync(PASS_FILE, 'utf8').trim();
 }
+
+// Synthetic Synthea bundle (committed test data) seeded into the account so data-dependent
+// flows (records, display, print) have content. Resolved from cwd (frontend/) → repo root.
+export const SEED_BUNDLE = path.resolve('../backend/pkg/database/testdata/Britt177_Blick895_ad0f0573-f8c7-4704-9eef-50342d37ef50.json');
