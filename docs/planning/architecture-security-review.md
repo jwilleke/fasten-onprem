@@ -1,5 +1,7 @@
 # YourPHR — Architecture & Security Review
 
+> **Correction (2026-06-07):** this review says "Angular 14" throughout, but the frontend was already on **Angular 20** at review time (upgraded 14→20 via foundation epic #12, merged 2026-06-04). The "Angular 14" framing led to filing #114 as a framework-upgrade need — actually a transitive lforms dep (fixed, #114 closed). Likewise H2's "JWT in localStorage" was since fixed (HttpOnly cookie, #103). Treat the stack details below as the point-in-time snapshot; the findings/backlog still stand.
+>
 > Independent evaluation of the `jwilleke/yourphr` codebase (community continuation of
 > Fasten OnPrem). Reviewed: backend (Go/Gin/GORM), frontend (Angular 14), deployment,
 > and the SMART-on-FHIR relay. **No code was changed** — this is an assessment plus a

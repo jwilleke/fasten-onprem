@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Mission: Your medical records, immediately and in your hands — for free.** (Fulfilling the 21st Century Cures Act, 2016. See issue #15 / `private-jims/goals.md`.) Prioritize work that advances immediate, complete patient access to records.
 
-**YourPHR** is a self-hosted personal/family electronic medical record viewer — a community continuation of Fasten OnPrem. It imports FHIR R4 bundles (manual upload or, in the original project, provider sync) and displays them. A **Go backend** (Gin + GORM, SQLite) serves a JSON API and the compiled **Angular 14 frontend**.
+**YourPHR** is a self-hosted personal/family electronic medical record viewer — a community continuation of Fasten OnPrem. It imports FHIR R4 bundles (manual upload or, in the original project, provider sync) and displays them. A **Go backend** (Gin + GORM, SQLite) serves a JSON API and the compiled **Angular 20 frontend**.
 
 **YourPHR is a standalone, community-maintained continuation** of `fastenhealth/fasten-onprem` (original by Jason Kulatunga / @AnalogJ and Alex Szilagyi, GPL v3 — attribution retained). It carries the project forward after upstream stalled and is going standalone (see EPIC #2). Near-term focus: improve display compatibility with **non-US-Core FHIR R4 exports**, specifically Veradigm/FollowMyHealth patient portal data. See `docs/Roadmap.md` and `README.md`. When fixing display issues, prefer fallbacks for missing US-Core fields (e.g. `class.code` when `type[]` is absent) rather than assuming strict US-Core conformance.
 
@@ -29,7 +29,7 @@ This is a **Personal Health Record** application. Patient data (PHI) and secrets
 
 ## Commands
 
-All commands are driven through the `Makefile`. There is also a Nix flake (`direnv allow`) that provisions Go, Node, Angular CLI 14.1.3, yarn, and tygo.
+All commands are driven through the `Makefile`. There is also a Nix flake (`direnv allow`) that provisions Go, Node, Angular CLI, yarn, and tygo. (The flake still pins the old Angular CLI 14.1.3 + Node 18 — stale vs the project's Angular 20 / Node 24; tracked in #138. Day-to-day `make`/`npx ng` use the correct local toolchain from `node_modules` + `.nvmrc`.)
 
 ```bash
 make test              # run both backend and frontend test suites
@@ -79,7 +79,7 @@ The upstream `github.com/fastenhealth/fasten-sources` package was made private. 
 
 ## Frontend architecture (`frontend/src/app/`)
 
-Standard Angular 14 module layout:
+Standard Angular 20 module layout (upgraded 14→20 via foundation epic #12):
 
 - `services/` — `fasten-api.service.ts` is the main backend API client; `auth.service.ts` + `auth-interceptor.service.ts` handle JWT; `event-bus.service.ts` for SSE/streaming.
 - `pages/`, `components/`, `widgets/` — UI; `models/` — typed view models (the `patient-access-brands/` subdir is tygo-generated, don't edit).

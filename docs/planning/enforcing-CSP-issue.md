@@ -89,13 +89,13 @@ We caused two outages by **deploying to validate**. Going forward, **validate th
 - Test in **incognito (no extensions** — removes the Perplexity-font noise) and in at least **two browsers** (Chrome + Firefox).
 - Deploy only when the local console is clean. (Aspirational: an automated E2E pass with the CSP applied.)
 
-## Path to fully-strict `script-src` (deferred, lower priority — likely with #114)
+## Path to fully-strict `script-src` (deferred, lower priority)
 
 This is intentionally *not* part of the current work; it is the eventual path if/when we decide the extra hardening is worth it:
 
 1. **Enumerate** every inline event handler (local walk) and pin the **exact widget + version** injecting them (lforms? dwv?).
 2. **Eliminate / contain:** ours → refactor `onX=` to Angular `(event)` bindings; third-party → upgrade the widget if a fixed version exists, else replace/fork. Iframe-sandboxing the widget (its own relaxed CSP + a `postMessage` bridge) and `'unsafe-hashes'` + enumerated handler hashes are **last-resort, over-engineered options** for a single-instance app — note them, don't reach for them.
-3. **Nonce + `'strict-dynamic'`** for script loading would require the Go backend to template `index.html` per-request (inject a nonce into the inline scripts + the CSP), replacing the static `StaticFS`/`c.File` serving of `index.html`. Angular 14 has **no** built-in CSP-nonce support (that's Angular 16+ `ngCspNonce`), so this realistically pairs with the **Angular upgrade (#114)**, which may change the widget stack anyway.
+3. **Nonce + `'strict-dynamic'`** for script loading would require the Go backend to template `index.html` per-request (inject a nonce into the inline scripts + the CSP), replacing the static `StaticFS`/`c.File` serving of `index.html`. The app is already on **Angular 20**, which **supports** CSP nonces (`ngCspNonce`, Angular 16+) — so this is unblocked at the framework level; the remaining work is the Go-backend per-request templating plus solving the inline-handler problem in steps 1–2. (Originally this was deferred to the Angular upgrade #114, but that upgrade is already done.)
 
 ## Worklog
 
