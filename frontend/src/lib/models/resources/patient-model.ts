@@ -22,6 +22,7 @@ export class PatientModel extends FastenDisplayModel {
   is_deceased: boolean|undefined
   deceased_date: string|undefined
   birth_sex: string|undefined
+  individual_sex: string|undefined
   marital_status: string|undefined
   race: string|undefined
   ethnicity: string|undefined
@@ -54,6 +55,7 @@ export class PatientModel extends FastenDisplayModel {
     this.deceased_date = _.get(fhirResource, 'deceasedDateTime');
     this.is_deceased = deceasedBoolean || this.deceased_date;
     this.birth_sex = this.getBirthSex(fhirResource);
+    this.individual_sex = this.getIndividualSex(fhirResource);
     this.marital_status = _.get(fhirResource, 'maritalStatus.text');
     this.race = this.getRace(fhirResource);
     this.ethnicity = this.getEthnicity(fhirResource);
@@ -87,6 +89,15 @@ export class PatientModel extends FastenDisplayModel {
       ext.url === "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
     );
     return extension?.valueCode;
+  }
+
+  // US Core 9.0.0 "Sex" element via the us-core-individual-sex extension (value[x] is a Coding).
+  // This supersedes the deprecated us-core-birthsex / us-core-sex extensions (#142).
+  getIndividualSex(fhirResource: any) {
+    const extension = fhirResource.extension?.find((ext: any) =>
+      ext.url === "http://hl7.org/fhir/us/core/StructureDefinition/us-core-individual-sex"
+    );
+    return extension?.valueCoding?.display || extension?.valueCoding?.code;
   }
 
   getRace(fhirResource: any) {
