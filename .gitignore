@@ -127,3 +127,9 @@ secrets.*
 # (e.g. `go build ./backend/cmd/relay` writes ./relay). Never commit build artifacts.
 /relay
 /fasten
+
+# Playwright E2E artifacts (frontend/e2e)
+/frontend/test-results/
+/frontend/playwright-report/
+/frontend/blob-report/
+/frontend/playwright/.cache/

@@ -1,0 +1,21 @@
+# Committed E2E test config (no secrets — uses the public default jwt.issuer.key).
+# Used by `make test-e2e` / Playwright's webServer. Port 9191 so it never collides
+# with the dev backend on 9090. Fresh ./db/fasten-e2e.db each run (webServer resets it).
+# HTTPS off so the session cookie is sent over http://localhost.
+version: 1
+web:
+  listen:
+    port: 9191
+    host: 0.0.0.0
+    https:
+      enabled: false
+  src:
+    frontend:
+      path: ./dist
+database:
+  type: sqlite
+  location: ./db/fasten-e2e.db
+  encryption:
+    enabled: false
+log:
+  level: WARN

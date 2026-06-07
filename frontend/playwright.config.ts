@@ -1,0 +1,38 @@
+import { defineConfig, devices } from '@playwright/test';
+import { BASE_URL } from './e2e/constants';
+
+// E2E config: drives a real browser against the PRODUCTION-SERVED path — the Go backend
+// serving the built dist under /web (config.e2e.yaml), not `ng serve` (which wouldn't
+// apply the backend CSP). `make test-e2e` builds the frontend first.
+export default defineConfig({
+  testDir: './e2e',
+  globalSetup: './e2e/global-setup.ts',
+  fullyParallel: false,        // single backend + shared seeded account
+  workers: 1,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
+  timeout: 60_000,
+  use: {
+    baseURL: BASE_URL,
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Phase 3: add Firefox for the multi-browser CSP matrix
+    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+  ],
+  // Boot the Go backend with a fresh test DB, serving the built dist. cwd is the repo
+  // root (one level up from frontend/). `go run` recompiles, hence the generous timeout.
+  webServer: {
+    command:
+      'rm -f db/fasten-e2e.db db/fasten-e2e.db-shm db/fasten-e2e.db-wal && go run backend/cmd/fasten/fasten.go start --config config.e2e.yaml',
+    cwd: '..',
+    url: BASE_URL,
+    timeout: 180_000,
+    reuseExistingServer: !process.env.CI,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  },
+});

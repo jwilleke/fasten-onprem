@@ -100,6 +100,13 @@ build-frontend-offline-sandbox: dep-frontend
 test-frontend: dep-frontend
 	cd frontend && npx ng test --watch=false
 
+# End-to-end browser tests (Playwright) against the production-served path: builds the
+# frontend, then Playwright boots the Go backend (config.e2e.yaml, fresh ./db/fasten-e2e.db,
+# :9191) serving ./dist and drives a real browser. See frontend/e2e/.
+.PHONY: test-e2e
+test-e2e: dep-frontend
+	cd frontend && npx yarn run build -- --configuration sandbox && npx yarn run e2e
+
 .PHONY: test-frontend-coverage
 # reduce logging, disable angular-cli analytics for ci environment
 test-frontend-coverage: dep-frontend
