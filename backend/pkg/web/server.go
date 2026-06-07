@@ -69,8 +69,11 @@ func (ae *AppEngine) Reinitialize() error {
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
-	// Security response headers on every response (#105 / H4). First, so it covers the SPA + API.
-	r.Use(middleware.SecurityHeadersMiddleware(ae.Config.GetBool("web.listen.https.enabled")))
+	// Security response headers on every response (#105 / H4) + staged CSP (#124). First, so it
+	// covers the SPA + API. The report-only strict script-src is computed once here from the
+	// served index.html, so the inline-script hashes can never drift from the served bytes.
+	reportOnlyScriptSrc := middleware.ComputeReportOnlyScriptSrc(ae.readFrontendIndexHTML())
+	r.Use(middleware.SecurityHeadersMiddleware(ae.Config.GetBool("web.listen.https.enabled"), reportOnlyScriptSrc))
 
 	if !ae.StandbyMode {
 		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
@@ -260,6 +263,20 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	}
 
 	return base, r
+}
+
+// readFrontendIndexHTML reads the index.html the backend serves from disk
+// (web.src.frontend.path), used at startup to compute the report-only CSP script-src hashes
+// (#124). Returns nil on any error — ComputeReportOnlyScriptSrc then falls back to
+// "script-src 'self'" (no hashes), which is harmless for an observe-only policy.
+func (ae *AppEngine) readFrontendIndexHTML() []byte {
+	indexPath := filepath.Join(ae.Config.GetString("web.src.frontend.path"), "index.html")
+	data, err := os.ReadFile(indexPath)
+	if err != nil {
+		ae.Logger.Warnf("CSP: could not read %s for report-only script-src hashes (%v); falling back to script-src 'self'", indexPath, err)
+		return nil
+	}
+	return data
 }
 
 func (ae *AppEngine) SetupFrontendRouting(base *gin.RouterGroup, router *gin.Engine) *gin.Engine {
