@@ -52,3 +52,7 @@ Backend coverage is broad — ~56 generated FHIR R4 resource models with search-
 ## Roadmap
 
 Tracked in epic [#136](https://github.com/jwilleke/yourphr/issues/136): pick the target version (done — 9.0.0), audit + complete Must-Support display per profile (prioritizing the Cures-Act USCDI core: problems, medications, allergies, labs+vitals, clinical notes), add the missing resources, then verify with Inferno. Complement: [#54](https://github.com/jwilleke/yourphr/issues/54) handles *non*-US-Core (non-conformant) data display.
+
+## Per-profile dashboards
+
+Goal: YourPHR should ship a pre-built dashboard widget for each US Core profile (the profiles enumerated as sections 1.5.1–1.5.17 in the [US Core 9.0.0 ToC](https://hl7.org/fhir/us/core/STU9/)), so a patient lands on a familiar, purpose-built view per data category (problems, medications, allergies, labs, vitals, clinical notes, …) instead of a generic resource table. Each widget renders that profile's Must-Support elements and degrades gracefully for non-conformant data (see [#54](https://github.com/jwilleke/yourphr/issues/54)). This is the display end-state of the [#136](https://github.com/jwilleke/yourphr/issues/136) audit: as each profile's Must-Support display is completed, its dashboard widget is what surfaces it.
