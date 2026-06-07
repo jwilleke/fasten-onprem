@@ -22,14 +22,14 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             # Frontend dependencies
-            nodejs-18_x
-            (yarn.override { nodejs = nodejs-18_x; })
+            nodejs_24
+            (yarn.override { nodejs = nodejs_24; })
             (pkgs.writeShellScriptBin "ng" ''
-              ${nodejs-18_x}/bin/npx @angular/cli@14.1.3 "$@"
+              ${nodejs_24}/bin/npx @angular/cli@20.3.27 "$@"
             '')
 
             # Backend dependencies
-            go_1_22
+            go
             
             # Docker
             docker
@@ -40,8 +40,8 @@
 
             # Go specific tools
             (pkgs.writeShellScriptBin "tygo" ''
-              ${go_1_22}/bin/go install github.com/gzuidhof/tygo@latest
-              ${go_1_22}/bin/go run github.com/gzuidhof/tygo "$@"
+              ${go}/bin/go install github.com/gzuidhof/tygo@latest
+              ${go}/bin/go run github.com/gzuidhof/tygo "$@"
             '')
           ];
 
