@@ -35,6 +35,16 @@ export default async function globalSetup(_config: FullConfig) {
         timeout: 120_000,
       });
       console.log(`[e2e] seed bundle import -> HTTP ${res.status()}`);
+
+      // Readiness gate: the import processes resources (related-resources / search params)
+      // asynchronously after returning 200, so a too-early IPS summary query can 500. Wait
+      // until the (cheap JSON) IPS summary succeeds before tests run, so data-dependent specs
+      // see a settled state. (Backend should also not 500 on in-progress data — see the issue.)
+      for (let i = 0; i < 20; i++) {
+        const r = await ctx.get(`${API_BASE}/secure/summary/ips`, { headers: { Authorization: `Bearer ${token}` } });
+        if (r.ok()) { console.log(`[e2e] IPS data ready after ~${i * 3}s`); break; }
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
     } else {
       console.log('[e2e] no token — skipped data seed; data-dependent specs will see an empty account');
     }

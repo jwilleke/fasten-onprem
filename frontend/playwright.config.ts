@@ -23,8 +23,12 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [
+    // chromium runs the whole suite. firefox runs only the browser-behavior specs (CSP guard,
+    // login, custom-element registration) — the multi-browser matrix's actual purpose. The
+    // data/API specs (data.spec) are browser-independent (API responses, PDF bytes), so running
+    // them on firefox adds no coverage and just doubles flake exposure.
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testIgnore: '**/data.spec.ts' },
   ],
   // Boot the Go backend with a fresh test DB, serving the built dist. cwd is the repo
   // root (one level up from frontend/). `go run` recompiles, hence the generous timeout.
