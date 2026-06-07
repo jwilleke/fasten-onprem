@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -54,6 +55,30 @@ func (suite *RepositorySummaryTestSuite) AfterTest(suiteName, testName string) {
 // a normal test function and pass our suite to suite.Run
 func TestRepositorySummaryTestSuiteSuite(t *testing.T) {
 	suite.Run(t, new(RepositorySummaryTestSuite))
+}
+
+// Regression for #148: with no Patient resource (nothing imported), the IPS export must return
+// the typed ErrIPSNoPatientData sentinel — the handler maps it to a 404 (not a 500). A read
+// endpoint must not 500 on a "no data" condition.
+func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryExport_NoPatient() {
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{Username: "test_username", Password: "testpassword", Email: "test@test.com"}
+	require.NoError(suite.T(), dbRepo.CreateUser(context.Background(), userModel))
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	// No bundle imported → no Patient resource.
+	_, err = dbRepo.GetInternationalPatientSummaryExport(authContext)
+	require.Error(suite.T(), err)
+	require.True(suite.T(), errors.Is(err, ErrIPSNoPatientData), "expected ErrIPSNoPatientData, got: %v", err)
 }
 
 func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundle() {
