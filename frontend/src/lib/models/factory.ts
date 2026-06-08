@@ -21,6 +21,7 @@ import {PractitionerModel} from './resources/practitioner-model';
 import {PractitionerRoleModel} from './resources/practitioner-role-model';
 import {ProcedureModel} from './resources/procedure-model';
 import {ProvenanceModel} from './resources/provenance-model';
+import {QuestionnaireResponseModel} from './resources/questionnaire-response-model';
 import {RelatedPersonModel} from './resources/related-person-model';
 import {ResearchStudyModel} from './resources/research-study-model';
 import {FastenOptions} from './fasten/fasten-options';
@@ -170,9 +171,9 @@ export function fhirModelFactory(
     // case ResourceType.Questionnaire:
     //   resourceModel = new QuestionnaireModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    // case ResourceType.QuestionnaireResponse:
-    //   resourceModel = new QuestionnaireResponseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
-    // break
+    case ResourceType.QuestionnaireResponse:
+      resourceModel = new QuestionnaireResponseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
     // case ResourceType.ReferralRequest:
     //   resourceModel = new ReferralRequestModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
