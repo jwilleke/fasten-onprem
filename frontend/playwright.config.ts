@@ -25,10 +25,16 @@ export default defineConfig({
   projects: [
     // chromium runs the whole suite. firefox runs only the browser-behavior specs (CSP guard,
     // login, custom-element registration) — the multi-browser matrix's actual purpose. The
-    // data/API specs (data.spec) are browser-independent (API responses, PDF bytes), so running
-    // them on firefox adds no coverage and just doubles flake exposure.
+    // data/seeded-content specs (data.spec, lforms-modal) are either browser-independent (API
+    // responses, PDF bytes) or depend on the seeded Synthea data, so running them on firefox adds no
+    // coverage and just doubles flake exposure. smart-connect IS a browser-behavior spec (window.open
+    // popup), so it stays in the firefox matrix.
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testIgnore: '**/data.spec.ts' },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+      testIgnore: ['**/data.spec.ts', '**/lforms-modal.spec.ts'],
+    },
   ],
   // Boot the Go backend with a fresh test DB, serving the built dist. cwd is the repo
   // root (one level up from frontend/). `go run` recompiles, hence the generous timeout.
