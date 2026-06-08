@@ -161,7 +161,7 @@ export class MedicalSourcesComponent implements OnInit {
 
         const authorizationUrl = await this.connectGatewayApi.generateSourceAuthorizeUrl(sourceMetadata)
 
-        // redirect to lighthouse with uri's (or open a new window in desktop mode)
+        // redirect to the connect gateway with uri's (or open a new window in desktop mode)
         this.connectGatewayApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
           if(!desktopRedirectData){
             return //wait for redirect

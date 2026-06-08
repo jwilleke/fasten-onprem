@@ -17,7 +17,7 @@ export const environment = {
   // the environment name, `sandbox`, `prod`, `beta`
   environment_name: "sandbox",
 
-  //specify the lighthouse server that we're going to use to authenticate against all our source/providers. Must not have trailing slash
+  //specify the connect gateway server that we're going to use to authenticate against all our source/providers. Must not have trailing slash
   connect_gateway_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',
 
   //used to specify the api server that we're going to use (can be relative or absolute). Must not have trailing slash

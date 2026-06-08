@@ -97,7 +97,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   }
 
   /**
-   * if the user is redirected to this page from the lighthouse, we'll need to process the "code" to retrieve the access token & refresh token.
+   * if the user is redirected to this page from the connect gateway, we'll need to process the "code" to retrieve the access token & refresh token.
    * @param expectedSourceStateInfo
    */
   public async callback(expectedSourceStateInfo: SourceState) {
@@ -460,7 +460,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         const authorizationUrl = await this.connectGatewayApi.generateSourceAuthorizeUrl(sourceMetadata, selectedSourceListItem.source.id)
 
         console.log('authorize url:', authorizationUrl.toString());
-        // redirect to lighthouse with uri's (or open a new window in desktop mode)
+        // redirect to the connect gateway with uri's (or open a new window in desktop mode)
         this.connectGatewayApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
           if(!desktopRedirectData){
             return //wait for redirect

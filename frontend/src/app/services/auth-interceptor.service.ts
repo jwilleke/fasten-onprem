@@ -32,7 +32,7 @@ export class AuthInterceptorService implements HttpInterceptor {
 
     console.log("Intercepting Request", req)
 
-    //only intercept requests to the fasten API & lighthouse, all other requests should be sent as-is
+    //only intercept requests to the fasten API & connect gateway, all other requests should be sent as-is
     const reqUrl = req.url.startsWith('http') ? new URL(req.url) : new URL(req.url, window.location.origin)
     const connectGatewayUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.connect_gateway_api_endpoint_base))
     const apiUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base))
@@ -71,7 +71,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     // if(
     //   (reqUrl.origin == connectGatewayUrl.origin && reqUrl.pathname.startsWith(connectGatewayUrl.pathname))
     // ){
-    //   //all requests to the lighthouse require the JWT
+    //   //all requests to the connect gateway require the JWT
     //   console.log("making authorized request...")
     //   // Clone the request to add the new auth header.
     //   const authReq = req.clone({headers: req.headers.set('Authorization', 'Bearer ' + this.authService.GetAuthToken())});

@@ -172,10 +172,10 @@ export class ConnectGatewayService {
   }
 
   /**
-   * once the user is redirected back to the lighthouse server, we need to get them back to the Fasten server
+   * once the user is redirected back to the connect gateway server, we need to get them back to the Fasten server
    * which may not be publically accessible (localhost:8080, 127.0.0.1:8080, 10.0.1.1:8080, etc)
-   * to handle this, we "register" an origin_url, which will be used by the lighthouse when the callback url is visited
-   * we'll also set a dest_url parameter, which the lighthouse /redirect url will forward the user to once the registration is complete.
+   * to handle this, we "register" an origin_url, which will be used by the connect gateway when the callback url is visited
+   * we'll also set a dest_url parameter, which the connect gateway /redirect url will forward the user to once the registration is complete.
    *
    * note: some sources (such as anthem & epic) share a callback url on the provider side (multiple "providers" redirect back to the
    * same callback url -- lighthouse.fastenhealth.com/sandbox/epic).
@@ -253,7 +253,7 @@ export class ConnectGatewayService {
     let tokenEndpointUrl = sourceMetadata.token_endpoint
 
     if(sourceMetadata.confidential) {
-      console.log("This is a confidential client, using lighthouse token endpoint.")
+      console.log("This is a confidential client, using connect gateway token endpoint.")
       //if this is a confidential client, we need to "override" token endpoint, and use the Fasten ConnectGateway to complete the swap
       tokenEndpointUrl = this.pathJoin([environment.connect_gateway_api_endpoint_base, `token/${expectedSourceStateInfo.endpoint_id}`])
 
