@@ -14,9 +14,9 @@ How YourPHR relates to the [FHIR **US Core** Implementation Guide](https://hl7.o
 
 ## Role and target
 
-- **Actor:** YourPHR is a US Core **Requestor / Client** — it imports FHIR bundles and fetches data via the SMART relay, then displays it. It is **not** a Responder/Server (it doesn't serve a FHIR API). So only the *Requestor* actor applies.
+- **Actor:** YourPHR is a US Core **Requestor / Client** — it imports FHIR bundles and fetches data via the SMART relay, then displays it. It is **not** a Responder/Server (it doesn't serve a FHIR API). So only the _Requestor_ actor applies.
 - **Target version:** **US Core 9.0.0 (STU 9)** (published 2026-05-31), FHIR R4 — the latest published release.
-- **Client conformance bar:** be able to **process and display the Must-Support data elements** of US Core profiles. (We don't need to *produce* conformant resources.)
+- **Client conformance bar:** be able to **process and display the Must-Support data elements** of US Core profiles. (We don't need to _produce_ conformant resources.)
 
 ## Support matrix (current)
 
@@ -55,7 +55,7 @@ Backend coverage is broad — ~56 generated FHIR R4 resource models with search-
 
 ## Roadmap
 
-Tracked in epic [#136](https://github.com/jwilleke/yourphr/issues/136): pick the target version (done — 9.0.0), audit + complete Must-Support display per profile (prioritizing the Cures-Act USCDI core: problems, medications, allergies, labs+vitals, clinical notes), add the missing resources, then verify with Inferno. Complement: [#54](https://github.com/jwilleke/yourphr/issues/54) handles *non*-US-Core (non-conformant) data display.
+Tracked in epic [#136](https://github.com/jwilleke/yourphr/issues/136): pick the target version (done — 9.0.0), audit + complete Must-Support display per profile (prioritizing the Cures-Act USCDI core: problems, medications, allergies, labs+vitals, clinical notes), add the missing resources, then verify with Inferno. Complement: [#54](https://github.com/jwilleke/yourphr/issues/54) handles _non_-US-Core (non-conformant) data display.
 
 ## Per-profile dashboards
 
