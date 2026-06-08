@@ -29,7 +29,7 @@ How YourPHR relates to the [FHIR **US Core** Implementation Guide](https://hl7.o
 | Smoking status | Smoking Status Observation | Observation | ✅ | ⚠️ generic — not differentiated |
 | Immunizations | Immunization | Immunization | ✅ | generic |
 | Procedures | Procedure | Procedure | ✅ | generic |
-| Clinical notes | DocumentReference, DiagnosticReport (Note) | DocumentReference, DiagnosticReport | ✅ | generic |
+| Clinical notes | DocumentReference, DiagnosticReport (Note) | DocumentReference, DiagnosticReport | ✅ | ✅ DocumentReference audited vs 9.0.0 (#147): MS status / type / category / subject / date / author / content.attachment (contentType, data/url — rendered & downloadable) / content.format / context |
 | Encounters | Encounter | Encounter | ✅ | generic |
 | Care plan / team / goals | CarePlan, CareTeam, Goal | CarePlan, CareTeam, Goal | ✅ | generic |
 | Implantable device | Device | Device | ✅ | generic |

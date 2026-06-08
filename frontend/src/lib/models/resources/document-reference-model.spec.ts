@@ -51,6 +51,10 @@ describe('DocumentReferenceModel', () => {
       // expected.context: any | undefined
       expected.code = { coding: [{ system: 'http://loinc.org', code: '34108-1', display: 'Outpatient Note' }] }
       expected.title = 'History and Physical'
+      // US Core Must-Support (#147)
+      expected.subject = { reference: 'Patient/xcda' }
+      expected.authors = [{ reference: 'Practitioner/xcda1' }, { reference: '#a2' }]
+      expected.content_formats = [{ system: 'urn:oid:1.3.6.1.4.1.19376.1.2.3', code: 'urn:ihe:pcc:handp:2008', display: 'History and Physical Specification' }]
 
       expect(new DocumentReferenceModel(example1Fixture)).toEqual(expected);
     });
