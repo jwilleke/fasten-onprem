@@ -20,6 +20,7 @@ import {PatientModel} from './resources/patient-model';
 import {PractitionerModel} from './resources/practitioner-model';
 import {PractitionerRoleModel} from './resources/practitioner-role-model';
 import {ProcedureModel} from './resources/procedure-model';
+import {ProvenanceModel} from './resources/provenance-model';
 import {RelatedPersonModel} from './resources/related-person-model';
 import {ResearchStudyModel} from './resources/research-study-model';
 import {FastenOptions} from './fasten/fasten-options';
@@ -162,6 +163,9 @@ export function fhirModelFactory(
       break
     case ResourceType.Procedure:
       resourceModel = new ProcedureModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case ResourceType.Provenance:
+      resourceModel = new ProvenanceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
     // case ResourceType.Questionnaire:
     //   resourceModel = new QuestionnaireModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)

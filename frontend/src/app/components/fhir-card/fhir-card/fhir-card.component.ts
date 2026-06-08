@@ -23,6 +23,7 @@ import {MedicationComponent} from '../resources/medication/medication.component'
 import {MedicationRequestComponent} from '../resources/medication-request/medication-request.component';
 import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
 import {ProcedureComponent} from '../resources/procedure/procedure.component';
+import {ProvenanceComponent} from '../resources/provenance/provenance.component';
 import {DiagnosticReportComponent} from '../resources/diagnostic-report/diagnostic-report.component';
 import {PractitionerComponent} from '../resources/practitioner/practitioner.component';
 import {DocumentReferenceComponent} from '../resources/document-reference/document-reference.component';
@@ -174,6 +175,9 @@ export class FhirCardComponent implements OnInit, OnChanges {
       }
       case "Procedure": {
         return ProcedureComponent;
+      }
+      case "Provenance": {
+        return ProvenanceComponent;
       }
       case "Practitioner": {
         return PractitionerComponent;
