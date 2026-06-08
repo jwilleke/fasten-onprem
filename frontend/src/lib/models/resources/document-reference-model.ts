@@ -21,6 +21,10 @@ export class DocumentReferenceModel extends FastenDisplayModel {
   created_at: string | undefined
   security_label_coding: CodingModel | undefined
   content: AttachmentModel[] | undefined
+  // US Core 9.0.0 Must-Support (#147):
+  subject: ReferenceModel | undefined   // Reference(Patient) — mandatory
+  authors: ReferenceModel[] = []        // author (who/what authored the document)
+  content_formats: CodingModel[] = []   // content.format — format of the attachment, per content item
   context: {
     eventCoding: CodingModel
     facilityTypeCoding: CodingModel
@@ -41,6 +45,8 @@ export class DocumentReferenceModel extends FastenDisplayModel {
     this.title = _.get(fhirResource, 'category.0.text') || _.get(fhirResource, 'category.0.coding.0.display') || _.get(fhirResource, 'type.text') || _.get(fhirResource, 'type.coding.0.display');
     this.description = _.get(fhirResource, 'description');
     this.status = _.get(fhirResource, 'status');
+    this.subject = _.get(fhirResource, 'subject');
+    this.authors = _.get(fhirResource, 'author', []);
     this.type_coding = _.get(fhirResource, 'type.coding[0]');
     this.class_coding = _.get(fhirResource, 'class.coding[0]');
     this.created_at = _.get(fhirResource, 'created');
@@ -87,6 +93,10 @@ export class DocumentReferenceModel extends FastenDisplayModel {
       const attachmentModel = new AttachmentModel(attachment);
       return attachmentModel;
     })
+    // content.format (Coding) — the format/profile of each attachment (US Core MS, #147)
+    this.content_formats = _.get(fhirResource, 'content', [])
+      .map((content: any) => _.get(content, 'format'))
+      .filter(Boolean);
   };
 
   resourceDTO(fhirResource:any, fhirVersion: fhirVersions){

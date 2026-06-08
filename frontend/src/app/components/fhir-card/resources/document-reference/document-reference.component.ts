@@ -40,17 +40,34 @@ export class DocumentReferenceComponent implements OnInit, FhirCardComponentInte
         data_type: TableRowItemDataType.CodableConcept,
         enabled: !!this.displayModel?.category,
       },
-      // {
-      //   label: 'Author',
-      //   data: this.displayModel?.performer,
-      //   data_type: TableRowItemDataType.Reference,
-      //   enabled: this.displayModel?.has_performer,
-      // },
-      // {
-      //   label: 'Conclusion',
-      //   data: this.displayModel?.conclusion,
-      //   enabled: !!this.displayModel?.conclusion,
-      // },
+      {
+        label: 'Status',
+        data: this.displayModel?.status,
+        enabled: !!this.displayModel?.status,
+      },
+      {
+        label: 'Type',
+        data: this.displayModel?.type_coding,
+        data_type: TableRowItemDataType.Coding,
+        enabled: !!this.displayModel?.type_coding,
+      },
+      {
+        label: 'Patient',
+        data: this.displayModel?.subject,
+        data_type: TableRowItemDataType.Reference,
+        enabled: !!this.displayModel?.subject,
+      },
+      {
+        // author is a list of References; render the display/reference joined (no ReferenceList row type)
+        label: 'Author',
+        data: (this.displayModel?.authors || []).map(a => a?.display || a?.reference).filter(Boolean).join(', '),
+        enabled: !!this.displayModel?.authors?.length,
+      },
+      {
+        label: 'Date',
+        data: this.displayModel?.created_at,
+        enabled: !!this.displayModel?.created_at,
+      },
     ];
   }
   markForCheck(){
