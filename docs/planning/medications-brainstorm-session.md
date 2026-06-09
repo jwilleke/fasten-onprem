@@ -58,8 +58,13 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
   Frame meds as **"from your records,"** shown **"as of your last import."**
 - **No guessing.** Do the best we can with the explicit signals the record actually states; never
   fabricate or infer. In particular: **no days-supply extrapolation** to decide a med was stopped,
-  and **no inferring "Purpose" from drug class**. When a signal is absent, we say "unknown" — we do
-  not invent a value.
+  and **no inferring "Purpose" from drug class**. When a signal is absent, we say so — we do not
+  invent a value.
+- **Absent data shows a common "Data Not Provided" marker** (app-wide convention, not meds-only).
+  When an expected field is missing from the imported record, render a muted **"Data Not Provided"**
+  with an explanation (tooltip + glossary link) that the data was not in the source — distinct from
+  a value of zero/none and from an app error. One shared component / one glossary term, reused
+  everywhere (see "Missing-data convention" below).
 - **"Current Medications" is a derived, reconciled view** (de-duplicated by drug) — not a raw
   per-resource dump.
 - **Include MedicationStatement in the reconciled list.** OTC drugs and supplements (and other
@@ -153,14 +158,35 @@ to FHIR sources (and an honest note on what FHIR usually omits):
 | **Medication** | `medication[CodeableConcept\|Reference]` → RxNorm display, else original text | Always present |
 | **Dose** | `dosageInstruction.doseAndRate` / `dosage.text` | Usually present |
 | **Frequency** | `dosageInstruction.timing` (+ `asNeeded` → PRN) / text | Often free-text; PRN detectable |
-| **Purpose** | `reasonCode` / `reasonReference` → Condition | **Sparse** — show only if stated; never inferred from drug class |
+| **Purpose** | `reasonCode` / `reasonReference` → Condition | **Sparse** — show if stated, else "Data Not Provided"; never inferred from drug class |
 | **Comments** | `requester` / `informationSource` (prescriber), `note[]`, status annotations | Partial |
 | **Status** | the classification above (Active / Suspended / Past / Unknown) | Always shown |
 
 - **Purpose is the weak column.** Jim's hand-curated table has rich purposes ("ACE inhibitor for
   blood pressure"); FHIR `reasonCode` is frequently empty, and inferring purpose from drug class is
-  both guessing and clinical advice — so it stays blank unless the record states it. (A future
-  _authoritative_ option is RxClass `may_treat`, but that is the parked RxClass build.)
+  both guessing and clinical advice — so it shows the **"Data Not Provided"** marker unless the
+  record states it. (A future _authoritative_ option is RxClass `may_treat`, but that is the parked
+  RxClass build.)
+
+#### Missing-data convention ("Data Not Provided") — app-wide
+
+This is **not medications-specific** — it is the visible expression of "no guessing" and should be a
+shared building block used by every resource view.
+
+- **One shared component** (e.g. `<app-missing-data>` / a small pipe) renders a muted **"Data Not
+  Provided"** in place of an absent expected field. The wording, styling, tooltip, and glossary link
+  live in that one place — mirrors how `resolveStatus` is shared.
+- **Explanation** (tooltip + a glossary term): _"This information was not included in the record
+  imported from your provider. YourPHR shows only what the source supplied — it never fills in or
+  guesses missing values."_ The glossary already exists (`/api/glossary`), so the long-form text is
+  a natural glossary entry.
+- **Use it for prominent/expected fields only** (Purpose, Dose, Frequency, prescriber…). Do **not**
+  render it for every minor optional field — a sparse non-US-Core record would otherwise become a
+  wall of placeholders. Silently omit truly-minor fields.
+- **Distinct from** a real zero/none value and from an app/render error — the marker means
+  specifically "absent in the source record."
+- Because it is app-wide, build the shared component under its **own issue**, and have the
+  Medications view be its first consumer.
 - **Consume the reconciled list** from the endpoint and render it — the frontend does not re-derive.
 - **Show everything with a Status badge; never hide by guessing.** Default can emphasise Active, with
   an "Active only / All" toggle — completed/suspended/unknown meds stay visible (e.g. a recent
