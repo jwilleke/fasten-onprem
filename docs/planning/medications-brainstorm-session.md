@@ -70,6 +70,13 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
 - **Include MedicationStatement in the reconciled list.** OTC drugs and supplements (and other
   self-reported meds) almost always arrive as MedicationStatement, not MedicationRequest — omitting
   it would drop a large share of a real patient's actual current meds.
+- **De-dup at the clinical-drug (dose-specific) level, not ingredient.** "Same drug" for collapsing
+  a row means same ingredient **+ strength + form** (RxNorm Clinical Drug, e.g. `Lisinopril 40 MG
+  Oral Tablet`) — so Lisinopril 40 mg and Lisinopril 10 mg are **two rows**, not one. This keeps the
+  Dose column unambiguous (no guessing which strength to show), makes a dose change visible (old
+  strength → Past, new → Active), and matches the non-US-Core fallback path, where the display
+  string already encodes the strength. It does **not** weaken the main de-dup: one strength's
+  prescription + its dispenses + a matching statement still collapse into a single row.
 - **Two-ends separation** (input gathers facts / output displays meaning), as above.
 - **Reconciliation lives in a backend compute-on-request endpoint.** One source of truth for the
   reconciliation + active/past logic (not duplicated in TypeScript), reusable by IPS / `/summary` /
@@ -129,8 +136,10 @@ The reconciliation sits between the two ends as an explicit derived layer — `G
 /api/secure/medications/reconciled` (or folded into the existing summary). Stateless, computed per
 request from the stored resources; never materialized. See Confirmed decisions for the rationale.
 
-- **Reconcile / de-duplicate by RxNorm** (fallback: normalized display text) into one entry per drug
-  — collapsing a prescription + statement + multiple dispenses of the same drug into a single entry.
+- **Reconcile / de-duplicate by RxNorm at the clinical-drug (dose-specific) level** (fallback:
+  normalized display text) into one entry per drug+strength+form — collapsing a prescription +
+  statement + multiple dispenses of that same clinical drug into a single entry. Different strengths
+  of the same ingredient remain separate rows (see Confirmed decisions).
 - **Classify state from explicit signals only** (no guessing — see below), with the **evidence**
   attached (status, explicit end dates, last activity) so the frontend can show _why_.
 - Resolve `medicationReference` → Medication; key/group on RxNorm; **pass through original `coding` +
@@ -234,9 +243,6 @@ Open questions for the links:
 
 ## Open questions (to decide)
 
-- **Grouping granularity** — RxNorm ingredient vs clinical-drug (dose-specific). Lisinopril 40 mg
-  and Lisinopril 10 mg: one row or two? (Leaning: clinical-drug / dose-specific, so a dose change is
-  visible — but two strengths of the same drug then list separately.)
 - **Confirm** the user-clicked external-link approach is acceptable.
 
 ## Related codebase state (2026-06-09)
