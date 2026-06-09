@@ -1,0 +1,113 @@
+# Medications — display & reconciliation (brainstorm + decisions)
+
+> **Status:** brainstorm / planning (2026-06-09). Not yet an implementation plan — captures the
+> shape, the confirmed decisions, and the open questions. Drug names below are generic examples,
+> not patient data.
+
+## Goal
+
+Clinicians (and patients) constantly ask for **"Current Medications."** That is **not** a single
+FHIR resource — it is a **derived, reconciled, patient-facing view** assembled across several
+resource types. Producing a clean, trustworthy current-meds list (that a patient can show a doctor)
+is the valuable outcome.
+
+## Architecture: the two ends
+
+The organizing principle: keep the two concerns separate.
+
+### Input-end (backend) — "just the facts"
+
+Gather and organize the source data, source-faithfully. Ingest the medication resources, normalize
+and index them, derive sort/title fields, and make them as conformant/complete as the source allows
+— **with fallbacks, never dropping data** (per the non-US-Core stance). **No clinical interpretation
+here** — the backend produces organized facts, attributed to their source.
+
+### Output-end (frontend) — "meaning for end-users"
+
+Present the facts meaningfully: reconcile across resources into a de-duplicated current-meds list,
+infer active vs past (transparently), render dose/status/source, expand-for-details, and link to
+authoritative drug references. Interpretation and UX live here.
+
+> Boundary note: the "is this current?" reconciliation is the one piece that could live on either
+> end (a backend computed endpoint vs frontend compute) — see Open Questions. The rule stays: the
+> backend stays facts-only; any inference is clearly **derived** and **transparent** to the user.
+
+## Confirmed decisions
+
+- **Display the patient's data regardless of conformance.** A viewer displays, it does not validate;
+  detect-don't-require; fallbacks are the mission-critical path. (Standing stance, reaffirmed.)
+- **No UI conformance-flagging; no clinical advice / interaction-checking** we cannot stand behind.
+  Frame meds as **"from your records,"** shown **"as of your last import."**
+- **"Current Medications" is a derived, reconciled view** (de-duplicated by drug) — not a raw
+  per-resource dump.
+- **Two-ends separation** (input gathers facts / output displays meaning), as above.
+- A per-medication **"Show all Medication details"** expander reveals the contributing
+  MedicationRequest / MedicationDispense / Medication (/ MedicationStatement) with dates + provenance.
+- **External drug-reference links** to DailyMed (`dailymed.nlm.nih.gov`) and MedlinePlus
+  (`medlineplus.gov`) for label / side-effects / contraindications / consumer info.
+- Those links are **user-clicked (explicit), not auto-fetched** — an outbound request carries the
+  drug name to NLM, so it should be the patient's deliberate action (consistent with the privacy
+  stance). NLM is a trusted public source; a drug name alone is not identifying.
+- **RxNorm is the join/lookup key** (already resolved by the glossary); fall back to normalized
+  display text when a source uses a local/proprietary code system.
+
+## Design sketch (mapped to the two ends)
+
+### Input-end (facts)
+
+- Parse all medication resource types, including **MedicationStatement** (not a US Core profile, but
+  FollowMyHealth emits it for self-reported meds).
+- Per resource, capture: code (RxNorm where present; preserve local code + display otherwise),
+  status, the relevant date(s) (authoredOn / effective[x] / whenHandedOver / dateAsserted), dosage,
+  dispense quantity + days-supply, and prescriber / pharmacy / informationSource where present.
+- Derive `sort_title` / `sort_date` for each (MedicationDispense and MedicationStatement currently
+  lack a `resourceSortConfig` entry — they render blank/undated).
+- Filter junk template fields (e.g. empty placeholder notes like `"ProviderName -"`).
+- Output: clean, source-attributed, organized resources — **no reconciliation/interpretation**.
+
+### Output-end (meaning)
+
+- **Reconcile / de-duplicate by RxNorm** (fallback: normalized display text) into one row per drug —
+  collapsing a prescription + statement + multiple dispenses of the same drug into a single entry.
+- **Active / Past split** via best-effort "current" heuristics, shown transparently ("as of import").
+- Row content: drug name, dose / route / frequency (from the best source's dosageInstruction),
+  status, last-activity date, source badge.
+- **Expand** to the contributing resources with provenance (which portal, when).
+- **Drug-info links** (DailyMed + MedlinePlus, keyed by RxCUI; name-search fallback for non-coded).
+- Likely a **"Medications" dashboard widget** (fits the per-profile dashboards roadmap, #136).
+
+## Open questions (to decide)
+
+- **Where does reconciliation live?** Backend computed endpoint (precedent: `/summary`, IPS) vs
+  frontend compute. The two-ends principle leans frontend (reconciliation is "meaning"), but a
+  backend endpoint could serve a ready-made list. Decide.
+- **"Current" heuristic specifics** — which signals and thresholds; days-supply math; how to handle
+  non-US-Core data with unreliable statuses / no end dates.
+- **Include MedicationStatement in the reconciled list?** (Recommend yes — it is the patient's
+  self-reported current meds.)
+- **Grouping granularity** — RxNorm ingredient vs clinical-drug (dose-specific).
+- **Confirm** the user-clicked external-link approach is acceptable.
+- **Jim's prior art:** the internal "MEW Current Medications" view — fields / grouping / links it
+  settled on (to align this design).
+
+## Related codebase state (2026-06-09)
+
+- **MedicationRequest** — display model + card + `resourceSortConfig` + US Core Must-Support audited
+  (#144). Complete.
+- **Medication** — display model + card wired; no `resourceSortConfig`; not MS-audited. (Usually a
+  referenced/contained resource, so "no sort" matters less.)
+- **MedicationDispense** — display model exists, but its fhir-card `typeLookup` case is **commented
+  out** (renders via the generic fallback); no `resourceSortConfig`. Effectively unhandled in the UI.
+- **MedicationStatement** — **no frontend display model** (factory case commented out); backend
+  stores/indexes it. Not a US Core profile.
+- **RxNorm glossary** exists (code -> display) — the basis for grouping + the external links.
+- Backend already has computed-summary precedent: `/summary` and the IPS summary endpoint.
+
+## Suggested phasing
+
+1. **Input-end:** parse + sort all medication types — wire the MedicationDispense card, add a
+   MedicationStatement model, add `resourceSortConfig` entries, filter placeholder notes.
+2. **Output-end:** the reconciled **Current Medications** view (active/past, de-dup, expand-for-details).
+3. **Drug-info links** (DailyMed + MedlinePlus by RxCUI, with name-search fallback).
+4. Track as an **epic / design issue** before code (the reconciliation logic + "current" heuristics
+   deserve their own discussion).
