@@ -92,6 +92,9 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
   MedicationRequest / MedicationDispense / Medication (/ MedicationStatement) with dates + provenance.
 - **External drug-reference links** to DailyMed (`dailymed.nlm.nih.gov`) and MedlinePlus
   (`medlineplus.gov`) for label / side-effects / contraindications / consumer info.
+- **NLM / FDA sources only** for outbound drug info — no ad-supported consumer sites (Drugs.com,
+  WebMD). Keeps it authoritative, ad-free, and consistent with "no clinical advice we can't stand
+  behind."
 - Those links are **user-clicked (explicit), not auto-fetched** — an outbound request carries the
   drug name to NLM, so it should be the patient's deliberate action (consistent with the privacy
   stance). NLM is a trusted public source; a drug name alone is not identifying.
@@ -105,9 +108,16 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
 
 - Parse all medication resource types, including **MedicationStatement** (not a US Core profile, but
   FollowMyHealth emits it for self-reported meds).
-- Per resource, capture: code (RxNorm where present; preserve local code + display otherwise),
-  status, the relevant date(s) (authoredOn / effective[x] / whenHandedOver / dateAsserted), dosage,
-  dispense quantity + days-supply, and prescriber / pharmacy / informationSource where present.
+- Per resource, capture the US Core **Must-Support** elements (capture where present, fall back where
+  not — never require):
+  - **Common:** code (RxNorm where present; preserve local code + display otherwise); status; the
+    `reported[x]` / `informationSource` flag (signals a secondary source such as the patient); the
+    SIG (free-text `dosageInstruction.text`); timing (when to administer); route; dose & rate.
+  - **MedicationRequest:** `category` (e.g. Discharge Medication); `requester` (prescriber);
+    `authoredOn` (date written); encounter; `dispenseRequest` quantity + number of refills.
+  - **MedicationDispense:** `performer` (who dispensed); `authorizingPrescription`; `type` (e.g.
+    partially dispensed); `quantity`; `whenHandedOver` (date dispensed); encounter.
+  - **MedicationStatement:** `effective[x]` / `dateAsserted`; `informationSource`.
 - Derive `sort_title` / `sort_date` for each (MedicationDispense and MedicationStatement currently
   lack a `resourceSortConfig` entry — they render blank/undated).
 - Filter junk template fields (e.g. empty placeholder notes like `"ProviderName -"`).
@@ -221,7 +231,6 @@ Open questions for the links:
 
 - MedlinePlus Connect returns a "no information available" page when an RxCUI isn't covered — decide the fallback (drop to name search vs hide the link).
 - A DailyMed deep link to the _exact_ label (`drugInfo.cfm?setid=<setid>`) needs an API hop (`services/v2/spls.json?rxcui=<RxCUI>` → `setid`). Name search is fine for v1; the deep link is a later enhancement (and would be a server-side or on-click lookup, not a static href).
-- Stick to **NLM / FDA sources only** — no ad-supported consumer sites (Drugs.com, WebMD). Keeps it authoritative, ad-free, and consistent with "no clinical advice we can't stand behind." Confirm.
 
 ## Open questions (to decide)
 
