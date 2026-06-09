@@ -84,4 +84,44 @@ describe('ConditionModel', () => {
 
   })
 
+  // Non-US-Core hardening (#54): the same data should display whether clinicalStatus/verificationStatus
+  // arrive as a US Core CodeableConcept, a text-only concept, or a loose plain-string code.
+  describe('non-US-Core status shapes (#54)', () => {
+    it('resolves a US Core CodeableConcept (code-first for clinical, display-first for verification)', () => {
+      const m = new ConditionModel({
+        code: { text: 'Asthma' },
+        clinicalStatus: { coding: [{ code: 'active', display: 'Active' }] },
+        verificationStatus: { coding: [{ code: 'confirmed', display: 'Confirmed' }] },
+      });
+      expect(m.clinical_status).toBe('active');
+      expect(m.verification_status).toBe('Confirmed');
+    });
+
+    it('resolves a text-only concept (no coding)', () => {
+      const m = new ConditionModel({
+        code: { text: 'Asthma' },
+        clinicalStatus: { text: 'Active' },
+        verificationStatus: { text: 'Confirmed' },
+      });
+      expect(m.clinical_status).toBe('Active');
+      expect(m.verification_status).toBe('Confirmed');
+    });
+
+    it('resolves a loose plain-string code (Veradigm/FollowMyHealth-style)', () => {
+      const m = new ConditionModel({
+        code: { text: 'Asthma' },
+        clinicalStatus: 'active',
+        verificationStatus: 'confirmed',
+      });
+      expect(m.clinical_status).toBe('active');
+      expect(m.verification_status).toBe('confirmed');
+    });
+
+    it('leaves status undefined when absent (no crash)', () => {
+      const m = new ConditionModel({ code: { text: 'Asthma' } });
+      expect(m.clinical_status).toBeUndefined();
+      expect(m.verification_status).toBeUndefined();
+    });
+  });
+
 });
