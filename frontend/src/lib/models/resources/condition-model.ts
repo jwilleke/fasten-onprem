@@ -68,9 +68,11 @@ export class ConditionModel extends FastenDisplayModel {
   };
 
   r4DTO(fhirResource:any){
-    this.clinical_status = _.get(fhirResource, 'clinicalStatus.coding.0.code');
-    this.verification_status = _.get(fhirResource, 'verificationStatus.coding.0.display')
-      || _.get(fhirResource, 'verificationStatus.coding.0.code');
+    // Non-US-Core hardening (#54): clinical/verification status may arrive as a US Core
+    // CodeableConcept, a text-only concept (no coding), or a loose plain-string code (Veradigm/FMH).
+    // Resolve all shapes so the status always displays. clinical_status stays code-first (e.g. 'active').
+    this.clinical_status = ConditionModel.resolveStatus(_.get(fhirResource, 'clinicalStatus'));
+    this.verification_status = ConditionModel.resolveStatus(_.get(fhirResource, 'verificationStatus'), true);
     // category[] distinguishes problem-list-item vs health-concern (US Core required slice)
     this.categories = _.get(fhirResource, 'category', [])
       .map((c:any) => _.get(c, 'coding.0.display') || _.get(c, 'text') || _.get(c, 'coding.0.code'))
@@ -102,5 +104,18 @@ export class ConditionModel extends FastenDisplayModel {
         throw Error('Unrecognized the fhir version property type.');
     }
   };
+
+  // Resolve a status-like element to a display string regardless of conformance (#54): a US Core
+  // CodeableConcept ({coding:[{code,display}]}), a text-only concept ({text}), or a loose plain-string
+  // code ("active") as some non-US-Core exporters (Veradigm/FollowMyHealth) emit. Code-first by
+  // default (preserves US Core codes like 'active'); preferDisplay flips to display-first.
+  static resolveStatus(value: any, preferDisplay = false): string | undefined {
+    if (value == null) { return undefined }
+    if (typeof value === 'string') { return value }
+    const code = _.get(value, 'coding.0.code');
+    const display = _.get(value, 'coding.0.display');
+    const text = _.get(value, 'text');
+    return preferDisplay ? (display || code || text) : (code || display || text);
+  }
 
 }
