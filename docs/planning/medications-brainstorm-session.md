@@ -236,14 +236,31 @@ Construction strategy (detect-don't-require):
 - **Have an RxCUI** → MedlinePlus Connect by code (best match), passing the display name as `v.dn` too.
 - **No RxCUI** (non-US-Core / local code system) → fall back to **name-based** links: DailyMed `search.cfm?query=<name>` and a MedlinePlus name search; both accept a free-text drug name. Never a dead end.
 
-Open questions for the links:
+Parked for v1 (decided):
 
-- MedlinePlus Connect returns a "no information available" page when an RxCUI isn't covered — decide the fallback (drop to name search vs hide the link).
-- A DailyMed deep link to the _exact_ label (`drugInfo.cfm?setid=<setid>`) needs an API hop (`services/v2/spls.json?rxcui=<RxCUI>` → `setid`). Name search is fine for v1; the deep link is a later enhancement (and would be a server-side or on-click lookup, not a static href).
+- **MedlinePlus "no information" page** — when an RxCUI isn't covered, Connect shows its own "no information available" page. v1 accepts that and always _also_ renders the DailyMed name-search link, so there is never a dead end. A nicer "drop to name search" fallback is a v2 polish, not a v1 blocker.
+- **DailyMed deep link** to the _exact_ label (`drugInfo.cfm?setid=<setid>`) needs an API hop (`services/v2/spls.json?rxcui=<RxCUI>` → `setid`). v1 uses the name-search link; the deep link is a v2 enhancement (a server-side or on-click lookup, not a static href).
 
 ## Open questions (to decide)
 
-- **Confirm** the user-clicked external-link approach is acceptable.
+These are reconciliation-logic details (leanings noted; all conservative, per no-guessing):
+
+- **De-dup when there is no RxNorm code.** _Leaning:_ first try to resolve the display text → RxNorm
+  via the glossary; if that fails, **exact normalized-string match only** (lowercase / trim /
+  collapse whitespace) — **never fuzzy** matching. Under-merging (two rows that are really one) is
+  honest and safe; wrong-merging two different drugs is dangerous and is itself guessing.
+- **Field precedence when several resources feed one row.** _Leaning:_ Dose / Frequency / SIG →
+  MedicationRequest (prescribed) > MedicationStatement (self-reported) > MedicationDispense;
+  prescriber → `MedicationRequest.requester`; last-activity → max relevant date across contributors;
+  name/code → most specific RxNorm clinical drug. Always expose every contributor in the expander —
+  nothing is dropped.
+- **Status-conflict resolution.** Dose-specific de-dup already removes most conflicts (a dose change
+  is now two rows). For a genuine conflict on the _same_ clinical drug (e.g. active request +
+  completed statement): _leaning:_ most-recently-dated authoritative status drives the badge, but
+  surface a "conflicting records — see details" affordance and list each contributor's status in the
+  expander. Expose the conflict; never fabricate a clean winner.
+- **List sort order.** _Leaning:_ group by Status (Active → Suspended → Unknown → Past), alphabetical
+  by name within each group; pairs with the "Active only / All" toggle. Cosmetic, easily changed.
 
 ## Related codebase state (2026-06-09)
 
