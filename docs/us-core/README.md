@@ -2,7 +2,7 @@
 
 > **Status (2026-06-08):** The six Cures-Act USCDI **core** profiles are now audited for **Must-Support _display_** vs US Core 9.0.0 — Patient ([#142](https://github.com/jwilleke/yourphr/issues/142)), AllergyIntolerance ([#145](https://github.com/jwilleke/yourphr/issues/145)), Condition ([#143](https://github.com/jwilleke/yourphr/issues/143)), MedicationRequest ([#144](https://github.com/jwilleke/yourphr/issues/144)), DocumentReference ([#147](https://github.com/jwilleke/yourphr/issues/147)), and Observation (labs + vital signs incl. multi-component blood pressure, [#146](https://github.com/jwilleke/yourphr/issues/146)).
 >
-> **Most other resource types still render as generic FHIR R4**; QuestionnaireResponse has no display model yet, and ~24 Observation sub-profiles classify but render generically. (Provenance now has a display model, [#162](https://github.com/jwilleke/yourphr/issues/162).)
+> **Most other resource types still render as generic FHIR R4** and ~24 Observation sub-profiles classify but render generically. (The previously-missing required resources Provenance [#162](https://github.com/jwilleke/yourphr/issues/162) and QuestionnaireResponse [#160](https://github.com/jwilleke/yourphr/issues/160) now have display models.)
 >
 > This is **display progress, not a conformance claim**: nothing has been verified against the ONC **Inferno** US Core test kit, so YourPHR is **not yet verified-conformant** to any US Core version. The rest is tracked in epic [#136](https://github.com/jwilleke/yourphr/issues/136).
 >
@@ -41,7 +41,7 @@ How YourPHR relates to the [FHIR **US Core** Implementation Guide](https://hl7.o
 | Related person | RelatedPerson | RelatedPerson | ✅ | generic |
 | Coverage / specimen / service request | Coverage, Specimen, ServiceRequest | Coverage, Specimen, ServiceRequest | ✅ | generic |
 | Provenance | US Core Provenance | Provenance | ✅ | ✅ display model added (#162): MS target[] / recorded / agent[] (type, who, onBehalfOf) — author/transmitter; resolves agent + target references |
-| **Questionnaire responses** | QuestionnaireResponse | QuestionnaireResponse | ❌ **none** | ❌ (lforms renders questionnaires, but no QR display model) |
+| Questionnaire responses | QuestionnaireResponse | QuestionnaireResponse | ✅ | ✅ display model added (#160): MS questionnaire / status / subject / authored / author + recursive item/answer tree (item.text + answer value[x]) |
 
 Backend coverage is broad — ~56 generated FHIR R4 resource models with search-parameter extraction handle storage/indexing for essentially all of these. A code→display **glossary** renders coded values (LOINC / SNOMED / RxNorm).
 
@@ -49,7 +49,7 @@ Backend coverage is broad — ~56 generated FHIR R4 resource models with search-
 
 1. **No profile-level Must-Support audit** — we render generic FHIR R4, not per US Core 9.0.0 profile.
 2. **Observation isn't split** into US Core's ~15 sub-profiles (vitals, labs, smoking, sexual orientation, occupation, screening, …).
-3. **Missing resources:** QuestionnaireResponse has no display model ([#160](https://github.com/jwilleke/yourphr/issues/160)). (Provenance done — [#162](https://github.com/jwilleke/yourphr/issues/162).)
+3. **Missing resources:** none outstanding — Provenance ([#162](https://github.com/jwilleke/yourphr/issues/162)) and QuestionnaireResponse ([#160](https://github.com/jwilleke/yourphr/issues/160)) display models are done.
 4. **Extensions beyond Patient** aren't handled.
 5. **No conformance verification** — nothing checked against US Core 9.0.0 examples or the ONC **Inferno** test kit.
 

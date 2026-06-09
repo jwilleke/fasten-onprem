@@ -28,6 +28,7 @@ export enum ResourceType {
   PractitionerRole = "PractitionerRole",
   Procedure = "Procedure",
   Provenance = "Provenance",
+  QuestionnaireResponse = "QuestionnaireResponse",
   RelatedPerson = "RelatedPerson",
   ResearchStudy = "ResearchStudy",
   ServiceRequest = "ServiceRequest",
