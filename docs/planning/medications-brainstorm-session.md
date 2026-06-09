@@ -154,6 +154,9 @@ request from the stored resources; never materialized. See Confirmed decisions f
   most-recently-dated authoritative status drives the badge, but the row shows a **"conflicting
   records — see details"** affordance and the expander lists each contributor's status. Expose the
   conflict; never fabricate a clean winner.
+- **List sort order** (decided): **newest on top** — sort by last-activity date, descending. Rows
+  with no usable date (Unknown / undated) sort to the bottom; we do not invent a date to place them
+  (no guessing). Works alongside the "Active only / All" toggle, which filters before sorting.
 - **Classify state from explicit signals only** (no guessing — see below), with the **evidence**
   attached (status, explicit end dates, last activity) so the frontend can show _why_.
 - Resolve `medicationReference` → Medication; key/group on RxNorm; **pass through original `coding` +
@@ -257,9 +260,7 @@ Parked for v1 (decided):
 
 ## Open questions (to decide)
 
-- **List sort order.** _Leaning (not yet locked):_ group by Status (Active → Suspended → Unknown →
-  Past), alphabetical by name within each group; pairs with the "Active only / All" toggle.
-  Cosmetic, easily changed.
+_All resolved as of 2026-06-09 — see Confirmed decisions and the Derived-layer section._
 
 ## Related codebase state (2026-06-09)
 
