@@ -140,6 +140,20 @@ request from the stored resources; never materialized. See Confirmed decisions f
   normalized display text) into one entry per drug+strength+form — collapsing a prescription +
   statement + multiple dispenses of that same clinical drug into a single entry. Different strengths
   of the same ingredient remain separate rows (see Confirmed decisions).
+- **De-dup when there is no RxNorm code** (decided): first try to resolve the display text → RxNorm
+  via the glossary; if that fails, **exact normalized-string match only** (lowercase / trim /
+  collapse whitespace) — **never fuzzy**. Under-merging (two rows that are really one) is honest;
+  wrong-merging two different drugs is dangerous and is itself guessing.
+- **Field precedence when several resources feed one row** (decided): Dose / Frequency / SIG →
+  MedicationRequest (prescribed) > MedicationStatement (self-reported) > MedicationDispense;
+  prescriber → `MedicationRequest.requester`; last-activity → max relevant date across contributors;
+  name/code → most specific RxNorm clinical drug. **Always expose every contributor in the
+  expander** — nothing is dropped.
+- **Status-conflict resolution** (decided): dose-specific de-dup already removes most conflicts. For
+  a genuine conflict on the _same_ clinical drug (e.g. active request + completed statement), the
+  most-recently-dated authoritative status drives the badge, but the row shows a **"conflicting
+  records — see details"** affordance and the expander lists each contributor's status. Expose the
+  conflict; never fabricate a clean winner.
 - **Classify state from explicit signals only** (no guessing — see below), with the **evidence**
   attached (status, explicit end dates, last activity) so the frontend can show _why_.
 - Resolve `medicationReference` → Medication; key/group on RxNorm; **pass through original `coding` +
@@ -243,24 +257,9 @@ Parked for v1 (decided):
 
 ## Open questions (to decide)
 
-These are reconciliation-logic details (leanings noted; all conservative, per no-guessing):
-
-- **De-dup when there is no RxNorm code.** _Leaning:_ first try to resolve the display text → RxNorm
-  via the glossary; if that fails, **exact normalized-string match only** (lowercase / trim /
-  collapse whitespace) — **never fuzzy** matching. Under-merging (two rows that are really one) is
-  honest and safe; wrong-merging two different drugs is dangerous and is itself guessing.
-- **Field precedence when several resources feed one row.** _Leaning:_ Dose / Frequency / SIG →
-  MedicationRequest (prescribed) > MedicationStatement (self-reported) > MedicationDispense;
-  prescriber → `MedicationRequest.requester`; last-activity → max relevant date across contributors;
-  name/code → most specific RxNorm clinical drug. Always expose every contributor in the expander —
-  nothing is dropped.
-- **Status-conflict resolution.** Dose-specific de-dup already removes most conflicts (a dose change
-  is now two rows). For a genuine conflict on the _same_ clinical drug (e.g. active request +
-  completed statement): _leaning:_ most-recently-dated authoritative status drives the badge, but
-  surface a "conflicting records — see details" affordance and list each contributor's status in the
-  expander. Expose the conflict; never fabricate a clean winner.
-- **List sort order.** _Leaning:_ group by Status (Active → Suspended → Unknown → Past), alphabetical
-  by name within each group; pairs with the "Active only / All" toggle. Cosmetic, easily changed.
+- **List sort order.** _Leaning (not yet locked):_ group by Status (Active → Suspended → Unknown →
+  Past), alphabetical by name within each group; pairs with the "Active only / All" toggle.
+  Cosmetic, easily changed.
 
 ## Related codebase state (2026-06-09)
 
