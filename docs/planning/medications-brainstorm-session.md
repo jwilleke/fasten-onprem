@@ -56,8 +56,15 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
   detect-don't-require; fallbacks are the mission-critical path. (Standing stance, reaffirmed.)
 - **No UI conformance-flagging; no clinical advice / interaction-checking** we cannot stand behind.
   Frame meds as **"from your records,"** shown **"as of your last import."**
+- **No guessing.** Do the best we can with the explicit signals the record actually states; never
+  fabricate or infer. In particular: **no days-supply extrapolation** to decide a med was stopped,
+  and **no inferring "Purpose" from drug class**. When a signal is absent, we say "unknown" — we do
+  not invent a value.
 - **"Current Medications" is a derived, reconciled view** (de-duplicated by drug) — not a raw
   per-resource dump.
+- **Include MedicationStatement in the reconciled list.** OTC drugs and supplements (and other
+  self-reported meds) almost always arrive as MedicationStatement, not MedicationRequest — omitting
+  it would drop a large share of a real patient's actual current meds.
 - **Two-ends separation** (input gathers facts / output displays meaning), as above.
 - **Reconciliation lives in a backend compute-on-request endpoint.** One source of truth for the
   reconciliation + active/past logic (not duplicated in TypeScript), reusable by IPS / `/summary` /
@@ -67,8 +74,9 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
   reuse + testability, not raw performance.
 - **The endpoint is an explicit derived layer, and returns its evidence.** Reconciliation/active-past
   is interpretation, so it stays separate from the pure-facts raw resource endpoints and is clearly
-  labelled derived. It returns the inputs it reasoned from (dates, status, days-supply) so the
-  frontend can show _why_ a med is current; the frontend still owns presentation (active/past UI,
+  labelled derived. It returns the inputs it reasoned from (status, explicit end dates, last
+  activity) so the frontend can show _why_ a med is in a given state; the frontend still owns
+  presentation (active/past UI,
   expanders, outbound links, the "as of your last import" framing).
 - **Endpoint contract is vendor-agnostic and RxNorm-keyed — but preserves original codings.** Logic
   works on standard FHIR fields with fallbacks (no FollowMyHealth special-casing); the API shape
@@ -108,20 +116,55 @@ request from the stored resources; never materialized. See Confirmed decisions f
 
 - **Reconcile / de-duplicate by RxNorm** (fallback: normalized display text) into one entry per drug
   — collapsing a prescription + statement + multiple dispenses of the same drug into a single entry.
-- **Active / Past suggestion** via best-effort "current" heuristics, with the **evidence** attached
-  (the dates / status / days-supply it reasoned from) so the frontend can show _why_.
+- **Classify state from explicit signals only** (no guessing — see below), with the **evidence**
+  attached (status, explicit end dates, last activity) so the frontend can show _why_.
 - Resolve `medicationReference` → Medication; key/group on RxNorm; **pass through original `coding` +
   display** as fidelity fields. Vendor-agnostic logic, no proprietary structures in the contract.
 - Reads MedicationRequest / MedicationStatement / MedicationDispense / Medication via
   `DatabaseRepository`. Go service + fixture tests, including a non-US-Core fixture.
 
+#### Active / Past classification (no guessing)
+
+State is decided from explicit, record-stated signals only — never inferred from age or
+days-supply. Priority order:
+
+| Explicit signal | State |
+| --- | --- |
+| `status = active` (MedicationRequest / MedicationStatement) | **Active** |
+| `status = on-hold` | **Suspended** |
+| `status = stopped / cancelled / completed` (or MedicationStatement `not-taken`) | **Past** |
+| `effectivePeriod.end` in the past (record _states_ it ended) | **Past** |
+| `status = unknown` / missing / `draft` / `intended` | **Unknown** |
+| `status = entered-in-error` | excluded |
+
+- "Best we can, no guessing": an old `status = active` with no recent dispense **stays Active** —
+  we surface "last activity: \<date\>" beside it and let the human judge; we never silently downgrade.
+- Non-US-Core data with no/garbage status lands in **Unknown** — shown, never assumed active.
+- Days-supply / last-dispense are shown as _information_ only; they never drive the classification.
+
 ### Output-end (presentation)
 
+Target layout, from Jim's "MEW Current Medications" prior art — columns
+**Medication · Dose · Frequency · Purpose · Comments**, plus an explicit **Status** badge. Mapped
+to FHIR sources (and an honest note on what FHIR usually omits):
+
+| Column | FHIR source | Reality |
+| --- | --- | --- |
+| **Medication** | `medication[CodeableConcept\|Reference]` → RxNorm display, else original text | Always present |
+| **Dose** | `dosageInstruction.doseAndRate` / `dosage.text` | Usually present |
+| **Frequency** | `dosageInstruction.timing` (+ `asNeeded` → PRN) / text | Often free-text; PRN detectable |
+| **Purpose** | `reasonCode` / `reasonReference` → Condition | **Sparse** — show only if stated; never inferred from drug class |
+| **Comments** | `requester` / `informationSource` (prescriber), `note[]`, status annotations | Partial |
+| **Status** | the classification above (Active / Suspended / Past / Unknown) | Always shown |
+
+- **Purpose is the weak column.** Jim's hand-curated table has rich purposes ("ACE inhibitor for
+  blood pressure"); FHIR `reasonCode` is frequently empty, and inferring purpose from drug class is
+  both guessing and clinical advice — so it stays blank unless the record states it. (A future
+  _authoritative_ option is RxClass `may_treat`, but that is the parked RxClass build.)
 - **Consume the reconciled list** from the endpoint and render it — the frontend does not re-derive.
-- **Active / Past split** shown transparently ("as of your last import"), using the endpoint's
-  evidence to explain the classification.
-- Row content: drug name, dose / route / frequency (from the best source's dosageInstruction),
-  status, last-activity date, source badge.
+- **Show everything with a Status badge; never hide by guessing.** Default can emphasise Active, with
+  an "Active only / All" toggle — completed/suspended/unknown meds stay visible (e.g. a recent
+  completed antibiotic, a suspended statin), annotated, not dropped.
 - **Expand** to the contributing resources with provenance (which portal, when).
 - **Drug-info links** (DailyMed + MedlinePlus, keyed by RxCUI; name-search fallback for non-coded)
   — see "Outbound information links" below for the concrete endpoints and URL templates.
@@ -156,14 +199,10 @@ Open questions for the links:
 
 ## Open questions (to decide)
 
-- **"Current" heuristic specifics** — which signals and thresholds; days-supply math; how to handle
-  non-US-Core data with unreliable statuses / no end dates.
-- **Include MedicationStatement in the reconciled list?** (Recommend yes — it is the patient's
-  self-reported current meds.)
-- **Grouping granularity** — RxNorm ingredient vs clinical-drug (dose-specific).
+- **Grouping granularity** — RxNorm ingredient vs clinical-drug (dose-specific). Lisinopril 40 mg
+  and Lisinopril 10 mg: one row or two? (Leaning: clinical-drug / dose-specific, so a dose change is
+  visible — but two strengths of the same drug then list separately.)
 - **Confirm** the user-clicked external-link approach is acceptable.
-- **Jim's prior art:** the internal "MEW Current Medications" view — fields / grouping / links it
-  settled on (to align this design).
 
 ## Related codebase state (2026-06-09)
 
