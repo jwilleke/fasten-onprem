@@ -28,9 +28,12 @@ Present the facts meaningfully: reconcile across resources into a de-duplicated 
 infer active vs past (transparently), render dose/status/source, expand-for-details, and link to
 authoritative drug references. Interpretation and UX live here.
 
-> Boundary note: the "is this current?" reconciliation is the one piece that could live on either
-> end (a backend computed endpoint vs frontend compute) — see Open Questions. The rule stays: the
-> backend stays facts-only; any inference is clearly **derived** and **transparent** to the user.
+> Boundary note: reconciliation + the "is this current?" inference is interpretation, so by the
+> two-ends principle it would sit on the Output-end. **Decided** to put it in a backend
+> compute-on-request endpoint instead (single source of truth, reusable by IPS / summary / future
+> clients) — see Confirmed decisions. To preserve the principle it lives as an explicit, clearly
+> **derived** layer, separate from the pure-facts raw resource endpoints, and returns its evidence
+> so the frontend can show _why_ a med is marked current. Raw ingestion/storage stays facts-only.
 
 ## Code systems — the target vocabulary (USCDI / US Core)
 
@@ -56,6 +59,22 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
 - **"Current Medications" is a derived, reconciled view** (de-duplicated by drug) — not a raw
   per-resource dump.
 - **Two-ends separation** (input gathers facts / output displays meaning), as above.
+- **Reconciliation lives in a backend compute-on-request endpoint.** One source of truth for the
+  reconciliation + active/past logic (not duplicated in TypeScript), reusable by IPS / `/summary` /
+  future clients. It is a stateless derivation over the stored resources (like `/summary` and IPS)
+  — **never a materialized "current_medications" table** (that would go stale on every import and
+  duplicate PHI). Per-patient compute is cheap (ms), so the win is single-source-of-truth +
+  reuse + testability, not raw performance.
+- **The endpoint is an explicit derived layer, and returns its evidence.** Reconciliation/active-past
+  is interpretation, so it stays separate from the pure-facts raw resource endpoints and is clearly
+  labelled derived. It returns the inputs it reasoned from (dates, status, days-supply) so the
+  frontend can show _why_ a med is current; the frontend still owns presentation (active/past UI,
+  expanders, outbound links, the "as of your last import" framing).
+- **Endpoint contract is vendor-agnostic and RxNorm-keyed — but preserves original codings.** Logic
+  works on standard FHIR fields with fallbacks (no FollowMyHealth special-casing); the API shape
+  exposes no proprietary structures and groups on RxNorm where present. It still **passes through
+  the original `coding` + display text** as fidelity fields — "no proprietary data" means none in
+  the contract/keying, _not_ dropping non-US-Core meds that lack an RxNorm code.
 - A per-medication **"Show all Medication details"** expander reveals the contributing
   MedicationRequest / MedicationDispense / Medication (/ MedicationStatement) with dates + provenance.
 - **External drug-reference links** to DailyMed (`dailymed.nlm.nih.gov`) and MedlinePlus
@@ -81,11 +100,26 @@ For this doc the binding row is **Medications → RxNorm** — which is exactly 
 - Filter junk template fields (e.g. empty placeholder notes like `"ProviderName -"`).
 - Output: clean, source-attributed, organized resources — **no reconciliation/interpretation**.
 
-### Output-end (meaning)
+### Derived layer (backend compute-on-request endpoint)
 
-- **Reconcile / de-duplicate by RxNorm** (fallback: normalized display text) into one row per drug —
-  collapsing a prescription + statement + multiple dispenses of the same drug into a single entry.
-- **Active / Past split** via best-effort "current" heuristics, shown transparently ("as of import").
+The reconciliation sits between the two ends as an explicit derived layer — `GET
+/api/secure/medications/reconciled` (or folded into the existing summary). Stateless, computed per
+request from the stored resources; never materialized. See Confirmed decisions for the rationale.
+
+- **Reconcile / de-duplicate by RxNorm** (fallback: normalized display text) into one entry per drug
+  — collapsing a prescription + statement + multiple dispenses of the same drug into a single entry.
+- **Active / Past suggestion** via best-effort "current" heuristics, with the **evidence** attached
+  (the dates / status / days-supply it reasoned from) so the frontend can show _why_.
+- Resolve `medicationReference` → Medication; key/group on RxNorm; **pass through original `coding` +
+  display** as fidelity fields. Vendor-agnostic logic, no proprietary structures in the contract.
+- Reads MedicationRequest / MedicationStatement / MedicationDispense / Medication via
+  `DatabaseRepository`. Go service + fixture tests, including a non-US-Core fixture.
+
+### Output-end (presentation)
+
+- **Consume the reconciled list** from the endpoint and render it — the frontend does not re-derive.
+- **Active / Past split** shown transparently ("as of your last import"), using the endpoint's
+  evidence to explain the classification.
 - Row content: drug name, dose / route / frequency (from the best source's dosageInstruction),
   status, last-activity date, source badge.
 - **Expand** to the contributing resources with provenance (which portal, when).
@@ -122,9 +156,6 @@ Open questions for the links:
 
 ## Open questions (to decide)
 
-- **Where does reconciliation live?** Backend computed endpoint (precedent: `/summary`, IPS) vs
-  frontend compute. The two-ends principle leans frontend (reconciliation is "meaning"), but a
-  backend endpoint could serve a ready-made list. Decide.
 - **"Current" heuristic specifics** — which signals and thresholds; days-supply math; how to handle
   non-US-Core data with unreliable statuses / no end dates.
 - **Include MedicationStatement in the reconciled list?** (Recommend yes — it is the patient's
@@ -151,7 +182,10 @@ Open questions for the links:
 
 1. **Input-end:** parse + sort all medication types — wire the MedicationDispense card, add a
    MedicationStatement model, add `resourceSortConfig` entries, filter placeholder notes.
-2. **Output-end:** the reconciled **Current Medications** view (active/past, de-dup, expand-for-details).
-3. **Drug-info links** (DailyMed + MedlinePlus by RxCUI, with name-search fallback).
-4. Track as an **epic / design issue** before code (the reconciliation logic + "current" heuristics
-   deserve their own discussion).
+2. **Derived layer:** the `GET /api/secure/medications/reconciled` endpoint — de-dup by RxNorm,
+   suggested active/past + evidence, original codings preserved; Go service + fixture tests.
+3. **Output-end:** the **Current Medications** view consuming the endpoint (active/past,
+   expand-for-details), plus the dashboard widget.
+4. **Drug-info links** (DailyMed + MedlinePlus by RxCUI, with name-search fallback).
+5. Track as an **epic / design issue** before code (the "current" heuristic deserves its own
+   discussion).
