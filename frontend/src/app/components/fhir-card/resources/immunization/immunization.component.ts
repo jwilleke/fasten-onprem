@@ -26,14 +26,32 @@ export class ImmunizationComponent implements OnInit, FhirCardComponentInterface
 
   ngOnInit(): void {
 
-    this.tableData.push(    {
-        label: 'Manufacturer Text',
+    this.tableData.push(
+      {
+        // US Core MS: statusReason — only present when a dose was not given (status=not-done)
+        label: 'Status reason',
+        data: this.displayModel?.status_reason,
+        data_type: TableRowItemDataType.CodableConcept,
+        enabled: !!this.displayModel?.status_reason,
+      },
+      {
+        // US Core MS: primarySource — was this recorded from the primary source, or reported?
+        label: 'Primary source',
+        data: this.displayModel?.primary_source ? 'Yes' : 'No',
+        enabled: this.displayModel?.primary_source !== undefined && this.displayModel?.primary_source !== null,
+      },
+      {
+        label: 'Manufacturer',
         data: this.displayModel?.manufacturer_text,
         enabled: !!this.displayModel?.manufacturer_text,
       },
       {
-        label: 'Manufacturer Text',
-        data: `${this.displayModel?.lot_number}` + this.displayModel?.lot_number_expiration_date ? ` expires on ${this.displayModel?.lot_number_expiration_date}` : '',
+        // Previously mislabeled "Manufacturer Text" with a broken expression that dropped the
+        // lot number; this is the lot number (+ expiration when present).
+        label: 'Lot number',
+        data: this.displayModel?.lot_number_expiration_date
+          ? `${this.displayModel?.lot_number} (expires ${this.displayModel?.lot_number_expiration_date})`
+          : this.displayModel?.lot_number,
         enabled: this.displayModel?.has_lot_number,
       },
       {

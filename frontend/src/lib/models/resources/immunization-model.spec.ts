@@ -12,6 +12,7 @@ describe('ImmunizationModel', () => {
 
       expected.title = 'Fluvax (Influenza)'
       expected.status = 'completed'
+      expected.primary_source = true // US Core MS: example1 has primarySource: true
       expected.provided_date  = '2013-01-10'
       // manufacturerText: string | undefined
       expected.has_lot_number = true
@@ -30,6 +31,22 @@ describe('ImmunizationModel', () => {
       expected.note = [ { text: 'Notes on adminstration of vaccine' } ]
 
       expect(new ImmunizationModel(example1Fixture)).toEqual(expected);
+    });
+
+    // US Core 9.0.0 Must-Support: statusReason (why a dose was not given) and primarySource.
+    it('should capture statusReason and primarySource (a not-done immunization)', () => {
+      const model = new ImmunizationModel({
+        resourceType: 'Immunization',
+        status: 'not-done',
+        statusReason: { text: 'Patient allergy to vaccine component' },
+        primarySource: false,
+        vaccineCode: { text: 'Influenza vaccine' },
+        patient: { reference: 'Patient/example' },
+      })
+      expect(model.status).toEqual('not-done')
+      expect(model.status_reason).toEqual({ text: 'Patient allergy to vaccine component' })
+      expect(model.primary_source).toEqual(false)
+      expect(model.title).toEqual('Influenza vaccine')
     });
   })
 });
