@@ -345,6 +345,18 @@ func CreateManualSource(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 	eventBus := c.MustGet(pkg.ContextKeyTypeEventBusServer).(event_bus.Interface)
 
+	// The import must survive the client disconnecting mid-upload — closing the tab, navigating
+	// away, or a reverse-proxy read-timeout. The import runs inline here (the request still blocks
+	// until it finishes), but Go does not kill the handler goroutine on client disconnect; it only
+	// cancels the *request* context. So every DB write below — the source upsert and the import
+	// itself — runs under a context detached from the request (GetBackgroundContext is rooted at
+	// context.Background() and carries only the auth username), so a cancelled request context can
+	// no longer abort an in-flight import and leave partial data. (#196 link repair and #201 sort
+	// titles are computed during the import, so a half-finished import would be visibly broken.)
+	// Only the upload read (storeFileLocally → temp file on disk) and the final JSON response use
+	// the request context.
+	backgroundContext := GetBackgroundContext(c)
+
 	// store the bundle file locally
 	bundleFile, err := storeFileLocally(c)
 	if err != nil {
@@ -358,7 +370,7 @@ func CreateManualSource(c *gin.Context) {
 	manualSourceCredential := models.SourceCredential{
 		PlatformType: sourcePkg.PlatformTypeManual,
 	}
-	tempSourceClient, err := factory.GetSourceClient("", c, logger, &manualSourceCredential)
+	tempSourceClient, err := factory.GetSourceClient("", backgroundContext, logger, &manualSourceCredential)
 	if err != nil {
 		err = fmt.Errorf("an error occurred while initializing hub client using manual source without credentials: %w", err)
 		logger.Errorln(err)
@@ -376,7 +388,7 @@ func CreateManualSource(c *gin.Context) {
 	manualSourceCredential.Patient = patientId
 
 	//store the manualSourceCredential
-	err = databaseRepo.CreateSource(c, &manualSourceCredential)
+	err = databaseRepo.CreateSource(backgroundContext, &manualSourceCredential)
 	if err != nil {
 		err = fmt.Errorf("an error occurred while creating manual source: %w", err)
 		logger.Errorln(err)
@@ -385,7 +397,7 @@ func CreateManualSource(c *gin.Context) {
 	}
 
 	summary, err := BackgroundJobSyncResourcesWrapper(
-		c,
+		backgroundContext,
 		logger,
 		databaseRepo,
 		&manualSourceCredential,
@@ -417,8 +429,8 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
-	//publish event
-	currentUser, _ := databaseRepo.GetCurrentUser(c)
+	//publish event (use the detached context so completion still records if the client has gone)
+	currentUser, _ := databaseRepo.GetCurrentUser(backgroundContext)
 	err = eventBus.PublishMessage(
 		models.NewEventSourceComplete(
 			currentUser.ID.String(),
