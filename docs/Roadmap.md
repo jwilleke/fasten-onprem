@@ -7,7 +7,6 @@ Standalone, community-maintained continuation of [Fasten OnPrem](https://github.
 - Baranding Tagline: "Your medical records, immediately and in your hands — for free."
 - Branding text: "YourPHR"
 
-
 **Goal:** a complete self-hosted PHR with working display for non-US-Core FHIR data and live provider sync via a personal OAuth relay.
 
 > ## 🎯 Staying focused
