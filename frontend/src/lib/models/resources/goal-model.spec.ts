@@ -34,6 +34,7 @@ describe('GoalModel', () => {
       expected.priority = { system: 'http://terminology.hl7.org/CodeSystem/goal-priority', code: 'high-priority', display: 'High Priority' }
       expected.subject = { reference: 'Patient/example', display: 'Peter James Chalmers' }
       expected.status_date = '2016-02-14'
+      expected.target_due_date = '2016-04-05' // US Core MS: target.dueDate
 
       expect(new GoalModel(example1Fixture)).toEqual(expected);
     });

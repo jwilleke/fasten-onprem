@@ -37,6 +37,8 @@ import {ObservationComponent} from '../resources/observation/observation.compone
 import {EncounterComponent} from '../resources/encounter/encounter.component';
 import {PatientComponent} from '../resources/patient/patient.component';
 import {CarePlanComponent} from '../resources/care-plan/care-plan.component';
+import {CareTeamComponent} from '../resources/care-team/care-team.component';
+import {GoalComponent} from '../resources/goal/goal.component';
 
 
 @Component({
@@ -114,9 +116,9 @@ export class FhirCardComponent implements OnInit, OnChanges {
       case "CarePlan": {
         return CarePlanComponent;
       }
-      // case "CareTeam": {
-      //   return CareTeamComponent;
-      // }
+      case "CareTeam": {
+        return CareTeamComponent;
+      }
       // case "Communication": {
       //   return ListCommunicationComponent;
       // }
@@ -141,9 +143,9 @@ export class FhirCardComponent implements OnInit, OnChanges {
       case "Encounter": {
         return EncounterComponent;
       }
-      // case "Goal": {
-      //   return ListGoalComponent;
-      // }
+      case "Goal": {
+        return GoalComponent;
+      }
       case "Immunization": {
         return ImmunizationComponent;
       }

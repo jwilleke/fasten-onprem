@@ -25,6 +25,7 @@ export class GoalModel extends FastenDisplayModel {
   priority: CodingModel | undefined
   subject: ReferenceModel | undefined
   status_date: string | undefined
+  target_due_date: string | undefined  // US Core MS: target.dueDate
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -50,6 +51,8 @@ export class GoalModel extends FastenDisplayModel {
     this.priority = _.get(fhirResource, 'priority.coding[0]');
     this.subject = _.get(fhirResource, 'subject');
     this.status_date = _.get(fhirResource, 'statusDate');
+    // US Core MS: target.dueDate (when the goal is expected to be reached)
+    this.target_due_date = _.get(fhirResource, 'target[0].dueDate');
   };
   dstu2DTO(fhirResource:any){
     this.description = _.get(fhirResource, 'description');
