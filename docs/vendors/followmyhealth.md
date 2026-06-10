@@ -37,6 +37,24 @@ FollowMyHealth is itself a suite (patient web portal, mobile apps, and the provi
 - **Access model:** a registered app is **"Test Only"** by default and reaches only Veradigm **test** organizations (synthetic patients, no PHI). Reaching real patient data requires Veradigm to grant **production** access — a partner request with a multi-day review. See the test-vs-real matrix in [`../FHIR/fhir-testing.md`](../FHIR/fhir-testing.md).
 - **Auth:** authorization-code + PKCE. The discovery is internally **contradictory** — it advertises a `client-public` capability _and_ confidential-only token-endpoint auth methods (`client-confidential-symmetric`/`-asymmetric`), which is part of why the connect flow stalls (see below).
 
+## Importing & re-importing
+
+Since live sync is blocked (see Known API Issues), the supported path is **manual upload of the patient-initiated export**.
+
+**Which file?** The **FHIR R4 JSON bundle only** (the `…AllPatientData.json` in the export archive). The sibling document files (`.txt`/`.jpg`/`.xml`/`.html`) are **not** read by the importer — they are referenced only by relative `./…` URLs that YourPHR never fetches (see Known API Issues #5).
+
+**To import:** add a manual source and upload the JSON bundle.
+
+**To re-import** (e.g. to pick up the link-repair [#196](https://github.com/jwilleke/yourphr/issues/196) and document-title [#201](https://github.com/jwilleke/yourphr/issues/201) fixes, which are computed **at import time** and so do not apply to already-stored records): just **upload the same JSON again.** Re-import is safe and idempotent:
+
+- The manual source is matched by patient id (`CreateSource` does a `FirstOrCreate` on `(user, endpoint, patient)`; a manual upload has no endpoint, and the patient id comes from the bundle), so re-uploading the **same** export **reuses the existing source** rather than creating a second one.
+- Each resource is **upserted in place** by its id and re-run through search-parameter extraction (new `sort_title`) and association building (the corrected reference links) — **no duplicate records.**
+- Stale association edges from the first import linger but are **harmless** (they point at ids no resource has); the re-import adds the correct links alongside them.
+
+**Optional clean slate:** delete the existing FollowMyHealth source first, then upload — this drops the old records and stale edges and rebuilds everything fresh. Not required, just tidier.
+
+> **Caveat:** this assumes the patient id in the bundle is unchanged between imports (it is, for the same export). If it ever differed you would get a second source — in which case delete the duplicate.
+
 ## Known API Issues
 
 These are the concrete problems YourPHR has hit with real FollowMyHealth data and APIs. Most have been mitigated on the **import/display** side; live sync remains externally blocked.
