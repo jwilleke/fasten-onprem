@@ -39,6 +39,8 @@ import {PatientComponent} from '../resources/patient/patient.component';
 import {CarePlanComponent} from '../resources/care-plan/care-plan.component';
 import {CareTeamComponent} from '../resources/care-team/care-team.component';
 import {GoalComponent} from '../resources/goal/goal.component';
+import {DeviceComponent} from '../resources/device/device.component';
+import {CoverageComponent} from '../resources/coverage/coverage.component';
 
 
 @Component({
@@ -125,12 +127,12 @@ export class FhirCardComponent implements OnInit, OnChanges {
       // case "Condition": {
       //   return ListConditionComponent;
       // }
-      // case "Coverage": {
-      //   return ListCoverageComponent;
-      // }
-      // case "Device": {
-      //   return ListDeviceComponent;
-      // }
+      case "Coverage": {
+        return CoverageComponent;
+      }
+      case "Device": {
+        return DeviceComponent;
+      }
       // case "DeviceRequest": {
       //   return ListDeviceRequestComponent;
       // }

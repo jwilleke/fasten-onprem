@@ -5,6 +5,7 @@ import {AppointmentModel} from './resources/appointment-model';
 import {CarePlanModel} from './resources/care-plan-model';
 import {CareTeamModel} from './resources/care-team-model';
 import {ConditionModel} from './resources/condition-model';
+import {CoverageModel} from './resources/coverage-model';
 import {DeviceModel} from './resources/device-model';
 import {DiagnosticReportModel} from './resources/diagnostic-report-model';
 import {DocumentReferenceModel} from './resources/document-reference-model';
@@ -94,9 +95,9 @@ export function fhirModelFactory(
     case ResourceType.Composition:
       resourceModel = new ConditionModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case ResourceType.Coverage":
-    //   resourceModel = new CoverageModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
-    // break
+    case ResourceType.Coverage:
+      resourceModel = new CoverageModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
     case ResourceType.Device:
       resourceModel = new DeviceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break

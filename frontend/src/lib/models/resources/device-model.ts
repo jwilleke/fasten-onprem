@@ -19,6 +19,11 @@ export class DeviceModel extends FastenDisplayModel {
   udi_carrier_hrf: string | undefined
   safety: string | undefined
   has_safety: boolean | undefined
+  patient: ReferenceModel | undefined        // US Core MS: patient (1..1)
+  distinct_identifier: string | undefined
+  lot_number: string | undefined
+  serial_number: string | undefined
+  manufacture_date: string | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -29,10 +34,24 @@ export class DeviceModel extends FastenDisplayModel {
 
   commonDTO(fhirResource:any){
     this.code = _.get(fhirResource, 'type');
-    this.model = _.get(fhirResource, 'model') || _.get(fhirResource,"code.text") || _.get(fhirResource,"code.coding.0.display") || 'Unknown Device';
+    // R4 Device names the kind via `type`; DSTU2 used `code`. Prefer the explicit model, then the
+    // R4 `type` (so R4 devices don't all render "Unknown Device"), then the DSTU2 `code`.
+    this.model =
+      _.get(fhirResource, 'model') ||
+      _.get(fhirResource, 'type.text') ||
+      _.get(fhirResource, 'type.coding.0.display') ||
+      _.get(fhirResource, 'code.text') ||
+      _.get(fhirResource, 'code.coding.0.display') ||
+      'Unknown Device';
     this.status = _.get(fhirResource, 'status', '');
     this.get_type_coding = _.get(fhirResource, 'type.coding');
     this.has_type_coding = Array.isArray(this.get_type_coding);
+    // US Core MS: patient, plus the implantable-device identifiers (R4).
+    this.patient = _.get(fhirResource, 'patient');
+    this.distinct_identifier = _.get(fhirResource, 'distinctIdentifier');
+    this.lot_number = _.get(fhirResource, 'lotNumber');
+    this.serial_number = _.get(fhirResource, 'serialNumber');
+    this.manufacture_date = _.get(fhirResource, 'manufactureDate');
   };
 
   dstu2DTO(fhirResource:any){
