@@ -62,9 +62,16 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           for(const ndx in connectedSources){
             console.log(connectedSources[ndx])
             this.connectedSourceList.push({source: connectedSources[ndx], brand: connectedBrand[ndx]})
-            if(connectedSources[ndx].latest_background_job?.job_status == "STATUS_LOCKED"){
+            // Re-show the in-progress/failed indicator when returning to the page mid-sync. Key by
+            // source.id (the template checks status[source.id] first) AND brand_id — manual sources
+            // (e.g. an uploaded bundle still importing) have no brand_id, so keying only by brand_id
+            // left their progress bar invisible on return even though the import was still running.
+            const jobStatus = connectedSources[ndx].latest_background_job?.job_status
+            if(jobStatus == "STATUS_LOCKED"){
+              this.status[connectedSources[ndx].id] = "token"
               this.status[connectedSources[ndx].brand_id] = "token"
-            } else if (connectedSources[ndx].latest_background_job?.job_status === "STATUS_FAILED") {
+            } else if (jobStatus === "STATUS_FAILED") {
+              this.status[connectedSources[ndx].id] = "failed"
               this.status[connectedSources[ndx].brand_id] = "failed"
             }
           }

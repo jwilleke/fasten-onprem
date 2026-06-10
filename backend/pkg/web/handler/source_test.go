@@ -250,6 +250,48 @@ func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler() {
 
 }
 
+// A client disconnecting mid-upload (closing the tab, navigating away, a proxy read-timeout)
+// cancels the request context. The import must NOT be abortable by that — it runs under a context
+// detached from the request — otherwise a half-finished import leaves partial data. Here the request
+// context is already cancelled before the handler runs; the import must still complete in full.
+func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler_SurvivesClientDisconnect() {
+	//setup
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	req, err := CreateManualSourceHttpRequestFromFile("testdata/Tania553_Harris789_545c2380-b77f-4919-ab5d-0f615f877250.json")
+	require.NoError(suite.T(), err)
+
+	// simulate the client already gone: a cancelled request context
+	cancelledCtx, cancel := context.WithCancel(context.Background())
+	cancel()
+	ctx.Request = req.WithContext(cancelledCtx)
+
+	//test
+	CreateManualSource(ctx)
+
+	//assert: the import completed in full despite the cancelled request context
+	require.Equal(suite.T(), http.StatusOK, w.Code)
+
+	type ResponseWrapper struct {
+		Data struct {
+			TotalResources int `json:"TotalResources"`
+		} `json:"data"`
+		Success bool                    `json:"success"`
+		Source  models.SourceCredential `json:"source"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), respWrapper.Success)
+	require.Equal(suite.T(), 196, respWrapper.Data.TotalResources, "the full bundle must import even though the request context was cancelled")
+}
+
 // bug: https://github.com/fastenhealth/fasten-onprem/pull/486
 func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler_ShouldExtractPatientIdFromConvertedCCDA() {
 	//setup
