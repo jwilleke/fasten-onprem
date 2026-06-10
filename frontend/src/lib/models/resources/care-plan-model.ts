@@ -7,6 +7,8 @@ import {CodableConceptModel} from '../datatypes/codable-concept-model';
 
 export class CarePlanModel extends FastenDisplayModel {
   code: CodableConceptModel | undefined
+  title: string | undefined        // card title (category display → description → generic)
+  text_div: string | undefined     // US Core MS: text (narrative) — the human-readable plan
   status: string | undefined
   expiry: string | undefined
   category: any[] | undefined
@@ -35,6 +37,15 @@ export class CarePlanModel extends FastenDisplayModel {
   commonDTO(fhirResource: any) {
     this.code = _.get(fhirResource, 'category');
 
+    this.title =
+      _.get(fhirResource, 'category.0.text') ||
+      _.get(fhirResource, 'category.0.coding.0.display') ||
+      _.get(fhirResource, 'description') ||
+      'Care Plan';
+    // US Core MS: intent (required) — was only set in stu3DTO, leaving R4 undefined.
+    this.intent = _.get(fhirResource, 'intent');
+    // US Core MS: text (narrative) — the human-readable assessment & plan.
+    this.text_div = _.get(fhirResource, 'text.div');
     this.status = _.get(fhirResource, 'status', '');
     this.expiry = _.get(fhirResource, 'expiry');
     this.category = _.get(fhirResource, 'category');
@@ -87,7 +98,7 @@ export class CarePlanModel extends FastenDisplayModel {
       });
     this.based_on = _.get(fhirResource, 'basedOn', []);
     this.part_of = _.get(fhirResource, 'partOf', []);
-    this.intent = _.get(fhirResource, 'intent', []);
+    // intent is now set in commonDTO (for all versions)
   };
 
   r4DTO(fhirResource: any) {

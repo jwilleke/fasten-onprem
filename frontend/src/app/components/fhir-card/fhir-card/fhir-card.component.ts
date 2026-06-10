@@ -36,6 +36,7 @@ import {OrganizationComponent} from '../resources/organization/organization.comp
 import {ObservationComponent} from '../resources/observation/observation.component';
 import {EncounterComponent} from '../resources/encounter/encounter.component';
 import {PatientComponent} from '../resources/patient/patient.component';
+import {CarePlanComponent} from '../resources/care-plan/care-plan.component';
 
 
 @Component({
@@ -110,9 +111,9 @@ export class FhirCardComponent implements OnInit, OnChanges {
       case "Binary": {
         return BinaryComponent;
       }
-      // case "CarePlan": {
-      //   return ListCarePlanComponent;
-      // }
+      case "CarePlan": {
+        return CarePlanComponent;
+      }
       // case "CareTeam": {
       //   return CareTeamComponent;
       // }

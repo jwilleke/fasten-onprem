@@ -1,0 +1,4 @@
+.careplan-narrative {
+  // FHIR narrative can carry its own tables/lists; keep it readable inside the card.
+  overflow-x: auto;
+}

@@ -1,4 +1,5 @@
 import { CarePlanModel } from './care-plan-model';
+import * as _ from "lodash";
 
 import * as heartOperationPlanFixture from "../../fixtures/r4/resources/carePlan/heartOperationPlan.json"
 import * as pregnancyPlanFixture from "../../fixtures/r4/resources/carePlan/pregnancyPlan.json"
@@ -15,6 +16,8 @@ describe('CarePlanModel', () => {
 
       const expected = new CarePlanModel({})
       expected.status = "completed"
+      expected.intent = 'plan'
+      expected.text_div = _.get(heartOperationPlanFixture, 'text.div')
       // expected.expiry = "completed"
       // expected.category = "completed"
       expected.goals = [ { reference: '#goal' } ]
@@ -59,6 +62,8 @@ describe('CarePlanModel', () => {
 
       const expected = new CarePlanModel({})
       expected.status = "active"
+      expected.intent = 'plan'
+      expected.text_div = _.get(pregnancyPlanFixture, 'text.div')
       // expected.expiry = "completed"
       // expected.category = "completed"
       expected.goals = [ { reference: '#goal' } ]
@@ -83,6 +88,9 @@ describe('CarePlanModel', () => {
 
       const expected = new CarePlanModel({})
       expected.status = "active"
+      expected.intent = 'plan'
+      expected.text_div = _.get(weightLossPlanFixture, 'text.div')
+      expected.title = 'Weight management plan'
       // expected.expiry = "completed"
       expected.category = [{ text: 'Weight management plan' }]
       expected.goals = [ { reference: 'Goal/example' } ]
