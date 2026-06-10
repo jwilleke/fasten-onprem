@@ -10,6 +10,8 @@ export class ImmunizationModel extends FastenDisplayModel {
 
   title: string | undefined
   status: string | undefined
+  status_reason: CodableConceptModel | undefined  // US Core MS: statusReason (why a dose was not given)
+  primary_source: boolean | undefined             // US Core MS: primarySource
   provided_date: string | undefined
   manufacturer_text: string | undefined
   has_lot_number: boolean | undefined
@@ -40,6 +42,8 @@ export class ImmunizationModel extends FastenDisplayModel {
       _.get(fhirResource, 'vaccineCode.text') ||
       _.get(fhirResource, 'vaccineCode.coding[0].display', 'Immunization');
     this.status = _.get(fhirResource, 'status', null);
+    this.status_reason = _.get(fhirResource, 'statusReason');
+    this.primary_source = _.get(fhirResource, 'primarySource');
     this.provided_date = _.get(fhirResource, 'date', null);
     this.reported = _.get(fhirResource, 'reported') && ' - self reported';
     this.manufacturer_text = _.get(fhirResource, 'manufacturer.display');
