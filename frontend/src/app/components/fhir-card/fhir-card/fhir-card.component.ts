@@ -45,6 +45,7 @@ import {ServiceRequestComponent} from '../resources/service-request/service-requ
 import {SpecimenComponent} from '../resources/specimen/specimen.component';
 import {RelatedPersonComponent} from '../resources/related-person/related-person.component';
 import {FamilyMemberHistoryComponent} from '../resources/family-member-history/family-member-history.component';
+import {ConditionComponent} from '../resources/condition/condition.component';
 
 
 @Component({
@@ -128,9 +129,9 @@ export class FhirCardComponent implements OnInit, OnChanges {
       // case "Communication": {
       //   return ListCommunicationComponent;
       // }
-      // case "Condition": {
-      //   return ListConditionComponent;
-      // }
+      case "Condition": {
+        return ConditionComponent;
+      }
       case "Coverage": {
         return CoverageComponent;
       }
