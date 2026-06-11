@@ -2,8 +2,45 @@ package models
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
+
+// allowedAggregationFunctions is the allowlist of SQL aggregation functions that
+// may be interpolated into a query. The aggregation `fn` is concatenated directly
+// into the SQL string (e.g. `max(...)`), so it MUST be constrained to this set to
+// prevent SQL injection. An empty function (no wrapper) is also permitted.
+var allowedAggregationFunctions = map[string]bool{
+	"":      true,
+	"count": true,
+	"sum":   true,
+	"avg":   true,
+	"min":   true,
+	"max":   true,
+}
+
+// aggregationFieldRegex constrains an aggregation `field` value. The field name is
+// already validated against the per-resource search-parameter allowlist, but the
+// optional `:modifier` portion is interpolated raw into a SQL JSON path (`'$.<mod>'`),
+// so the whole token is restricted to a safe charset. The literal `*` (count-all) is
+// handled separately by the caller.
+var aggregationFieldRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(:[A-Za-z0-9_-]+)?$`)
+
+// validateAggregation enforces the injection-safety constraints on a single
+// aggregation clause (`count_by` / `group_by` / `order_by`): a populated field drawn
+// from a safe charset and a function drawn from the allowlist.
+func validateAggregation(name string, agg *QueryResourceAggregation) error {
+	if len(agg.Field) == 0 {
+		return fmt.Errorf("if '%s' is present, field must be populated", name)
+	}
+	if agg.Field != "*" && !aggregationFieldRegex.MatchString(agg.Field) {
+		return fmt.Errorf("%s field contains invalid characters: %q", name, agg.Field)
+	}
+	if !allowedAggregationFunctions[strings.ToLower(agg.Function)] {
+		return fmt.Errorf("%s has unsupported aggregation function: %q", name, agg.Function)
+	}
+	return nil
+}
 
 // maps to frontend/src/app/models/widget/dashboard-widget-query.ts
 type QueryResource struct {
@@ -45,27 +82,18 @@ func (q *QueryResource) Validate() error {
 		}
 
 		if q.Aggregations.CountBy != nil {
-			if len(q.Aggregations.CountBy.Field) == 0 {
-				return fmt.Errorf("if 'count_by' is present, field must be populated")
-			}
-			if strings.Contains(q.Aggregations.CountBy.Field, " ") {
-				return fmt.Errorf("count_by cannot have spaces (or aliases)")
+			if err := validateAggregation("count_by", q.Aggregations.CountBy); err != nil {
+				return err
 			}
 		}
 		if q.Aggregations.GroupBy != nil {
-			if len(q.Aggregations.GroupBy.Field) == 0 {
-				return fmt.Errorf("if 'group_by' is present, field must be populated")
-			}
-			if strings.Contains(q.Aggregations.GroupBy.Field, " ") {
-				return fmt.Errorf("group_by cannot have spaces (or aliases)")
+			if err := validateAggregation("group_by", q.Aggregations.GroupBy); err != nil {
+				return err
 			}
 		}
 		if q.Aggregations.OrderBy != nil {
-			if len(q.Aggregations.OrderBy.Field) == 0 {
-				return fmt.Errorf("if 'order_by' is present, field must be populated")
-			}
-			if strings.Contains(q.Aggregations.OrderBy.Field, " ") {
-				return fmt.Errorf("order_by cannot have spaces (or aliases)")
+			if err := validateAggregation("order_by", q.Aggregations.OrderBy); err != nil {
+				return err
 			}
 		}
 
