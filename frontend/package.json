@@ -38,7 +38,7 @@
     "@microsoft/fetch-event-source": "^2.0.1",
     "@ng-bootstrap/ng-bootstrap": "^19.0.1",
     "@ng-select/ng-select": "^15.0.1",
-    "@panva/oauth4webapi": "1.2.0",
+    "@panva/oauth4webapi": "1.2.1",
     "@popperjs/core": "^2.11.6",
     "@swimlane/ngx-datatable": "^20.0.0",
     "@types/fhir": "^0.0.35",

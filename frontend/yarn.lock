@@ -3988,10 +3988,12 @@
     node-gyp "^12.1.0"
     proc-log "^6.0.0"
 
-"@panva/oauth4webapi@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/@panva/oauth4webapi/-/oauth4webapi-1.2.0.tgz#f0bce0da0953dd8f8c091af77d559fddf44f1b0f"
-  integrity sha512-OmwAE3fzlSJsA0zzCWA/ob7Nwb7nwzku8vbAjgmnkkVYbpyokBsaVrrzog9cM0RMytXexpNNcbQbMF/UNa71mg==
+"@panva/oauth4webapi@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@panva/oauth4webapi/-/oauth4webapi-1.2.1.tgz#dc271692353bdd4023051d5a8bfe56cb9cb27174"
+  integrity sha512-cIqO3PZO2fqWWWe/7NG7dzEcMq1xZDOjWWVlH7l8xCk+j7bAHlpVoVAKUCRNnqSH1hG2E7TQZqcB9WqmC9mwJQ==
+  dependencies:
+    oauth4webapi "^1.2.1"
 
 "@parcel/watcher-android-arm64@2.5.6":
   version "2.5.6"
@@ -10512,6 +10514,11 @@ nth-check@^2.0.1, nth-check@^2.1.1:
   integrity sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==
   dependencies:
     boolbase "^1.0.0"
+
+oauth4webapi@^1.2.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/oauth4webapi/-/oauth4webapi-1.4.1.tgz#ca3804850bad324dea44cd2d348df7c2ba0721cf"
+  integrity sha512-OjdXyMSoNpMUP9/2TsYQZEuUkKTUboi1tmDSkVP4Awx46K0V75oRLa1OmdQHVpbl8ejwfFt1s5tQiHOYKBgJ9g==
 
 object-assign@^4, object-assign@latest:
   version "4.1.1"
