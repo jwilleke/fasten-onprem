@@ -18,7 +18,15 @@ repos. Put repo-specific context **below the `KIT:END` marker**; do not edit her
 
 ## Priorities — GitHub labels are the source of truth
 
-- `P0` critical/security · `P1` high · `P2` normal · `deferred` postponed · `needs-triage` unassigned.
+Priority labels are mutually exclusive and mean:
+
+- `P0` — **Broken. Stop all work and fix it.** (production down / blocked / security breach)
+- `P1` — **Delivers value to the mission.**
+- `P2` — **Nice to have.**
+- `deferred` — consciously postponed; `needs-triage` — awaiting a priority decision.
+
+Then:
+
 - Security comes first. Scanner alerts (Dependabot / code-scanning / GitGuardian) become
   issues labeled `security` + a graded priority: critical/high → `P0`, medium → `P1`, low → `P2`.
 - `TODO.md` = a `▶ Resume here` block (maintained by `/wrap`) on top, then priority bands that

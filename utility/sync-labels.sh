@@ -16,9 +16,9 @@ set -euo pipefail
 # name|hexcolor|description
 LABELS=(
   # --- Priority (mutually exclusive) ---
-  "P0|b60205|Critical / security — do now"
-  "P1|d93f0b|High priority"
-  "P2|fbca04|Normal priority"
+  "P0|b60205|Broken — stop all work and fix it"
+  "P1|d93f0b|Delivers value to the mission"
+  "P2|fbca04|Nice to have"
   "deferred|cccccc|Consciously postponed"
   "needs-triage|ededed|Open issue awaiting a priority decision"
   # --- State / type (additive) ---
