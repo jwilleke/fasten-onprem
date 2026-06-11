@@ -13,12 +13,18 @@ and rides on the now-complete SMART on FHIR stack ([EPIC #20](https://github.com
 
 ## Status at a glance
 
-- **Have we connected to the Epic sandbox yet? No — not exercised end-to-end.**
-  The full code path is in place and the relay is live, but no one has yet
-  registered an Epic patient-facing app, obtained a `client_id`, and run a real
-  authorize → login → token → import against `fhir.epic.com`. What *is* verified
-  is that Epic's discovery endpoints are reachable and the supporting stack is
-  built (see below).
+- **Is anything blocking Epic? No.** Epic's sandbox is self-service — register a
+  patient-facing app, get a non-production `client_id`, run the flow. There is
+  no approval gate. (That gate is Veradigm-specific, [#53](https://github.com/jwilleke/yourphr/issues/53) — see below.)
+- **The SMART flow is already proven end-to-end** against the SMART Health IT
+  sandbox (`launch.smarthealthit.org`): authorize → login → token exchange →
+  `$everything` import all succeeded (spike [#48](https://github.com/jwilleke/yourphr/issues/48)).
+  Epic reuses that exact same generic SMART-R4 client — it is just a different
+  provider in the same, working code path.
+- **Has *Epic specifically* been connected yet? Not yet** — no one has run a real
+  authorize → token → import against `fhir.epic.com`. That is a remaining
+  **task, not a blocker**: it needs a `client_id` and a run. Epic's discovery
+  endpoints are confirmed reachable.
 - **Supporting stack — DONE** (all closed): SMART spike
   ([#48](https://github.com/jwilleke/yourphr/issues/48)), generic Go SMART-R4
   client ([#49](https://github.com/jwilleke/yourphr/issues/49)), self-hosted
