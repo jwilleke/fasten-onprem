@@ -223,6 +223,56 @@
       "width": 12,
       "height": 4,
       "item_type": "medications-widget"
+    },
+    {
+      "title_text": "Problems",
+      "description_text": "Your most recent health problems and conditions.",
+      "x": 0,
+      "y": 19,
+      "width": 4,
+      "height": 4,
+      "item_type": "profile-summary-widget",
+      "queries": [{ "q": { "select": [], "from": "Condition", "where": {} } }]
+    },
+    {
+      "title_text": "Allergies",
+      "description_text": "Substances you have a recorded allergy or intolerance to.",
+      "x": 4,
+      "y": 19,
+      "width": 4,
+      "height": 4,
+      "item_type": "profile-summary-widget",
+      "queries": [{ "q": { "select": [], "from": "AllergyIntolerance", "where": {} } }]
+    },
+    {
+      "title_text": "Immunizations",
+      "description_text": "Vaccines recorded in your health record.",
+      "x": 8,
+      "y": 19,
+      "width": 4,
+      "height": 4,
+      "item_type": "profile-summary-widget",
+      "queries": [{ "q": { "select": [], "from": "Immunization", "where": {} } }]
+    },
+    {
+      "title_text": "Procedures",
+      "description_text": "Procedures performed as part of your care.",
+      "x": 0,
+      "y": 23,
+      "width": 4,
+      "height": 4,
+      "item_type": "profile-summary-widget",
+      "queries": [{ "q": { "select": [], "from": "Procedure", "where": {} } }]
+    },
+    {
+      "title_text": "Clinical Notes",
+      "description_text": "Documents and notes from your providers.",
+      "x": 4,
+      "y": 23,
+      "width": 4,
+      "height": 4,
+      "item_type": "profile-summary-widget",
+      "queries": [{ "q": { "select": [], "from": "DocumentReference", "where": {} } }]
     }
   ]
 }
