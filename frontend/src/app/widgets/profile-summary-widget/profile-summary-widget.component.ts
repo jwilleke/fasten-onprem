@@ -97,6 +97,6 @@ export class ProfileSummaryWidgetComponent extends DashboardWidgetComponent impl
   }
 
   get viewAllRoute(): string | undefined {
-    return (this.widgetConfig?.parsing as any)?.view_all_route;
+    return this.widgetConfig?.parsing?.view_all_route;
   }
 }

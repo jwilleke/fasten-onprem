@@ -33,5 +33,7 @@ export class DashboardWidgetConfig {
   x?: number
   y?: number
 
-  parsing?: {label?: string, xAxisKey?: string, yAxisKey?: string} | Record<string, string>
+  // `view_all_route` is consumed by the profile-summary-widget (#245): when set, the widget renders a
+  // "View all →" header link to that route. Optional — category-level list pages are a later phase.
+  parsing?: {label?: string, xAxisKey?: string, yAxisKey?: string, view_all_route?: string} | Record<string, string>
 }
