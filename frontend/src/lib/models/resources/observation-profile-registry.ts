@@ -82,6 +82,33 @@ export interface ObservationClassification {
   inferred: boolean;                   // true => resolved via category/code fallback, not meta.profile
 }
 
+// Human label for a kind — used when we only resolved a kind (inferred), not a named profile.
+const KIND_DISPLAY: Record<ObservationProfileKind, string> = {
+  'laboratory': 'Laboratory',
+  'vital-signs': 'Vital Signs',
+  'blood-pressure': 'Blood Pressure',
+  'social-history': 'Social History',
+  'preference': 'Preference',
+  'pregnancy': 'Pregnancy',
+  'advance-directive': 'Advance Directive',
+  'other': 'Observation',
+};
+
+export function observationKindDisplay(kind: ObservationProfileKind): string {
+  return KIND_DISPLAY[kind] || 'Observation';
+}
+
+// The label to show for an Observation's profile/classification, or undefined when there's no
+// meaningful signal. Declared meta.profile → the named profile. Inferred (category/code) → the kind
+// with an explicit "(inferred)" qualifier so it's never mistaken for a declared conformance claim
+// (no-guessing principle). Inferred 'other' (we couldn't classify) → undefined (show nothing).
+export function observationProfileLabel(c: ObservationClassification | undefined): string | undefined {
+  if (!c) { return undefined; }
+  if (c.profile) { return c.profile.display; }
+  if (c.kind === 'other') { return undefined; }
+  return `${observationKindDisplay(c.kind)} (inferred)`;
+}
+
 // Classify by meta.profile (primary), else infer from category + LOINC code (fallback for data that
 // doesn't declare conformance — the common case for imported non-US-Core exports).
 export function classifyObservationProfile(fhirResource: any): ObservationClassification {

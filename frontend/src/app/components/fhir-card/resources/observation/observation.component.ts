@@ -6,6 +6,7 @@ import {TableComponent} from '../../common/table/table.component';
 import {Router, RouterModule} from '@angular/router';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {ObservationModel} from '../../../../../lib/models/resources/observation-model';
+import {observationProfileLabel} from '../../../../../lib/models/resources/observation-profile-registry';
 import { ObservationVisualizationComponent } from '../../common/observation-visualization/observation-visualization.component';
 
 @Component({
@@ -87,12 +88,15 @@ export class ObservationComponent implements OnInit {
       })
     }
 
-    // Surface the declared US Core profile — only when the resource actually claims one via
-    // meta.profile (we don't present an inferred classification as if it were declared).
+    // Surface the Observation's US Core sub-profile classification. A declared meta.profile shows the
+    // named profile (e.g. "Blood Pressure"); an inferred classification (category/LOINC fallback —
+    // the common case for non-US-Core exports) shows the kind with an explicit "(inferred)" qualifier
+    // so it's never mistaken for a declared conformance claim. Unclassifiable ('other' inferred) → nothing.
+    const profileLabel = observationProfileLabel(this.displayModel?.us_core_profile)
     this.tableData.push({
-      label: 'US Core Profile',
-      data: this.displayModel?.us_core_profile?.profile?.display,
-      enabled: !this.displayModel?.us_core_profile?.inferred && !!this.displayModel?.us_core_profile?.profile,
+      label: 'Profile',
+      data: profileLabel,
+      enabled: !!profileLabel,
     })
   }
 
