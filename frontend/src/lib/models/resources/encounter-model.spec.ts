@@ -21,6 +21,7 @@ describe('EncounterModel', () => {
       // encounterType: string | undefined
       expected.resource_class = 'inpatient encounter'
       expected.resource_status = 'in-progress'
+      expected.subject = { reference: 'Patient/example' } // US Core MS
       // no type/serviceType → title falls back to class.display
       expected.display = 'inpatient encounter'
       // participant
@@ -39,6 +40,7 @@ describe('EncounterModel', () => {
       // back through class.display below.
       expected.resource_class =  'home health'
       expected.resource_status = 'finished'
+      expected.subject = { reference: 'Patient/example' } // US Core MS
       expected.display = 'home health'
       expected.participant = [
         {
@@ -62,6 +64,7 @@ describe('EncounterModel', () => {
       expected.encounter_type = [ { coding: [ Object({ system: 'http://snomed.info/sct', code: '11429006', display: 'Consultation' }) ] } ]
       expected.resource_class = 'ambulatory'
       expected.resource_status = 'finished'
+      expected.subject = { reference: 'Patient/f201', display: 'Roel' } // US Core MS
       expected.display = 'Consultation' // title from type.coding.display
       expected.reasonCode = [
         {

@@ -17,6 +17,8 @@ export class EncounterModel extends FastenDisplayModel {
   resource_class: string | undefined
   resource_status: string | undefined
   discharge_disposition: CodableConceptModel | undefined
+  subject: ReferenceModel | undefined          // US Core MS: subject (Patient)
+  service_type: CodableConceptModel | undefined // US Core MS: serviceType
   participant: {
     display?: string,
     role?: string,
@@ -41,6 +43,8 @@ export class EncounterModel extends FastenDisplayModel {
     this.has_participant = _.has(fhirResource, 'participant');
     this.reasonCode = _.get(fhirResource, 'reasonCode');
     this.discharge_disposition = _.get(fhirResource, 'hospitalization.dischargeDisposition');
+    this.subject = _.get(fhirResource, 'subject');             // US Core MS: subject (Patient)
+    this.service_type = _.get(fhirResource, 'serviceType');    // US Core MS: serviceType
 
     // Card title fallback. US Core titles off type/serviceType; Veradigm/FollowMyHealth often omits
     // both and ships only a location + a class with a system but no code — so without this the title

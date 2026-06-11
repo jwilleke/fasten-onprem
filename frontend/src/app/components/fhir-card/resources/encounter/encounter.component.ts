@@ -48,10 +48,24 @@ export class EncounterComponent implements OnInit, FhirCardEditableComponentInte
 
     this.tableData = [
       {
+        // US Core MS: subject (Patient)
+        label: 'Patient',
+        data: this.displayModel?.subject,
+        data_type: TableRowItemDataType.Reference,
+        enabled: !!this.displayModel?.subject,
+      },
+      {
         label: 'Type',
         data: this.displayModel?.encounter_type?.[0],
         data_type: TableRowItemDataType.CodableConcept,
         enabled: !!this.displayModel?.encounter_type?.[0],
+      },
+      {
+        // US Core MS: serviceType
+        label: 'Service type',
+        data: this.displayModel?.service_type,
+        data_type: TableRowItemDataType.CodableConcept,
+        enabled: !!this.displayModel?.service_type,
       },
       {
         label: 'Class',
