@@ -86,7 +86,6 @@ frontend/documentation.json
 certs/
 
 /private-jims/
-.claude/
 .DS_Store
 
 ####################################################################
