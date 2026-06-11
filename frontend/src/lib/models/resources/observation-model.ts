@@ -42,6 +42,7 @@ export class ObservationModel extends FastenDisplayModel {
   subject: ReferenceModel | undefined
   fhirResource: any
   reference_range: ReferenceRangeModel
+  interpretation: CodableConceptModel | undefined  // US Core MS: interpretation (High/Low/Normal flag)
 
   value_model: ObservationValue
 
@@ -62,6 +63,8 @@ export class ObservationModel extends FastenDisplayModel {
     this.status = _.get(fhirResource, 'status', '');
     this.subject = _.get(fhirResource, 'subject');
     this.reference_range = new ReferenceRangeModel(_.get(this.fhirResource, 'referenceRange.0'))
+    const interpretation = _.get(fhirResource, 'interpretation.0');
+    if (interpretation) { this.interpretation = new CodableConceptModel(interpretation) }
 
     this.meta_profiles = _.get(fhirResource, 'meta.profile', []) || [];
     this.us_core_profile = classifyObservationProfile(fhirResource);

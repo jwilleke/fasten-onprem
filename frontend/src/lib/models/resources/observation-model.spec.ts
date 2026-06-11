@@ -19,6 +19,22 @@ describe('ObservationModel', () => {
     expect(new ObservationModel({}).reference_range).toBeInstanceOf(ReferenceRangeModel);
   });
 
+  // US Core MS: interpretation (e.g. High/Low/Normal)
+  it('captures interpretation when present', () => {
+    const o = new ObservationModel({
+      resourceType: 'Observation',
+      status: 'final',
+      code: { text: 'Hemoglobin' },
+      interpretation: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation', code: 'H', display: 'High' }], text: 'High' }],
+    }, fhirVersions.R4);
+    expect(o.interpretation).toBeTruthy();
+    expect(o.interpretation?.text).toEqual('High');
+  });
+
+  it('has no interpretation when absent', () => {
+    expect(new ObservationModel({}).interpretation).toBeUndefined();
+  });
+
   describe('value_model', () => {
     it('is null if there is no value setting', () => {
       expect(new ObservationModel({}).value_model).toBeFalsy();

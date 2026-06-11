@@ -57,9 +57,19 @@ export class ObservationComponent implements OnInit {
         enabled: !!this.displayModel?.code,
       },
       {
+        // value[x], or dataAbsentReason (buildValue resolves it). When the observation carries
+        // neither a value nor a reason and has no value-bearing components (common in
+        // FollowMyHealth exports), say so explicitly rather than render a blank/missing row.
         label: 'Value',
-        data: this.displayModel?.value_model?.display(),
-        enabled: !!this.displayModel?.value_model,
+        data: this.displayModel?.value_model ? this.displayModel.value_model.display() : 'No result recorded',
+        enabled: !!this.displayModel?.value_model || (this.displayModel?.components?.length || 0) === 0,
+      },
+      {
+        // US Core MS: interpretation (e.g. High / Low / Normal)
+        label: 'Interpretation',
+        data: this.displayModel?.interpretation,
+        data_type: TableRowItemDataType.CodableConcept,
+        enabled: !!this.displayModel?.interpretation,
       },
       {
         label: 'Reference',
