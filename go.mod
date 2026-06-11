@@ -15,7 +15,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/TwiN/deepmerge v0.2.2
 	github.com/analogj/go-util v0.0.0-20210417161720-39b497cca03b
-	github.com/dave/jennifer v1.6.1
+	github.com/dave/jennifer v1.7.1
 	github.com/dominikbraun/graph v0.15.0
 	github.com/dop251/goja v0.0.0-20230605162241-28ee0ee714f3
 	github.com/fastenhealth/fasten-sources v0.6.25
