@@ -34,13 +34,23 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: coverage-artifacts
-      - name: Upload coverage reports
+      # Upload backend + frontend coverage under separate flags so Codecov tracks each
+      # component independently. fail_ci_if_error stays false: a coverage-upload hiccup
+      # (or an unset CODECOV_TOKEN) must never fail CI. Coverage is informational, not a gate
+      # (see codecov.yml).
+      - name: Upload backend coverage
         uses: codecov/codecov-action@v7
         with:
-          files: coverage-artifacts/backend-coverage/backend-coverage.txt,coverage-artifacts/frontend-coverage/lcov.info
-          flags: unittests
-          # Non-blocking in jwilleke fork: CODECOV_TOKEN may be unset, and a failed upload
-          # must not fail CI. Set the secret and flip this to true to enforce uploads.
+          files: coverage-artifacts/backend-coverage/backend-coverage.txt
+          flags: backend
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+      - name: Upload frontend coverage
+        uses: codecov/codecov-action@v7
+        with:
+          files: coverage-artifacts/frontend-coverage/lcov.info
+          flags: frontend
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
