@@ -3,9 +3,9 @@
 <!-- RESUME:START -->
 ## ▶ Resume here — 2026-06-12
 
-- Last worked on: **BS5 base migration (#265, image `main-242`) + patient-first tile dashboard (slice 1, commit 4b4b439a, image `main-243`) LANDED on main.** Tile dashboard: full-width, "Current Medical Concerns" (explicitly-active conditions) on top, large-icon category tiles (plain label + clinical term + counts) routing to detail pages, drag-to-reorder w/ localStorage persistence + reset-to-default. Verified: 460 unit tests, 11 e2e, desktop+mobile screenshots. Jim's refinements applied from design review: tiles lead to category detail pages; concerns first; plain/clinical label mix.
-- Branch / state: main, in sync with origin, working tree clean except Jim's untracked `docs/your-phr-dashboard/# Patient Dashboard.md`. 2 unrelated pre-existing stashes on other branches.
-- Running / in-flight: CI/Docker building the BS5 commits → Flux will deploy. Interim visual roughness on live is expected and accepted (per #265).
+- Last worked on: **BS5 base migration (#265) + patient-first tile dashboard (#209 slice 1) shipped and DEPLOYED as image `main-244`** (commits 6d3eb3aa, 51f92708, 4b4b439a, 3b97d5c7; Flux bumped 18:12Z). Tile dashboard: full-width, "Current Medical Concerns" (explicitly-active conditions) on top, large-icon category tiles (plain label + clinical term + counts) routing to detail pages, drag-to-reorder w/ localStorage persistence + reset-to-default. Verified: 460 unit tests, 11 e2e, desktop+mobile screenshots. Gotcha fixed along the way: image `main-243` failed CI on the prod 10MB initial-bundle hard budget (CDK drag-drop pushed 9.99→10.07MB); budget now 12MB error / 10MB warning (3b97d5c7) — real fix is lazy loading (pre-existing debt).
+- Branch / state: main, in sync with origin (nothing unpushed), working tree clean except Jim's untracked `docs/your-phr-dashboard/# Patient Dashboard.md` (his notes — leave). 2 unrelated pre-existing stashes on other branches.
+- Running / in-flight: none locally. Only CodeQL still running on GitHub (informational). Live instance should show `v1.2.0-75-g3b97d5c7` after the pod rolls; hard-refresh if stale.
 - Parked / half-done: BS4 compat shims (`assets/scss/bootstrap/_mixins.scss` top block + `assets/scss/_bs4-shims.scss`) are transitional — delete as Azia partials retire (#209).
 - Next steps:
   - **Slice 2 of #209: left-rail record browser** — give every tile category a true detail page (source-detail's master-detail pattern app-wide, counts in the rail); drop remaining `.container` caps on other pages.
