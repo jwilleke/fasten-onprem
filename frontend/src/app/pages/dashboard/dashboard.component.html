@@ -1,155 +1,83 @@
-
 <div class="az-content az-content-dashboard">
-  <div class="container">
+  <div class="container-fluid px-3 px-lg-4 dashboard-page">
     <div class="az-content-body">
-      <div class="az-dashboard-one-title">
-        <div>
-          <h2 class="az-dashboard-title">Welcome back!</h2>
-          <p class="az-dashboard-text">Your <strong>personal</strong> electronic medical record</p>
+
+      <div class="d-flex flex-wrap align-items-center gap-3 dashboard-header">
+        <div class="me-auto">
+          <h2 class="dashboard-title mb-1">Your Health Record</h2>
+          <p class="dashboard-subtitle mb-0">Everything imported from your medical sources, in one place.</p>
         </div>
-        <div class="az-content-header-right">
-          <div class="media">
-            <div class="media-body">
-              <label>Last Updated</label>
-              <h6>{{lastUpdated ? (lastUpdated | date:'MMM d, yyyy') : ''}}</h6>
-            </div><!-- media-body -->
-          </div><!-- media -->
-          <div class="media">
-            <div class="media-body">
-              <label>Selected Sources</label>
-              <h6>All Sources</h6>
-            </div><!-- media-body -->
-          </div><!-- media -->
-          <a [routerLink]="'/sources'" class="btn btn-purple">Add Source</a>
-          <a [routerLink]="'/resource/create'" class="btn btn-purple mg-l-10">Add Condition</a>
-
+        <div class="text-end dashboard-meta" *ngIf="lastUpdated">
+          <label class="mb-0">Last updated</label>
+          <h6 class="mb-0">{{lastUpdated | date:'MMM d, yyyy'}}</h6>
         </div>
-      </div><!-- az-dashboard-one-title -->
-
-      <div class="az-dashboard-nav">
-        <nav class="nav">
-          <a *ngFor="let dashboardConfig of dashboardConfigs; let i = index"
-             class="nav-link"
-             [class.active]="selectedDashboardConfigNdx === i"
-             (click)="changeSelectedDashboard(i)"
-          >{{dashboardConfig.title}}</a>
-        </nav>
-
-        <nav class="nav">
-          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Export</a>
-          <a class="nav-link" (click)="showAddDashboardLocationModal(addDashboard)"><i class="fas fa-plus"></i> Add</a>
-          <a class="nav-link" (click)="showDashboardSettingsModal(dashboardSettings)"><i class="fas fa-sliders-h"></i> Settings</a>
-          <a class="nav-link"><i class="fas fa-ellipsis"></i></a>
-        </nav>
+        <a [routerLink]="'/sources'" class="btn btn-primary">Add Records</a>
       </div>
 
-      <div class="row mt-5 mb-3">
-        <div class="col-12">
-          <div class="alert alert-info" role="alert">
-            <strong>Description:</strong> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.description}}
-            <br/>
-            <span *ngIf="dashboardConfigs?.[selectedDashboardConfigNdx]?.source">
-              <strong>Source:</strong> <a [href]="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" externalLink> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
-            </span>
+      <section class="dashboard-section" aria-labelledby="current-concerns-heading">
+        <h4 id="current-concerns-heading" class="section-title">Current Medical Concerns</h4>
+        <p class="section-subtitle">Health issues your records mark as active <span class="clinical-term">(Condition, clinical status: active)</span></p>
+
+        <div *ngIf="concernsLoading" class="concerns-empty">
+          <app-loading-spinner [loadingTitle]="'Checking your records...'"></app-loading-spinner>
+        </div>
+
+        <ul *ngIf="!concernsLoading && activeConcerns.length > 0" class="concern-list list-unstyled">
+          <li *ngFor="let concern of activeConcerns">
+            <button type="button" class="concern-item" (click)="openConcern(concern)">
+              <i class="fa-solid fa-heart-pulse concern-icon" aria-hidden="true"></i>
+              <span class="concern-text">
+                <span class="concern-name">{{concern.display}}</span>
+                <span *ngIf="concern.clinicalDetail" class="concern-clinical">{{concern.clinicalDetail}}</span>
+              </span>
+              <span *ngIf="concern.since" class="concern-since">since {{concern.since | date:'MMM y'}}</span>
+              <i class="fa-solid fa-chevron-right concern-chevron" aria-hidden="true"></i>
+            </button>
+          </li>
+        </ul>
+
+        <div *ngIf="!concernsLoading && activeConcerns.length === 0" class="concerns-empty">
+          <p class="mb-0">No conditions are marked active in your records. <a [routerLink]="'/medical-history'">Review your full medical history</a>.</p>
+        </div>
+      </section>
+
+      <section class="dashboard-section" aria-labelledby="browse-heading">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <div class="me-auto">
+            <h4 id="browse-heading" class="section-title">Browse Your Records</h4>
+            <p class="section-subtitle">Each category opens its full list of records.</p>
           </div>
+          <button *ngIf="customizing && hasCustomOrder" type="button" class="btn btn-sm btn-outline-secondary" (click)="resetTileOrder()">
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset to default
+          </button>
+          <button type="button" class="btn btn-sm" [class.btn-outline-primary]="!customizing" [class.btn-primary]="customizing" (click)="toggleCustomizing()">
+            <i class="fa-solid" [class.fa-up-down-left-right]="!customizing" [class.fa-check]="customizing" aria-hidden="true"></i>
+            {{customizing ? 'Done' : 'Customize layout'}}
+          </button>
         </div>
-      </div>
 
-      <gridstack id="gridstack" #gridComp [options]="gridOptions"></gridstack>
+        <p *ngIf="customizing" class="customize-hint" role="status">Drag the tiles into the order you want. Your order is saved automatically.</p>
 
-
-    </div><!-- az-content-body -->
-  </div>
-</div><!-- az-content -->
-
-<ng-template #addDashboard let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Add Dashboard</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    <p>
-      Users can create personalized dashboards tracking the information they care about, by querying their own medical records using a SQL-like syntax.
-    </p>
-    <p>
-      YourPHR comes with a few <a href="https://github.com/jwilleke/yourphr/tree/main/backend/pkg/web/handler/dashboard" externalLink>pre-built dashboards</a> to get you started. You can also add your own dashboards by providing a link to a Github Gist containing a JSON representation of your dashboard.
-    </p>
-    <p>
-      See <a href="https://yourphr.org" externalLink>Dashboard Configuration Documentation</a> for more information.
-    </p>
-    <form>
-      <div class="mb-3">
-        <label for="remoteDashboardLocation">Remote Dashboard Location (Github Gist)<span ngbTooltip="required" class="text-danger">*</span></label>
-        <div class="input-group">
-          <input
-            required
-            id="remoteDashboardLocation"
-            class="form-control"
-            placeholder="https://gist.github.com/..."
-            pattern="https://gist.github.com/.*"
-            name="remoteDashboardLocation"
-            type="url"
-            [(ngModel)]="dashboardLocation"
-            #dashboardLocationField="ngModel"
-          />
+        <div class="tile-grid"
+             cdkDropList
+             cdkDropListOrientation="mixed"
+             [cdkDropListDisabled]="!customizing"
+             (cdkDropListDropped)="onTileDrop($event)">
+          <button *ngFor="let tile of tiles"
+                  cdkDrag
+                  type="button"
+                  class="tile"
+                  [class.tile-customizing]="customizing"
+                  [attr.aria-label]="tile.label + ' — ' + tile.count + ' records'"
+                  (click)="openTile(tile)">
+            <i class="tile-icon {{tile.icon}}" aria-hidden="true"></i>
+            <span class="tile-count" [class.tile-count-zero]="tile.count === 0">{{tile.count}}</span>
+            <span class="tile-label">{{tile.label}}</span>
+            <span class="tile-clinical">{{tile.clinicalLabel}}</span>
+          </button>
         </div>
-      </div>
+      </section>
 
-      <div *ngIf="dashboardLocationField.invalid && (dashboardLocationField.dirty || dashboardLocationField.touched)"
-           class="alert alert-danger">
-
-        <div *ngIf="dashboardLocationField.errors?.['required']">
-          Dashboard Location is required.
-        </div>
-        <div *ngIf="dashboardLocationField.errors?.['pattern']">
-          Dashboard Location must be a valid github gist url.
-        </div>
-      </div>
-
-      <div *ngIf="dashboardLocationError" class="alert alert-danger">
-        {{dashboardLocationError}}
-      </div>
-
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn  btn-outline-indigo" [disabled]="addDashboardLoading" (click)="addDashboardLocation()">Add</button>
-  </div>
-</ng-template>
-
-
-<ng-template #dashboardSettings let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title">{{dashboardConfigs?.[selectedDashboardConfigNdx]?.title}} Settings</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-12">
-        <p>{{dashboardConfigs?.[selectedDashboardConfigNdx]?.description}}</p>
-      </div>
-    </div>
-
-
-    <div class="row row-xs align-items-center mg-b-20">
-      <div class="col-12">
-        <h6>Editor Mode</h6>
-        <p>Editor mode allows you to reorganize widgets on your dashboard</p>
-        <div (click)="toggleEditableGrid()" [class.on]="!this.gridEditDisabled" class="az-toggle"><span></span></div>
-      </div><!-- col -->
-    </div>
-    <div *ngIf="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" class="row row-xs align-items-center mg-b-20">
-      <div class="col-12">
-        <h6>Refresh</h6>
-        <p>Click to refresh your dashboard configuration. Only applicable to remote dashboards.</p>
-      </div><!-- col -->
-      <div class="col-4">
-        <button ngbTooltip="not yet implemented" class="btn btn-outline-indigo">Refresh</button>
-      </div><!-- col -->
     </div>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-danger me-auto" ngbTooltip="not yet implemented">Delete</button>
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
-  </div>
-</ng-template>
+</div>

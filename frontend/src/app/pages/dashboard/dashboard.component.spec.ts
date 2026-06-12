@@ -1,21 +1,25 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DashboardComponent } from './dashboard.component';
+import { DashboardComponent, DEFAULT_TILES } from './dashboard.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {RouterModule} from '@angular/router';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { GridstackComponent } from 'src/app/components/gridstack/gridstack.component';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { SharedModule } from '../../components/shared.module';
+import { DashboardPreferencesService } from '../../services/dashboard-preferences.service';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
+  let preferences: DashboardPreferencesService;
 
   beforeEach(waitForAsync(() => {
+    localStorage.removeItem('dashboard_tile_order');
     TestBed.configureTestingModule({
     declarations: [DashboardComponent],
-    imports: [RouterTestingModule, RouterModule, GridstackComponent],
+    imports: [RouterTestingModule, RouterModule, DragDropModule, SharedModule],
     providers: [
         {
             provide: HTTP_CLIENT_TOKEN,
@@ -31,10 +35,49 @@ describe('DashboardComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
+    preferences = TestBed.inject(DashboardPreferencesService);
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('dashboard_tile_order');
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should render the default tiles in default order', () => {
+    expect(component.tiles.map((tile) => tile.id)).toEqual(DEFAULT_TILES.map((tile) => tile.id));
+    expect(component.tiles[0].label).toEqual('Health Issues');
+  });
+
+  it('should persist the new order on tile drop', () => {
+    component.onTileDrop({previousIndex: 0, currentIndex: 2} as CdkDragDrop<any>);
+
+    expect(component.tiles[2].id).toEqual(DEFAULT_TILES[0].id);
+    expect(component.hasCustomOrder).toBeTrue();
+    expect(preferences.getTileOrder()).toEqual(component.tiles.map((tile) => tile.id));
+  });
+
+  it('should restore the default order on reset and keep counts', () => {
+    component.tiles[0].count = 42;
+    component.onTileDrop({previousIndex: 0, currentIndex: 3} as CdkDragDrop<any>);
+
+    component.resetTileOrder();
+
+    expect(component.tiles.map((tile) => tile.id)).toEqual(DEFAULT_TILES.map((tile) => tile.id));
+    expect(component.tiles[0].count).toEqual(42);
+    expect(component.hasCustomOrder).toBeFalse();
+    expect(preferences.getTileOrder()).toBeNull();
+  });
+
+  it('should not navigate from a tile while customizing', () => {
+    spyOn((component as any).router, 'navigate');
+    component.customizing = true;
+
+    component.openTile(component.tiles[0]);
+
+    expect((component as any).router.navigate).not.toHaveBeenCalled();
   });
 });

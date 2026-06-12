@@ -1,5 +1,213 @@
-.page-view-chart-wrapper {
-  canvas {
-    width: 100%;
+@import "../../../assets/scss/bootstrap/variables";
+
+.dashboard-page {
+  max-width: 1800px;
+}
+
+.dashboard-header {
+  padding: 24px 0 8px;
+
+  .dashboard-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: $gray-900;
   }
+  .dashboard-subtitle {
+    color: $gray-600;
+    font-size: 0.95rem;
+  }
+  .dashboard-meta label {
+    color: $gray-600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+}
+
+.dashboard-section {
+  margin-top: 28px;
+
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: $gray-900;
+  }
+  .section-subtitle {
+    color: $gray-600;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+}
+
+.clinical-term {
+  color: $gray-500;
+}
+
+// --- Current Medical Concerns ---
+
+.concern-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+
+  li { display: block; }
+}
+
+.concern-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 14px 18px;
+  background: #fff;
+  border: 1px solid $gray-300;
+  border-left: 4px solid $pink;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color .15s ease;
+
+  &:hover {
+    border-color: $gray-500;
+    border-left-color: $pink;
+  }
+
+  .concern-icon {
+    color: $pink;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+  .concern-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .concern-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $gray-900;
+  }
+  .concern-clinical {
+    font-size: 0.8rem;
+    color: $gray-600;
+  }
+  .concern-since {
+    margin-left: auto;
+    color: $gray-600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .concern-chevron {
+    color: $gray-500;
+    font-size: 0.8rem;
+  }
+}
+
+.concerns-empty {
+  padding: 16px 18px;
+  background: $gray-100;
+  border-radius: 10px;
+  color: $gray-700;
+}
+
+// --- Category tiles ---
+
+.customize-hint {
+  color: $gray-600;
+  font-size: 0.85rem;
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+  padding-bottom: 40px;
+
+  @media (max-width: 575px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 22px 20px;
+  background: #fff;
+  border: 1px solid $gray-300;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .1s ease;
+
+  &:hover {
+    border-color: $indigo;
+    transform: translateY(-2px);
+  }
+
+  .tile-icon {
+    font-size: 1.9rem;
+    color: $indigo;
+    margin-bottom: 10px;
+  }
+  .tile-count {
+    font-size: 1.7rem;
+    font-weight: 600;
+    line-height: 1;
+    color: $gray-900;
+
+    &.tile-count-zero { color: $gray-500; }
+  }
+  .tile-label {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: $gray-900;
+    margin-top: 4px;
+  }
+  .tile-clinical {
+    font-size: 0.78rem;
+    color: $gray-600;
+  }
+
+  &.tile-customizing {
+    cursor: grab;
+    border-style: dashed;
+
+    &:hover { transform: none; }
+  }
+}
+
+.cdk-drag-preview.tile {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+  background: #fff;
+}
+.cdk-drag-placeholder { opacity: .3; }
+
+// --- Dark theme ---
+
+@mixin dashboard-dark {
+  .dashboard-title, .section-title { color: var(--dark-text-white-color); }
+  .dashboard-subtitle, .section-subtitle, .dashboard-meta label, .customize-hint, .clinical-term { color: var(--dark-secondary-text-color); }
+
+  .concern-item, .tile, .cdk-drag-preview.tile {
+    background: var(--card);
+    border-color: var(--border);
+  }
+  .concern-item { border-left-color: var(--primary); }
+  .concern-name, .tile-label, .tile-count { color: var(--dark-text-color); }
+  .concern-clinical, .concern-since, .tile-clinical { color: var(--dark-secondary-text-color); }
+  .tile-count.tile-count-zero { color: var(--dark-secondary-text-color); }
+  .tile-icon, .concern-icon { color: var(--primary); }
+  .tile:hover { border-color: var(--primary); }
+  .concerns-empty { background: var(--card); color: var(--dark-text-color); }
+}
+
+:host-context(body.dark-theme) { @include dashboard-dark; }
+
+@media (prefers-color-scheme: dark) {
+  :host-context(body:not(.light-theme)) { @include dashboard-dark; }
 }

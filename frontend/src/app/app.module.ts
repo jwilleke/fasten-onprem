@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -85,7 +86,8 @@ import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wiza
         NgSelectModule,
         WidgetsModule,
         DirectivesModule,
-        IconsModule], providers: [
+        IconsModule,
+        DragDropModule], providers: [
         {
             provide: HTTP_CLIENT_TOKEN,
             useClass: HttpClient,
