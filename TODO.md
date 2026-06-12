@@ -27,16 +27,15 @@ _none — security board clean (0 open Dependabot / code-scanning alerts)._
 - #209 [EPIC] Migrate to Bootstrap 5
 - #20 [EPIC] SMART on FHIR — live provider sync
 - #14 [FEATURE] User Profile Update (PII)
+- #261 [FEATURE] Settings under User Profile
 - #53 [SMART] Veradigm/FollowMyHealth integration — blocked on vendor app approval
 
 ## ⏸ Deferred
 
 - #239 [chore] Revisit gofhir-models 0.1.x once encoding/json/v2 is default in Go
 - #131 [FEATURE] E2E testing — lforms questionnaire render + interact
+- #263 [FEATURE] Message Provider
 
 ## ❓ Needs triage
 
-2 awaiting a priority decision:
-
-- #263 [FEATURE] Message Provider
-- #261 [FEATURE] Settings under User Profile
+_none — all open issues carry a priority band._
