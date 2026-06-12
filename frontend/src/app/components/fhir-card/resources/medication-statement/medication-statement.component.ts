@@ -83,6 +83,11 @@ export class MedicationStatementComponent implements OnInit, FhirCardComponentIn
         enabled: !!this.displayModel?.dosage_text,
       },
       {
+        label: 'Route',
+        data: this.displayModel?.route_display,
+        enabled: !!this.displayModel?.route_display,
+      },
+      {
         label: 'Category',
         data: (this.displayModel?.categories || []).join(', '),
         enabled: !!this.displayModel?.categories?.length,

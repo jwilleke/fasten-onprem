@@ -21,7 +21,8 @@ export class MedicationStatementModel extends FastenDisplayModel {
   date_asserted: string|undefined
   information_source: ReferenceModel|undefined
   reason_code: string|undefined
-  dosage_text: string|undefined             // dosage.text (the SIG)
+  dosage_text: string|undefined             // dosage.text (the SIG), or a structured-dose fallback
+  route_display: string|undefined           // dosage.route (e.g. "ORAL")
   categories: string[] = []
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
@@ -38,7 +39,19 @@ export class MedicationStatementModel extends FastenDisplayModel {
     this.date_asserted = _.get(fhirResource, 'dateAsserted');
     this.information_source = _.get(fhirResource, 'informationSource');
     this.reason_code = _.get(fhirResource, 'reasonCode');
+
+    // Dosage: prefer the free-text SIG. CCD/portal data often has no `dosage.text` but DOES have a
+    // structured dose (route + doseQuantity) — render that rather than showing nothing (#264).
     this.dosage_text = _.get(fhirResource, 'dosage.0.text');
+    if (!this.dosage_text) {
+      const doseValue = _.get(fhirResource, 'dosage.0.doseAndRate.0.doseQuantity.value');
+      if (doseValue !== undefined && doseValue !== null) {
+        const doseUnit = _.get(fhirResource, 'dosage.0.doseAndRate.0.doseQuantity.unit');
+        this.dosage_text = doseUnit ? `${doseValue} ${doseUnit}` : `${doseValue}`;
+      }
+    }
+    this.route_display =
+      _.get(fhirResource, 'dosage.0.route.coding.0.display') || _.get(fhirResource, 'dosage.0.route.text');
     this.categories = (_.get(fhirResource, 'category') ? [].concat(_.get(fhirResource, 'category')) : [])
       .map((c: any) => _.get(c, 'coding.0.display') || _.get(c, 'text') || _.get(c, 'coding.0.code'))
       .filter(Boolean);
