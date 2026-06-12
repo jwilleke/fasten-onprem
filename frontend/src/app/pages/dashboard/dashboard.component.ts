@@ -5,7 +5,7 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {AuthService} from '../../services/auth.service';
 import {DashboardPreferencesService} from '../../services/dashboard-preferences.service';
 import {Summary} from '../../models/fasten/summary';
-import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {ClassifiedCondition} from '../../models/fasten/classified-condition';
 
 // A large-icon category tile. Labels pair plain language (label) with the
 // standardized clinical term (clinicalLabel) so the record stays legible to
@@ -32,14 +32,6 @@ export const DEFAULT_TILES: DashboardTile[] = [
   {id: 'care-team', label: 'Care Team', clinicalLabel: 'Practitioners & organizations', icon: 'fa-solid fa-user-doctor', route: '/practitioners', resourceTypes: ['Practitioner', 'Organization', 'CareTeam'], count: 0},
 ]
 
-export interface ActiveConcern {
-  display: string
-  clinicalDetail?: string
-  since?: string
-  sourceId: string
-  sourceResourceId: string
-}
-
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -57,7 +49,11 @@ export class DashboardComponent implements OnInit {
   customizing = false
   hasCustomOrder = false
 
-  activeConcerns: ActiveConcern[] = []
+  // Conditions, classified by the backend (Layer 1) and grouped here for display (Layer 2).
+  currentConcerns: ClassifiedCondition[] = []  // active / remission / unknown problem-list-items
+  pastProblems: ClassifiedCondition[] = []     // resolved problem-list-items
+  profileItems: ClassifiedCondition[] = []     // social / personal "Patient Profile" items
+  showPastProblems = false
 
   private userId: string = undefined
 
@@ -101,36 +97,21 @@ export class DashboardComponent implements OnInit {
       error: () => { this.loading = false }
     })
 
-    this.fastenApi.getResources('Condition').subscribe({
-      next: (conditions: ResourceFhir[]) => {
+    // The backend classifier synthesizes Condition.category + display state and separates real
+    // health problems from social/administrative "Personal Health Conditions". Grouping here is the
+    // source-agnostic display mapping (Layer 2).
+    this.fastenApi.getClassifiedConditions().subscribe({
+      next: (rows: ClassifiedCondition[]) => {
         this.concernsLoading = false
-        this.activeConcerns = (conditions || [])
-          .filter((condition) => this.isActiveCondition(condition))
-          .map((condition) => this.toActiveConcern(condition))
+        const problems = (rows || []).filter((r) => r.category === 'problem-list-item')
+        // Current = Active + Remission (still tracked) + Unknown (shown, never assumed); RuledOut is
+        // intentionally excluded from both lists, and entered-in-error never reaches the client.
+        this.currentConcerns = problems.filter((r) => r.state === 'Active' || r.state === 'Remission' || r.state === 'Unknown')
+        this.pastProblems = problems.filter((r) => r.state === 'Resolved')
+        this.profileItems = (rows || []).filter((r) => r.category === 'sdoh' || r.category === 'health-concern')
       },
       error: () => { this.concernsLoading = false }
     })
-  }
-
-  // Only conditions the record explicitly marks active are "current medical
-  // concerns" — no inference from absence (see no-guessing display principle).
-  private isActiveCondition(condition: ResourceFhir): boolean {
-    const clinicalStatus = (condition?.resource_raw as any)?.clinicalStatus
-    const codings = clinicalStatus?.coding || []
-    return codings.some((coding) => coding?.code === 'active' || coding?.code === 'recurrence' || coding?.code === 'relapse')
-  }
-
-  private toActiveConcern(condition: ResourceFhir): ActiveConcern {
-    const raw = condition.resource_raw as any
-    const display = raw?.code?.text || raw?.code?.coding?.[0]?.display || raw?.code?.coding?.[0]?.code || 'Unknown condition'
-    const clinicalDisplay = raw?.code?.coding?.[0]?.display
-    return {
-      display: display,
-      clinicalDetail: clinicalDisplay && clinicalDisplay !== display ? clinicalDisplay : undefined,
-      since: raw?.onsetDateTime || raw?.recordedDate || undefined,
-      sourceId: condition.source_id,
-      sourceResourceId: condition.source_resource_id,
-    }
   }
 
   private populateTileCounts(summary: Summary) {
@@ -158,8 +139,12 @@ export class DashboardComponent implements OnInit {
     this.router.navigate([tile.route])
   }
 
-  openConcern(concern: ActiveConcern) {
+  openConcern(concern: ClassifiedCondition) {
     this.router.navigate(['/explore', concern.sourceId, 'resource', concern.sourceResourceId])
+  }
+
+  togglePastProblems() {
+    this.showPastProblems = !this.showPastProblems
   }
 
   toggleCustomizing() {

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import {map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {ReconciledMedication} from '../models/fasten/reconciled-medication';
+import {ClassifiedCondition} from '../models/fasten/classified-condition';
 import {ServerLogs} from '../models/fasten/server-logs';
 import {Source} from '../models/fasten/source';
 import {User} from '../models/fasten/user';
@@ -142,6 +143,15 @@ export class FastenApiService {
       .pipe(
         map((response: ResponseWrapper) => {
           return (response.data || []) as ReconciledMedication[]
+        })
+      );
+  }
+
+  getClassifiedConditions(): Observable<ClassifiedCondition[]> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/conditions/classified`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return (response.data || []) as ClassifiedCondition[]
         })
       );
   }

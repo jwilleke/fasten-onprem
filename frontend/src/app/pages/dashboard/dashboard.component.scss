@@ -112,6 +112,45 @@
   color: $gray-700;
 }
 
+.concern-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+
+  .concern-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+}
+
+// Past problems live one click away — resolved, neutral (not the pink "active" accent).
+.past-problems {
+  margin-top: 12px;
+
+  .past-problems-toggle {
+    color: $gray-600;
+    font-size: 0.85rem;
+    text-decoration: none;
+
+    i { margin-right: 6px; font-size: 0.75rem; }
+    &:hover { color: $gray-800; }
+  }
+}
+
+.concern-item-past {
+  border-left-color: $gray-400;
+  &:hover { border-left-color: $gray-500; }
+  .concern-icon { color: $gray-500; }
+}
+
+// Patient Profile — neutral indigo accent to read as "about you", not a health problem.
+.concern-item-profile {
+  border-left-color: $indigo;
+  &:hover { border-left-color: $indigo; }
+  .concern-icon { color: $indigo; }
+}
+
 // --- Category tiles ---
 
 .customize-hint {

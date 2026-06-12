@@ -16,29 +16,72 @@
 
       <section class="dashboard-section" aria-labelledby="current-concerns-heading">
         <h4 id="current-concerns-heading" class="section-title">Current Medical Concerns</h4>
-        <p class="section-subtitle">Health issues your records mark as active <span class="clinical-term">(Condition, clinical status: active)</span></p>
+        <p class="section-subtitle">Active health problems from your records <span class="clinical-term">(Condition, problem list)</span></p>
 
         <div *ngIf="concernsLoading" class="concerns-empty">
           <app-loading-spinner [loadingTitle]="'Checking your records...'"></app-loading-spinner>
         </div>
 
-        <ul *ngIf="!concernsLoading && activeConcerns.length > 0" class="concern-list list-unstyled">
-          <li *ngFor="let concern of activeConcerns">
+        <ul *ngIf="!concernsLoading && currentConcerns.length > 0" class="concern-list list-unstyled">
+          <li *ngFor="let concern of currentConcerns">
             <button type="button" class="concern-item" (click)="openConcern(concern)">
               <i class="fa-solid fa-heart-pulse concern-icon" aria-hidden="true"></i>
               <span class="concern-text">
-                <span class="concern-name">{{concern.display}}</span>
-                <span *ngIf="concern.clinicalDetail" class="concern-clinical">{{concern.clinicalDetail}}</span>
+                <span class="concern-name">{{concern.title}}</span>
+                <span class="concern-badges">
+                  <span *ngIf="concern.selfReported" class="concern-badge badge bg-secondary">Self-reported</span>
+                  <span *ngIf="concern.state === 'Remission'" class="concern-badge badge bg-info">In remission<ng-container *ngIf="concern.abated"> since {{concern.abated | date:'MMM y'}}</ng-container></span>
+                  <span *ngIf="concern.state === 'Unknown'" class="concern-badge badge bg-light text-dark">Status not specified</span>
+                </span>
               </span>
-              <span *ngIf="concern.since" class="concern-since">since {{concern.since | date:'MMM y'}}</span>
+              <span *ngIf="concern.onset" class="concern-since">since {{concern.onset | date:'MMM y'}}</span>
               <i class="fa-solid fa-chevron-right concern-chevron" aria-hidden="true"></i>
             </button>
           </li>
         </ul>
 
-        <div *ngIf="!concernsLoading && activeConcerns.length === 0" class="concerns-empty">
+        <div *ngIf="!concernsLoading && currentConcerns.length === 0" class="concerns-empty">
           <p class="mb-0">No conditions are marked active in your records. <a [routerLink]="'/medical-history'">Review your full medical history</a>.</p>
         </div>
+
+        <div *ngIf="!concernsLoading && pastProblems.length > 0" class="past-problems">
+          <button type="button" class="past-problems-toggle btn btn-link p-0" (click)="togglePastProblems()" [attr.aria-expanded]="showPastProblems">
+            <i class="fa-solid" [class.fa-chevron-right]="!showPastProblems" [class.fa-chevron-down]="showPastProblems" aria-hidden="true"></i>
+            Past health problems ({{pastProblems.length}})
+          </button>
+          <ul *ngIf="showPastProblems" class="concern-list list-unstyled mt-2">
+            <li *ngFor="let problem of pastProblems">
+              <button type="button" class="concern-item concern-item-past" (click)="openConcern(problem)">
+                <i class="fa-solid fa-clock-rotate-left concern-icon" aria-hidden="true"></i>
+                <span class="concern-text">
+                  <span class="concern-name">{{problem.title}}</span>
+                  <span *ngIf="problem.selfReported" class="concern-clinical">Self-reported</span>
+                </span>
+                <span class="concern-since">
+                  <ng-container *ngIf="problem.onset">{{problem.onset | date:'y'}} – </ng-container>resolved<ng-container *ngIf="problem.abated"> {{problem.abated | date:'MMM y'}}</ng-container>
+                </span>
+                <i class="fa-solid fa-chevron-right concern-chevron" aria-hidden="true"></i>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section *ngIf="!concernsLoading && profileItems.length > 0" class="dashboard-section" aria-labelledby="patient-profile-heading">
+        <h4 id="patient-profile-heading" class="section-title">Patient Profile</h4>
+        <p class="section-subtitle">Personal, social, and lifestyle information from your records — not health problems <span class="clinical-term">(Condition, personal health)</span></p>
+
+        <ul class="concern-list list-unstyled">
+          <li *ngFor="let item of profileItems">
+            <button type="button" class="concern-item concern-item-profile" (click)="openConcern(item)">
+              <i class="fa-solid fa-id-card concern-icon" aria-hidden="true"></i>
+              <span class="concern-text">
+                <span class="concern-name">{{item.title}}</span>
+              </span>
+              <i class="fa-solid fa-chevron-right concern-chevron" aria-hidden="true"></i>
+            </button>
+          </li>
+        </ul>
       </section>
 
       <section class="dashboard-section" aria-labelledby="browse-heading">
