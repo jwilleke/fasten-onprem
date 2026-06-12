@@ -168,3 +168,4 @@ is the supported verification path.
 - Design: [`../planning/smart-on-fhir/smart-on-fhir.md`](../planning/smart-on-fhir/smart-on-fhir.md), [`../planning/smart-on-fhir/oauth-gateway.md`](../planning/smart-on-fhir/oauth-gateway.md).
 - Friction notes: [`clientid-friction.md`](./clientid-friction.md).
 - Epic docs: SMART test patients <https://fhir.epic.com/Documentation?docId=testpatients>; OAuth2 <https://fhir.epic.com/Documentation?docId=oauth2>.
+- [Epic Developer Docs](https://fhir.epic.com/Documentation?docId=developerguidelines)
