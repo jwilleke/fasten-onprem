@@ -1,0 +1,41 @@
+{
+  "resourceType": "MedicationStatement",
+  "id": "4149cba4-9687-3e3f-ab2c-c7888a1b60a6",
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:uuid:6c844c75-aa34-411c-b7bd-5e4a9f206e29"
+    }
+  ],
+  "status": "active",
+  "effectivePeriod": {
+    "end": "2013-08-15T00:00:00.000Z"
+  },
+  "dosage": [
+    {
+      "route": {
+        "coding": [
+          {
+            "code": "C38288",
+            "display": "ORAL",
+            "system": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl"
+          }
+        ]
+      },
+      "doseAndRate": [
+        {
+          "doseQuantity": {
+            "value": 1,
+            "system": "http://unitsofmeasure.org"
+          }
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "Patient/cda-83e7180597cf7434"
+  },
+  "medicationReference": {
+    "reference": "Medication/30ed8b7e-4839-3d68-b2e5-8c8b39a40971"
+  }
+}
