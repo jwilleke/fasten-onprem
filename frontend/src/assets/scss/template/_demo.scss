@@ -717,7 +717,7 @@
   background: #fff;
   padding: 15px 150px;
   display: flex;
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     padding: 15px 20px;
     display: block;
   }
@@ -743,7 +743,7 @@
     font-weight: 400;
     vertical-align: middle;
     line-height: 1;
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
       margin-bottom: 10px;
     }
   }

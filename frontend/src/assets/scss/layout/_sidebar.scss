@@ -1,7 +1,7 @@
 /* ###### 6.8 Sidebar  ###### */
 
 .az-sidebar-show {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     overflow: hidden;
 
     .az-sidebar {
@@ -75,7 +75,7 @@
     width: $az-width-sidebar - 20px;
   }
 
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     position: fixed;
     top: 0;
     left: 0;

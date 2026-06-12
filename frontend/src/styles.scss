@@ -211,6 +211,9 @@
 //@import '@fullcalendar/core/main.css';
 //@import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
+/* ############### BS4 -> BS5 TRANSITIONAL SHIMS (#265) ############### */
+@import "./assets/scss/bs4-shims";
+
 @import '../node_modules/@swimlane/ngx-datatable/index.css';
 @import '../node_modules/@swimlane/ngx-datatable/themes/bootstrap.css';
 @import '../node_modules/@swimlane/ngx-datatable/assets/icons.css';

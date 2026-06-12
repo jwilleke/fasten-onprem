@@ -1,7 +1,7 @@
 /* ###### 6.6 Navbar  ###### */
 
 .az-navbar-show {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     overflow: hidden;
 
     .az-navbar-backdrop {
@@ -63,7 +63,7 @@
     display: flex;
     flex-direction: column;
 
-    @include media-breakpoint-down(md) { padding: 0; }
+    @include media-breakpoint-down(lg) { padding: 0; }
 
     @include media-breakpoint-up(lg) {
       flex-direction: row;
@@ -251,7 +251,7 @@
       display: none;
 
       > .nav-sub-item {
-        @include media-breakpoint-down(md) {
+        @include media-breakpoint-down(lg) {
           margin-left: 37px;
           > .nav-sub-link { padding-left: 10px; }
         }
@@ -326,7 +326,7 @@
       padding: 0;
       pointer-events: auto;
 
-      @include media-breakpoint-down(md) { max-width: none; }
+      @include media-breakpoint-down(lg) { max-width: none; }
       @include media-breakpoint-up(lg) {
         display: flex;
         background-color: #fff;
@@ -364,7 +364,7 @@
 
       + .nav {
         .nav-sub-item:first-child {
-          @include media-breakpoint-down(md) {
+          @include media-breakpoint-down(lg) {
             margin-top: 6px;
             padding-top: 6px;
             border-top: 1px dotted $gray-200;

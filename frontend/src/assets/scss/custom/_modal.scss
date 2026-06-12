@@ -236,7 +236,8 @@
 .modal-content {
   border-radius: 0;
   border-width: 0; }
-.modal-content .close {
+.modal-content .close,
+.modal-content .btn-close {
   font-size: 28px;
   padding: 0;
   margin: 0;
@@ -408,7 +409,8 @@
 .modal.effect-just-me .modal-content {
   background-color: transparent; }
 
-.modal.effect-just-me .close {
+.modal.effect-just-me .close,
+.modal.effect-just-me .btn-close {
   text-shadow: none;
   color: #fff; }
 

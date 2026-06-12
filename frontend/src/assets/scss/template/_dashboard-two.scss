@@ -44,7 +44,7 @@
     + div {
       margin-top: 10px;
 
-      @include media-breakpoint-down(xs) { flex-basis: 50%; }
+      @include media-breakpoint-down(sm) { flex-basis: 50%; }
       @include media-breakpoint-up(sm) {
         margin-left: 25px;
         margin-top: 0;

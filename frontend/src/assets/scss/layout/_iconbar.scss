@@ -1,7 +1,7 @@
 /* ###### 6.5 Iconbar  ###### */
 
 .az-iconbar-show {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     .az-iconbar { display: flex; }
     .az-iconbar-aside { display: block; }
   }

@@ -4,7 +4,7 @@
   @media (max-width: 575px) { overflow: hidden; }
 
   .az-content-left {
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
       display: block;
       position: fixed;
       top: 0;
@@ -24,7 +24,7 @@
 }
 
 .az-content-body-show {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     .az-header {
       .az-header-menu-icon { display: none; }
       .az-header-left .az-header-arrow { display: block; }
@@ -47,7 +47,7 @@
 
   .container {
     @include media-breakpoint-up(lg) { padding: 0; }
-    @include media-breakpoint-down(md) { max-width: none; }
+    @include media-breakpoint-down(lg) { max-width: none; }
   }
 }
 

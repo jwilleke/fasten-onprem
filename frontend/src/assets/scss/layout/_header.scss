@@ -1,7 +1,7 @@
 /* ###### 6.4 Header  ###### */
 
 .az-header-menu-show {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     overflow: hidden;
 
     .az-header-menu {
@@ -46,7 +46,7 @@
 
   > .container {
     @include media-breakpoint-up(lg) { padding: 0; }
-    @include media-breakpoint-down(md) { max-width: none; }
+    @include media-breakpoint-down(lg) { max-width: none; }
   }
 
   .az-header-left .az-logo {
@@ -205,7 +205,7 @@
   nav {
     &.az-menu-sub {
       &.dropdown-menu {
-        @include media-breakpoint-down(md) {
+        @include media-breakpoint-down(lg) {
           position: static !important;
           transform: translate(0) !important;
           border-width: 0;
@@ -338,7 +338,7 @@
 
   @include media-breakpoint-up(lg) { display: none; }
 
-  .close {
+  .close, .btn-close {
     font-weight: 300;
     font-size: 28px;
   }
@@ -399,7 +399,7 @@
   .container {
     padding: 0;
 
-    @include media-breakpoint-down(md) { max-width: none; }
+    @include media-breakpoint-down(lg) { max-width: none; }
     @include media-breakpoint-up(lg) {
       display: flex;
       background-color: #fff;
@@ -643,7 +643,7 @@
       border-width: 2px;
     }
 
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
@@ -781,7 +781,7 @@
       border-width: 2px;
     }
 
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;

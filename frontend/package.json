@@ -44,7 +44,7 @@
     "@types/fhir": "^0.0.35",
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "asmcrypto.js": "^2.3.2",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "^5.3.8",
     "chart.js": "^4.4.2",
     "dwv": "^0.31.0",
     "fhirpath": "^3.3.0",

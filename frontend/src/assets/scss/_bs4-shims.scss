@@ -1,0 +1,28 @@
+// Transitional shims for BS4 structural idioms still present in templates
+// after the #265 class sweep. Delete entries as templates are reworked (#209).
+
+// BS4 .media object (replaced by flex utilities in BS5)
+.media {
+  display: flex;
+  align-items: flex-start;
+}
+.media-body { flex: 1; }
+
+// BS4 .close (mobile menu link in the header still uses it via Azia styles)
+.close {
+  float: right;
+  font-size: 1.3125rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  opacity: .5;
+  background-color: transparent;
+  border: 0;
+
+  &:hover { color: #000; text-decoration: none; opacity: .75; }
+}
+
+// BS5 removed the input-group append/prepend wrappers; make any stragglers
+// transparent to the flex layout instead of breaking it.
+.input-group-prepend,
+.input-group-append { display: contents; }

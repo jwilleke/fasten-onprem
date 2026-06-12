@@ -11,7 +11,7 @@
   position: relative;
   line-height: normal;
 }
-.az-nav .nav-link:hover-focus() {
+.az-nav .nav-link:hover, .az-nav .nav-link:focus {
   color: #1c273c;
 }
 .az-nav .nav-link + .nav-link {
@@ -110,7 +110,7 @@
 .az-nav-dark .nav-link {
   color: rgba(255, 255, 255, 0.7);
 }
-.az-nav-dark .nav-link:hover-focus() {
+.az-nav-dark .nav-link:hover, .az-nav-dark .nav-link:focus {
   color: #fff;
 }
 .az-nav-dark .nav-link + .nav-link {
@@ -135,7 +135,7 @@
   color: #596882;
   position: relative;
 }
-.az-nav-line .nav-link:hover-focus() {
+.az-nav-line .nav-link:hover, .az-nav-line .nav-link:focus {
   color: #1c273c;
 }
 .az-nav-line .nav-link + .nav-link {
@@ -172,7 +172,7 @@
 .az-nav-line.az-nav-dark .nav-link {
   color: rgba(255, 255, 255, 0.7);
 }
-.az-nav-line.az-nav-dark .nav-link:hover-focus() {
+.az-nav-line.az-nav-dark .nav-link:hover, .az-nav-line.az-nav-dark .nav-link:focus {
   color: #fff;
 }
 .az-nav-line.az-nav-dark .nav-link.active {
@@ -202,7 +202,7 @@
   background-color: #b4bdce;
   background-image: none;
 }
-.az-nav-tabs .lSAction > a:hover-focus() {
+.az-nav-tabs .lSAction > a:hover, .az-nav-tabs .lSAction > a:focus {
   background-color: #a5afc4;
 }
 .az-nav-tabs .lSAction > a::before {
@@ -252,7 +252,7 @@
   white-space: nowrap;
   background-color: #e3e7ed;
 }
-.az-nav-tabs .tab-link:hover-focus() {
+.az-nav-tabs .tab-link:hover, .az-nav-tabs .tab-link:focus {
   background-color: #f4f5f8;
 }
 .az-nav-tabs .tab-link.active {

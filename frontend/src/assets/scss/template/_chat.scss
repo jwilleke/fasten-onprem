@@ -1,7 +1,7 @@
 /* ###### 7.3 Chat  ###### */
 
 .az-content-body-show {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     .az-header-menu-icon { display: none; }
     .az-header-left .az-header-arrow { display: block; }
 

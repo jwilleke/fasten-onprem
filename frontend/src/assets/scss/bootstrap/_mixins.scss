@@ -1,4 +1,31 @@
 
+// BS4 -> BS5 compat shims (#265): mixins/functions Bootstrap 5 removed but the
+// Azia-era partials still call. Delete as the Azia theme is retired (#209).
+@function theme-color($key: "primary") { @return map-get($theme-colors, $key); }
+@function color-yiq($color) { @return color-contrast($color); }
+@mixin hover { &:hover { @content; } }
+@mixin hover-focus { &:hover, &:focus { @content; } }
+@mixin hover-active { &:hover, &:active { @content; } }
+@mixin hover-focus-active { &:hover, &:focus, &:active { @content; } }
+@mixin badge-variant($bg) {
+  color: color-contrast($bg);
+  background-color: $bg;
+  @at-root a#{&} {
+    &:hover, &:focus {
+      color: color-contrast($bg);
+      background-color: darken($bg, 10%);
+    }
+  }
+}
+@mixin form-control-focus($ignore-warning: false) {
+  &:focus {
+    color: $input-focus-color;
+    background-color: $input-focus-bg;
+    border-color: $input-focus-border-color;
+    outline: 0;
+    box-shadow: $input-focus-box-shadow;
+  }
+}
 
 // Accordion One Variant
 @mixin accordion-variant($color) {

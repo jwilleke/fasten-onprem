@@ -135,7 +135,7 @@ ng-fullcalendar {
     .fc-right { order: 3; }
     .fc-clear { display: none; }
 
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
       .fc-center {
         order: 1;
         flex: 0 0 100%;
@@ -290,7 +290,7 @@ ng-fullcalendar {
         th, td {
           border-color: $gray-300;
 
-          @include media-breakpoint-down(md) {
+          @include media-breakpoint-down(lg) {
             &:first-child { border-left-width: 0; }
             &:last-child { border-right-width: 0; }
           }
@@ -300,7 +300,7 @@ ng-fullcalendar {
       > tbody > tr > td {
         border-color: $gray-300;
 
-        @include media-breakpoint-down(md) {
+        @include media-breakpoint-down(lg) {
           &:first-child { border-left-width: 0; }
           &:last-child { border-right-width: 0; }
         }
