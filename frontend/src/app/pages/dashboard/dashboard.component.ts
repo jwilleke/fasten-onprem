@@ -18,10 +18,13 @@ export interface DashboardTile {
   route: string
   resourceTypes: string[]
   count: number
+  // countKey tiles get their count from the condition classifier (not the summary resource counts).
+  countKey?: 'concerns' | 'profile'
 }
 
 export const DEFAULT_TILES: DashboardTile[] = [
-  {id: 'health-issues', label: 'Health Issues', clinicalLabel: 'Conditions & diagnoses', icon: 'fa-solid fa-heart-pulse', route: '/medical-history', resourceTypes: ['Condition'], count: 0},
+  {id: 'concerns', label: 'Medical Concerns', clinicalLabel: 'Active health problems', icon: 'fa-solid fa-heart-pulse', route: '/medical-history', resourceTypes: [], count: 0, countKey: 'concerns'},
+  {id: 'patient-profile', label: 'Patient Profile', clinicalLabel: 'Personal & social info', icon: 'fa-solid fa-id-card', route: '/medical-history', resourceTypes: [], count: 0, countKey: 'profile'},
   {id: 'medications', label: 'Medications', clinicalLabel: 'Prescriptions & medication statements', icon: 'fa-solid fa-pills', route: '/medications', resourceTypes: ['MedicationRequest', 'MedicationStatement', 'Medication', 'MedicationAdministration', 'MedicationDispense'], count: 0},
   {id: 'allergies', label: 'Allergies', clinicalLabel: 'Allergies & intolerances', icon: 'fa-solid fa-triangle-exclamation', route: '/medical-history', resourceTypes: ['AllergyIntolerance'], count: 0},
   {id: 'lab-results', label: 'Lab Results', clinicalLabel: 'Observations & diagnostic reports', icon: 'fa-solid fa-flask', route: '/labs', resourceTypes: ['Observation', 'DiagnosticReport'], count: 0},
@@ -40,7 +43,6 @@ export const DEFAULT_TILES: DashboardTile[] = [
 })
 export class DashboardComponent implements OnInit {
   loading = false
-  concernsLoading = false
 
   lastUpdated: Date = null
   sourceCount = 0
@@ -48,12 +50,6 @@ export class DashboardComponent implements OnInit {
   tiles: DashboardTile[] = []
   customizing = false
   hasCustomOrder = false
-
-  // Conditions, classified by the backend (Layer 1) and grouped here for display (Layer 2).
-  currentConcerns: ClassifiedCondition[] = []  // active / remission / unknown problem-list-items
-  pastProblems: ClassifiedCondition[] = []     // resolved problem-list-items
-  profileItems: ClassifiedCondition[] = []     // social / personal "Patient Profile" items
-  showPastProblems = false
 
   private userId: string = undefined
 
@@ -66,7 +62,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true
-    this.concernsLoading = true
 
     // paint immediately with the default order; re-apply the saved order once
     // the user id arrives (preferences are scoped per user)
@@ -98,20 +93,24 @@ export class DashboardComponent implements OnInit {
     })
 
     // The backend classifier synthesizes Condition.category + display state and separates real
-    // health problems from social/administrative "Personal Health Conditions". Grouping here is the
-    // source-agnostic display mapping (Layer 2).
+    // health problems from social/administrative "Personal Health Conditions". The Medical Concerns
+    // and Patient Profile tiles are counted from it (not the raw Condition count).
     this.fastenApi.getClassifiedConditions().subscribe({
       next: (rows: ClassifiedCondition[]) => {
-        this.concernsLoading = false
         const problems = (rows || []).filter((r) => r.category === 'problem-list-item')
-        // Current = Active + Remission (still tracked) + Unknown (shown, never assumed); RuledOut is
-        // intentionally excluded from both lists, and entered-in-error never reaches the client.
-        this.currentConcerns = problems.filter((r) => r.state === 'Active' || r.state === 'Remission' || r.state === 'Unknown')
-        this.pastProblems = problems.filter((r) => r.state === 'Resolved')
-        this.profileItems = (rows || []).filter((r) => r.category === 'sdoh' || r.category === 'health-concern')
+        // Concerns = Active + Remission (still tracked) + Unknown (shown, never assumed); RuledOut is
+        // excluded, Resolved is past, and entered-in-error never reaches the client.
+        const concerns = problems.filter((r) => r.state === 'Active' || r.state === 'Remission' || r.state === 'Unknown')
+        const profile = (rows || []).filter((r) => r.category === 'sdoh' || r.category === 'health-concern')
+        this.setTileCount('concerns', concerns.length)
+        this.setTileCount('profile', profile.length)
       },
-      error: () => { this.concernsLoading = false }
     })
+  }
+
+  private setTileCount(countKey: 'concerns' | 'profile', count: number) {
+    const tile = this.tiles.find((t) => t.countKey === countKey)
+    if (tile) tile.count = count
   }
 
   private populateTileCounts(summary: Summary) {
@@ -120,6 +119,7 @@ export class DashboardComponent implements OnInit {
       countsByType[typeCount.resource_type] = typeCount.count
     }
     for (const tile of this.tiles) {
+      if (tile.countKey) continue // counted from the classifier, not summary resource counts
       tile.count = tile.resourceTypes.reduce((sum, resourceType) => sum + (countsByType[resourceType] || 0), 0)
     }
   }
@@ -137,14 +137,6 @@ export class DashboardComponent implements OnInit {
   openTile(tile: DashboardTile) {
     if (this.customizing) return
     this.router.navigate([tile.route])
-  }
-
-  openConcern(concern: ClassifiedCondition) {
-    this.router.navigate(['/explore', concern.sourceId, 'resource', concern.sourceResourceId])
-  }
-
-  togglePastProblems() {
-    this.showPastProblems = !this.showPastProblems
   }
 
   toggleCustomizing() {

@@ -49,7 +49,7 @@ describe('DashboardComponent', () => {
 
   it('should render the default tiles in default order', () => {
     expect(component.tiles.map((tile) => tile.id)).toEqual(DEFAULT_TILES.map((tile) => tile.id));
-    expect(component.tiles[0].label).toEqual('Health Issues');
+    expect(component.tiles[0].label).toEqual('Medical Concerns');
   });
 
   it('should persist the new order on tile drop', () => {
