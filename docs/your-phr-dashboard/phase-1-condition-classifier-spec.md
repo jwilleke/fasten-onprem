@@ -9,11 +9,13 @@ The dashboard's "Current Medical Concerns" must list **only active clinical prob
 ## Scope
 
 **In:**
+
 - A backend, pure, stateless **Condition classifier** (Layer 1) that synthesizes a standard `Condition.category` and a display tier from explicit record signals, non-destructively.
 - A `GET /api/secure/conditions/classified` endpoint, mirroring `GET /api/secure/medications/reconciled`.
 - Frontend: dashboard consumes the endpoint, fixes "Current Medical Concerns", adds a "Patient Profile" section.
 
 **Out (later phases):**
+
 - Resolving the *named* practitioner for "who said this" — Phase 2 (Phase 1 sets only the `selfReported` flag).
 - Encounter/reference resolution (the `Encounter/<patient>_<id>` quirk) — Phase 2.
 - Detail-card legibility rebuild — Phase 3.
@@ -153,6 +155,7 @@ switch clinicalStatusCode:
 ```
 
 Notes:
+
 - `entered-in-error` is the one case we **omit** — honoring the record's own statement that it was a mistake (consistent with "report facts as given": the recorded fact *is* "this was an error").
 - `remission` stays a tracked current problem (improved/absent **but not fully resolved**; relapse/recurrence is the return from it) — display under Current with an "in remission since `<abatement>`" badge.
 - `abatement` present + `active` status is a FHIR con-4 violation (non-conformant export). The switch keeps `clinicalStatus` authoritative; only when status is absent does `abatement` imply `Resolved`. (If FMH is observed to emit active+abated in practice, revisit toward treating abatement as the end-signal.)
