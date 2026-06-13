@@ -157,7 +157,7 @@ export class FastenApiService {
       );
   }
 
-  getRecentResources(limit: number = 5): Observable<ResourceListItem[]> {
+  getRecentResources(limit = 5): Observable<ResourceListItem[]> {
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resources/recent`, {params: {limit}})
       .pipe(
         map((response: ResponseWrapper) => {
