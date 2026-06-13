@@ -23,6 +23,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   current_user_claims: UserRegisteredClaims = new UserRegisteredClaims()
   backgroundJobs: BackgroundJob[] = []
 
+  // Initials of the current login, shown as the profile avatar.
+  get userInitials(): string {
+    const name = (this.current_user_claims.full_name || '').trim()
+    if (name) {
+      const parts = name.split(/\s+/).filter(Boolean)
+      const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].slice(0, 2)
+      return initials.toUpperCase()
+    }
+    const fallback = (this.current_user_claims.sub || this.current_user_claims.email || '?').trim()
+    return fallback.slice(0, 2).toUpperCase()
+  }
+
   newSupportRequest: SupportRequest = null
   loading = false
   errorMsg = ""

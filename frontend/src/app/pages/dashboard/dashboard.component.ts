@@ -1,15 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {Subject, Subscription, of} from 'rxjs';
+import {debounceTime, distinctUntilChanged, switchMap, catchError} from 'rxjs/operators';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {AuthService} from '../../services/auth.service';
 import {DashboardPreferencesService} from '../../services/dashboard-preferences.service';
 import {Summary} from '../../models/fasten/summary';
 import {ClassifiedCondition} from '../../models/fasten/classified-condition';
+import {ResourceListItem} from '../../models/fasten/resource-list-item';
 
-// A large-icon category tile. Labels pair plain language (label) with the
-// standardized clinical term (clinicalLabel) so the record stays legible to
-// the patient and useful to providers (#262).
 // The palette a patient can pick a tile color from (matches the SCSS .tile-color-* classes).
 export const TILE_PALETTE = ['amber', 'blue', 'red', 'green', 'teal', 'purple', 'pink', 'gray']
 
@@ -50,11 +50,21 @@ export const DEFAULT_TILES: DashboardTile[] = [
     styleUrls: ['./dashboard.component.scss'],
     standalone: false
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   loading = false
 
   lastUpdated: Date = null
   sourceCount = 0
+
+  greeting = 'Welcome'
+  patientName = ''       // full name of the record being viewed
+  patientFirstName = ''
+
+  recentActivity: ResourceListItem[] = []
+
+  searchQuery = ''
+  searchResults: ResourceListItem[] = []
+  searching = false
 
   tiles: DashboardTile[] = []
   customizing = false
@@ -63,6 +73,8 @@ export class DashboardComponent implements OnInit {
   palette = TILE_PALETTE
 
   private userId: string = undefined
+  private searchInput$ = new Subject<string>()
+  private searchSub: Subscription
 
   constructor(
     private fastenApi: FastenApiService,
@@ -73,6 +85,10 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true
+    this.greeting = this.timeOfDayGreeting()
+    this.loadPatientName()
+    this.loadRecentActivity()
+    this.wireSearch()
 
     // paint immediately with the default order; re-apply the saved order once
     // the user id arrives (preferences are scoped per user)
@@ -119,6 +135,86 @@ export class DashboardComponent implements OnInit {
         this.setTileCount('profile', profile.length)
       },
     })
+  }
+
+  ngOnDestroy() {
+    this.searchSub?.unsubscribe()
+  }
+
+  private timeOfDayGreeting(): string {
+    const hour = new Date().getHours()
+    if (hour < 12) return 'Good morning'
+    if (hour < 18) return 'Good afternoon'
+    return 'Good evening'
+  }
+
+  // The record being viewed is identified by its Patient resource (a family PHR may hold several).
+  private loadPatientName() {
+    this.fastenApi.getResources('Patient').subscribe({
+      next: (patients) => {
+        const raw = (patients && patients[0]?.resource_raw) as any
+        const name = raw?.name?.find((n) => n?.use === 'official') || raw?.name?.[0]
+        if (!name) return
+        const given = (name.given || []).join(' ')
+        this.patientFirstName = (name.given && name.given[0]) || ''
+        this.patientName = (name.text || `${given} ${name.family || ''}`).trim()
+      },
+      error: () => { /* greeting falls back to a generic welcome */ },
+    })
+  }
+
+  private loadRecentActivity() {
+    this.fastenApi.getRecentResources(5).subscribe({
+      next: (items) => { this.recentActivity = items || [] },
+      error: () => { this.recentActivity = [] },
+    })
+  }
+
+  private wireSearch() {
+    this.searchSub = this.searchInput$.pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      switchMap((q) => {
+        const query = (q || '').trim()
+        if (query.length < 2) { this.searching = false; return of([] as ResourceListItem[]) }
+        this.searching = true
+        return this.fastenApi.searchResources(query).pipe(catchError(() => of([] as ResourceListItem[])))
+      }),
+    ).subscribe((results) => {
+      this.searching = false
+      this.searchResults = results
+    })
+  }
+
+  onSearchInput(value: string) {
+    this.searchQuery = value
+    this.searchInput$.next(value)
+  }
+
+  clearSearch() {
+    this.searchQuery = ''
+    this.searchResults = []
+    this.searching = false
+  }
+
+  openResource(item: ResourceListItem) {
+    this.router.navigate(['/explore', item.source_id, 'resource', item.source_resource_id])
+  }
+
+  // map a FHIR resource type to a Font Awesome icon for the recent/search lists
+  iconForType(resourceType: string): string {
+    const map: Record<string, string> = {
+      Condition: 'fa-heart-pulse',
+      MedicationRequest: 'fa-pills', MedicationStatement: 'fa-pills', MedicationDispense: 'fa-pills', Medication: 'fa-pills', MedicationAdministration: 'fa-pills',
+      AllergyIntolerance: 'fa-triangle-exclamation',
+      Observation: 'fa-flask', DiagnosticReport: 'fa-flask',
+      Immunization: 'fa-syringe',
+      Encounter: 'fa-notes-medical',
+      Procedure: 'fa-user-nurse',
+      DocumentReference: 'fa-file-medical', Media: 'fa-file-medical', Binary: 'fa-file-medical',
+      Practitioner: 'fa-user-doctor', Organization: 'fa-hospital', CareTeam: 'fa-user-doctor',
+    }
+    return 'fa-solid ' + (map[resourceType] || 'fa-file-lines')
   }
 
   private setTileCount(countKey: 'concerns' | 'profile', count: number) {

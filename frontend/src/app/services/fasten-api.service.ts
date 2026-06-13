@@ -7,6 +7,7 @@ import {map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {ReconciledMedication} from '../models/fasten/reconciled-medication';
 import {ClassifiedCondition} from '../models/fasten/classified-condition';
+import {ResourceListItem} from '../models/fasten/resource-list-item';
 import {ServerLogs} from '../models/fasten/server-logs';
 import {Source} from '../models/fasten/source';
 import {User} from '../models/fasten/user';
@@ -152,6 +153,24 @@ export class FastenApiService {
       .pipe(
         map((response: ResponseWrapper) => {
           return (response.data || []) as ClassifiedCondition[]
+        })
+      );
+  }
+
+  getRecentResources(limit: number = 5): Observable<ResourceListItem[]> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resources/recent`, {params: {limit}})
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return (response.data || []) as ResourceListItem[]
+        })
+      );
+  }
+
+  searchResources(query: string): Observable<ResourceListItem[]> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resources/search`, {params: {q: query}})
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return (response.data || []) as ResourceListItem[]
         })
       );
   }

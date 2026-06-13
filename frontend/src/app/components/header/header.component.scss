@@ -1,0 +1,23 @@
+// Initials avatar for the current login (replaces the generic icon).
+.az-img-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #6840bf;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+// In the profile dropdown header the avatar is a touch larger.
+.az-header-profile .az-img-user .az-img-initials {
+  width: 48px;
+  height: 48px;
+  font-size: 1rem;
+}

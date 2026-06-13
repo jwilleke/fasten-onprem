@@ -45,6 +45,109 @@
   font-size: 0.85rem;
 }
 
+// --- Search your record ---
+
+.dashboard-search {
+  position: relative;
+  max-width: 560px;
+  margin-top: 8px;
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $gray-500;
+    pointer-events: none;
+  }
+  .search-input {
+    padding-left: 38px;
+    padding-right: 38px;
+    border-radius: 10px;
+    height: 44px;
+  }
+  .search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: $gray-500;
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  .search-results {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    right: 0;
+    margin-top: 6px;
+    background: #fff;
+    border: 1px solid $gray-300;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    overflow: hidden;
+  }
+  .search-status {
+    padding: 12px 16px;
+    color: $gray-600;
+    font-size: 0.9rem;
+  }
+  .search-list {
+    margin: 0;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    padding: 11px 16px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover { background: $gray-100; }
+
+    .search-item-icon { color: $gray-500; width: 18px; text-align: center; }
+    .search-item-title { font-weight: 500; color: $gray-900; min-width: 0; }
+    .search-item-date { margin-left: auto; color: $gray-600; font-size: 0.82rem; white-space: nowrap; }
+  }
+}
+
+// --- Recent activity ---
+
+.activity-list {
+  margin: 0;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  overflow: hidden;
+
+  li + li .activity-item { border-top: 1px solid $gray-200; }
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 13px 18px;
+  border: 0;
+  background: #fff;
+  cursor: pointer;
+
+  &:hover { background: $gray-100; }
+
+  .activity-icon { color: $gray-500; width: 18px; text-align: center; }
+  .activity-title { font-weight: 500; color: $gray-900; min-width: 0; }
+  .activity-date { margin-left: auto; color: $gray-600; font-size: 0.85rem; white-space: nowrap; }
+}
+
 // --- Category tiles (colored, icon-led, arrangeable) ---
 
 .tile-grid {
@@ -169,6 +272,20 @@
   .tile .tile-sub { color: var(--dark-secondary-text-color); }
   .tile-wrap.tile-customizing .tile { border-color: rgba(255, 255, 255, .25); }
   .tile-swatches .swatch.swatch-active { border-color: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .4) inset; }
+
+  .dashboard-search {
+    .search-results { background: var(--card); border-color: var(--border); }
+    .search-item:hover { background: rgba(255, 255, 255, .05); }
+    .search-item .search-item-title { color: var(--dark-text-color); }
+    .search-item .search-item-date, .search-status { color: var(--dark-secondary-text-color); }
+  }
+
+  .activity-list { border-color: var(--border); }
+  .activity-list li + li .activity-item { border-top-color: var(--border); }
+  .activity-item { background: var(--card); }
+  .activity-item:hover { background: rgba(255, 255, 255, .05); }
+  .activity-item .activity-title { color: var(--dark-text-color); }
+  .activity-item .activity-date { color: var(--dark-secondary-text-color); }
 
   // saturated-dark panels with light accents (matches the design sample)
   .tile-color-amber  { --tile-bg: #3a3014; --tile-accent: #e0b15f; }

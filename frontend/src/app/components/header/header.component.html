@@ -70,14 +70,14 @@
         </a>
       </div>
       <div class="dropdown az-profile-menu" ngbDropdown>
-        <a class="az-img-user" id="profileDropdown" ngbDropdownToggle><img src="assets/logo/yourphr-icon.svg" alt="user"></a>
+        <a class="az-img-user" id="profileDropdown" ngbDropdownToggle [attr.aria-label]="'Account: ' + (current_user_claims.full_name || current_user_claims.sub)"><span class="az-img-initials">{{userInitials}}</span></a>
         <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="profileDropdown">
           <div class="az-dropdown-header d-sm-none">
             <a class="az-header-arrow" (click)="closeMenu($event)"><i class="icon ion-md-arrow-back"></i></a>
           </div>
           <div [routerLink]="'/patient-profile'" class="az-header-profile cursor-pointer">
             <div class="az-img-user">
-              <img src="assets/logo/yourphr-icon.svg" alt="">
+              <span class="az-img-initials">{{userInitials}}</span>
             </div><!-- az-img-user -->
             <h6>{{current_user_claims.full_name || current_user_claims.sub || current_user_claims.email }}</h6>
             <span *ngIf="isAdmin">Administrator</span>

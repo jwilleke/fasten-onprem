@@ -4,14 +4,37 @@
 
       <div class="d-flex flex-wrap align-items-center gap-3 dashboard-header">
         <div class="me-auto">
-          <h2 class="dashboard-title mb-1">Your Health Record</h2>
-          <p class="dashboard-subtitle mb-0">Everything imported from your medical sources, in one place.</p>
+          <h2 class="dashboard-title mb-1">{{greeting}}<ng-container *ngIf="patientFirstName">, {{patientFirstName}}</ng-container></h2>
+          <p class="dashboard-subtitle mb-0">
+            <ng-container *ngIf="patientName">YourPHR · {{patientName}}</ng-container>
+            <ng-container *ngIf="lastUpdated"> · last import {{lastUpdated | date:'MMM d, yyyy'}}</ng-container>
+          </p>
         </div>
-        <div class="text-end dashboard-meta" *ngIf="lastUpdated">
-          <label class="mb-0">Last updated</label>
-          <h6 class="mb-0">{{lastUpdated | date:'MMM d, yyyy'}}</h6>
+        <a [routerLink]="'/sources'" class="btn btn-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add records</a>
+      </div>
+
+      <div class="dashboard-search">
+        <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+        <input type="search" class="form-control search-input" placeholder="Search your record"
+               aria-label="Search your record"
+               [value]="searchQuery" (input)="onSearchInput($any($event.target).value)">
+        <button *ngIf="searchQuery" type="button" class="search-clear" aria-label="Clear search" (click)="clearSearch()">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+
+        <div *ngIf="searchQuery.length >= 2" class="search-results">
+          <div *ngIf="searching" class="search-status">Searching…</div>
+          <ul *ngIf="!searching && searchResults.length > 0" class="search-list list-unstyled">
+            <li *ngFor="let item of searchResults">
+              <button type="button" class="search-item" (click)="openResource(item)">
+                <i class="search-item-icon {{iconForType(item.source_resource_type)}}" aria-hidden="true"></i>
+                <span class="search-item-title">{{item.title || item.source_resource_type}}</span>
+                <span *ngIf="item.date" class="search-item-date">{{item.date | date:'MMM d, yyyy'}}</span>
+              </button>
+            </li>
+          </ul>
+          <div *ngIf="!searching && searchResults.length === 0" class="search-status">No matches.</div>
         </div>
-        <a [routerLink]="'/sources'" class="btn btn-primary">Add Records</a>
       </div>
 
       <section class="dashboard-section" aria-labelledby="browse-heading">
@@ -59,6 +82,21 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <section *ngIf="recentActivity.length > 0" class="dashboard-section" aria-labelledby="recent-heading">
+        <h4 id="recent-heading" class="section-title">Recent activity</h4>
+        <p class="section-subtitle">The latest additions to your record.</p>
+
+        <ul class="activity-list list-unstyled">
+          <li *ngFor="let item of recentActivity">
+            <button type="button" class="activity-item" (click)="openResource(item)">
+              <i class="activity-icon {{iconForType(item.source_resource_type)}}" aria-hidden="true"></i>
+              <span class="activity-title">{{item.title || item.source_resource_type}}</span>
+              <span *ngIf="item.date" class="activity-date">{{item.date | date:'MMM d, yyyy'}}</span>
+            </button>
+          </li>
+        </ul>
       </section>
 
     </div>
