@@ -40,209 +40,145 @@
   }
 }
 
-.clinical-term {
-  color: $gray-500;
-}
-
-// --- Current Medical Concerns ---
-
-.concern-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-
-  li { display: block; }
-}
-
-.concern-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  text-align: left;
-  padding: 14px 18px;
-  background: #fff;
-  border: 1px solid $gray-300;
-  border-left: 4px solid $pink;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: border-color .15s ease;
-
-  &:hover {
-    border-color: $gray-500;
-    border-left-color: $pink;
-  }
-
-  .concern-icon {
-    color: $pink;
-    font-size: 1.15rem;
-    flex-shrink: 0;
-  }
-  .concern-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-  .concern-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: $gray-900;
-  }
-  .concern-clinical {
-    font-size: 0.8rem;
-    color: $gray-600;
-  }
-  .concern-since {
-    margin-left: auto;
-    color: $gray-600;
-    font-size: 0.85rem;
-    white-space: nowrap;
-  }
-  .concern-chevron {
-    color: $gray-500;
-    font-size: 0.8rem;
-  }
-}
-
-.concerns-empty {
-  padding: 16px 18px;
-  background: $gray-100;
-  border-radius: 10px;
-  color: $gray-700;
-}
-
-.concern-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-
-  .concern-badge {
-    font-size: 0.7rem;
-    font-weight: 600;
-  }
-}
-
-// Past problems live one click away — resolved, neutral (not the pink "active" accent).
-.past-problems {
-  margin-top: 12px;
-
-  .past-problems-toggle {
-    color: $gray-600;
-    font-size: 0.85rem;
-    text-decoration: none;
-
-    i { margin-right: 6px; font-size: 0.75rem; }
-    &:hover { color: $gray-800; }
-  }
-}
-
-.concern-item-past {
-  border-left-color: $gray-400;
-  &:hover { border-left-color: $gray-500; }
-  .concern-icon { color: $gray-500; }
-}
-
-// Patient Profile — neutral indigo accent to read as "about you", not a health problem.
-.concern-item-profile {
-  border-left-color: $indigo;
-  &:hover { border-left-color: $indigo; }
-  .concern-icon { color: $indigo; }
-}
-
-// --- Category tiles ---
-
 .customize-hint {
   color: $gray-600;
   font-size: 0.85rem;
 }
 
+// --- Category tiles (colored, icon-led, arrangeable) ---
+
 .tile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 14px;
   padding-bottom: 40px;
 
   @media (max-width: 575px) {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
+}
+
+.tile-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .tile {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 22px 20px;
-  background: #fff;
-  border: 1px solid $gray-300;
-  border-radius: 12px;
+  gap: 2px;
+  width: 100%;
+  min-height: 116px;
+  padding: 18px 18px 16px;
   text-align: left;
+  border: 1px solid transparent;
+  border-radius: 14px;
   cursor: pointer;
-  transition: border-color .15s ease, transform .1s ease;
+  background: var(--tile-bg, #fff);
+  transition: transform .1s ease, box-shadow .15s ease;
 
   &:hover {
-    border-color: $indigo;
     transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .10);
   }
 
   .tile-icon {
-    font-size: 1.9rem;
-    color: $indigo;
+    font-size: 1.5rem;
+    color: var(--tile-accent, #{$indigo});
     margin-bottom: 10px;
   }
-  .tile-count {
-    font-size: 1.7rem;
-    font-weight: 600;
-    line-height: 1;
-    color: $gray-900;
-
-    &.tile-count-zero { color: $gray-500; }
-  }
   .tile-label {
-    font-size: 1.02rem;
+    font-size: 1.05rem;
     font-weight: 600;
-    color: $gray-900;
-    margin-top: 4px;
+    color: var(--tile-accent, #{$gray-900});
   }
-  .tile-clinical {
-    font-size: 0.78rem;
+  .tile-sub {
+    font-size: 0.82rem;
     color: $gray-600;
-  }
 
-  &.tile-customizing {
-    cursor: grab;
-    border-style: dashed;
-
-    &:hover { transform: none; }
+    .tile-count { font-weight: 600; }
   }
 }
 
-.cdk-drag-preview.tile {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
-  background: #fff;
+.tile-wrap.tile-customizing .tile {
+  cursor: grab;
+  border-style: dashed;
+  border-color: rgba(0, 0, 0, .25);
+
+  &:hover { transform: none; box-shadow: none; }
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+  border-radius: 14px;
 }
 .cdk-drag-placeholder { opacity: .3; }
+
+// --- Color palette (light theme) ---
+
+.tile-color-amber  { --tile-bg: #fbf1df; --tile-accent: #8a5a12; }
+.tile-color-blue   { --tile-bg: #e9f0fb; --tile-accent: #2b5394; }
+.tile-color-red    { --tile-bg: #fbecea; --tile-accent: #9d3a31; }
+.tile-color-green  { --tile-bg: #e9f4ea; --tile-accent: #357a3a; }
+.tile-color-teal   { --tile-bg: #e3f3f3; --tile-accent: #157f7f; }
+.tile-color-purple { --tile-bg: #f1ecfb; --tile-accent: #6840bf; }
+.tile-color-pink   { --tile-bg: #fbecf2; --tile-accent: #a23368; }
+.tile-color-gray   { --tile-bg: #eef1f4; --tile-accent: #51606e; }
+
+// --- Color swatch picker (shown in customize mode) ---
+
+.tile-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 2px;
+
+  .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    padding: 0;
+    cursor: pointer;
+
+    &.swatch-active {
+      border-color: $gray-700;
+      box-shadow: 0 0 0 1px #fff inset;
+    }
+  }
+
+  .swatch-amber  { background: #d49a3a; }
+  .swatch-blue   { background: #4b7fcc; }
+  .swatch-red    { background: #cf5249; }
+  .swatch-green  { background: #4fa356; }
+  .swatch-teal   { background: #2bb3b0; }
+  .swatch-purple { background: #8b5cf6; }
+  .swatch-pink   { background: #d4609a; }
+  .swatch-gray   { background: #8a97a5; }
+}
 
 // --- Dark theme ---
 
 @mixin dashboard-dark {
   .dashboard-title, .section-title { color: var(--dark-text-white-color); }
-  .dashboard-subtitle, .section-subtitle, .dashboard-meta label, .customize-hint, .clinical-term { color: var(--dark-secondary-text-color); }
+  .dashboard-subtitle, .section-subtitle, .dashboard-meta label, .customize-hint { color: var(--dark-secondary-text-color); }
 
-  .concern-item, .tile, .cdk-drag-preview.tile {
-    background: var(--card);
-    border-color: var(--border);
-  }
-  .concern-item { border-left-color: var(--primary); }
-  .concern-name, .tile-label, .tile-count { color: var(--dark-text-color); }
-  .concern-clinical, .concern-since, .tile-clinical { color: var(--dark-secondary-text-color); }
-  .tile-count.tile-count-zero { color: var(--dark-secondary-text-color); }
-  .tile-icon, .concern-icon { color: var(--primary); }
-  .tile:hover { border-color: var(--primary); }
-  .concerns-empty { background: var(--card); color: var(--dark-text-color); }
+  .tile .tile-sub { color: var(--dark-secondary-text-color); }
+  .tile-wrap.tile-customizing .tile { border-color: rgba(255, 255, 255, .25); }
+  .tile-swatches .swatch.swatch-active { border-color: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .4) inset; }
+
+  // saturated-dark panels with light accents (matches the design sample)
+  .tile-color-amber  { --tile-bg: #3a3014; --tile-accent: #e0b15f; }
+  .tile-color-blue   { --tile-bg: #1e2c46; --tile-accent: #84a9df; }
+  .tile-color-red    { --tile-bg: #3c2220; --tile-accent: #e08a82; }
+  .tile-color-green  { --tile-bg: #1f3320; --tile-accent: #84c98a; }
+  .tile-color-teal   { --tile-bg: #143433; --tile-accent: #5fc7c4; }
+  .tile-color-purple { --tile-bg: #271f3e; --tile-accent: #b39ae6; }
+  .tile-color-pink   { --tile-bg: #371f2c; --tile-accent: #e088b3; }
+  .tile-color-gray   { --tile-bg: #262b30; --tile-accent: #9aa6b2; }
 }
 
 :host-context(body.dark-theme) { @include dashboard-dark; }

@@ -17,6 +17,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     localStorage.removeItem('dashboard_tile_order');
+    localStorage.removeItem('dashboard_tile_colors');
     TestBed.configureTestingModule({
     declarations: [DashboardComponent],
     imports: [RouterTestingModule, RouterModule, DragDropModule, SharedModule],
@@ -41,6 +42,7 @@ describe('DashboardComponent', () => {
 
   afterEach(() => {
     localStorage.removeItem('dashboard_tile_order');
+    localStorage.removeItem('dashboard_tile_colors');
   });
 
   it('should create', () => {
@@ -79,5 +81,26 @@ describe('DashboardComponent', () => {
     component.openTile(component.tiles[0]);
 
     expect((component as any).router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('should set and persist a tile color', () => {
+    const tile = component.tiles[0];
+    component.setTileColor(tile, 'green');
+
+    expect(tile.color).toEqual('green');
+    expect(component.hasCustomColors).toBeTrue();
+    expect(preferences.getTileColors()[tile.id]).toEqual('green');
+  });
+
+  it('should restore default colors on reset', () => {
+    const tile = component.tiles[0];
+    const defaultColor = DEFAULT_TILES[0].color;
+    component.setTileColor(tile, 'pink');
+
+    component.resetTileOrder();
+
+    expect(component.tiles[0].color).toEqual(defaultColor);
+    expect(component.hasCustomColors).toBeFalse();
+    expect(preferences.getTileColors()).toEqual({});
   });
 });

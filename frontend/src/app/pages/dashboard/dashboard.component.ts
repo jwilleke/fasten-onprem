@@ -10,6 +10,13 @@ import {ClassifiedCondition} from '../../models/fasten/classified-condition';
 // A large-icon category tile. Labels pair plain language (label) with the
 // standardized clinical term (clinicalLabel) so the record stays legible to
 // the patient and useful to providers (#262).
+// The palette a patient can pick a tile color from (matches the SCSS .tile-color-* classes).
+export const TILE_PALETTE = ['amber', 'blue', 'red', 'green', 'teal', 'purple', 'pink', 'gray']
+
+// A large-icon category tile. Labels pair plain language (label) with the
+// standardized clinical term (clinicalLabel) so the record stays legible to
+// the patient and useful to providers (#262). color is the default palette
+// hue (patient-overridable); unit is the noun in the count sub-line.
 export interface DashboardTile {
   id: string
   label: string
@@ -18,21 +25,23 @@ export interface DashboardTile {
   route: string
   resourceTypes: string[]
   count: number
+  color: string
+  unit: string
   // countKey tiles get their count from the condition classifier (not the summary resource counts).
   countKey?: 'concerns' | 'profile'
 }
 
 export const DEFAULT_TILES: DashboardTile[] = [
-  {id: 'concerns', label: 'Medical Concerns', clinicalLabel: 'Active health problems', icon: 'fa-solid fa-heart-pulse', route: '/medical-history', resourceTypes: [], count: 0, countKey: 'concerns'},
-  {id: 'patient-profile', label: 'Patient Profile', clinicalLabel: 'Personal & social info', icon: 'fa-solid fa-id-card', route: '/medical-history', resourceTypes: [], count: 0, countKey: 'profile'},
-  {id: 'medications', label: 'Medications', clinicalLabel: 'Prescriptions & medication statements', icon: 'fa-solid fa-pills', route: '/medications', resourceTypes: ['MedicationRequest', 'MedicationStatement', 'Medication', 'MedicationAdministration', 'MedicationDispense'], count: 0},
-  {id: 'allergies', label: 'Allergies', clinicalLabel: 'Allergies & intolerances', icon: 'fa-solid fa-triangle-exclamation', route: '/medical-history', resourceTypes: ['AllergyIntolerance'], count: 0},
-  {id: 'lab-results', label: 'Lab Results', clinicalLabel: 'Observations & diagnostic reports', icon: 'fa-solid fa-flask', route: '/labs', resourceTypes: ['Observation', 'DiagnosticReport'], count: 0},
-  {id: 'immunizations', label: 'Immunizations', clinicalLabel: 'Vaccinations', icon: 'fa-solid fa-syringe', route: '/medical-history', resourceTypes: ['Immunization'], count: 0},
-  {id: 'visits', label: 'Visits & Notes', clinicalLabel: 'Encounters', icon: 'fa-solid fa-notes-medical', route: '/medical-history', resourceTypes: ['Encounter'], count: 0},
-  {id: 'procedures', label: 'Procedures', clinicalLabel: 'Procedures & surgeries', icon: 'fa-solid fa-user-nurse', route: '/medical-history', resourceTypes: ['Procedure'], count: 0},
-  {id: 'documents', label: 'Documents', clinicalLabel: 'Clinical documents & files', icon: 'fa-solid fa-file-medical', route: '/medical-history', resourceTypes: ['DocumentReference', 'Media', 'Binary'], count: 0},
-  {id: 'care-team', label: 'Care Team', clinicalLabel: 'Practitioners & organizations', icon: 'fa-solid fa-user-doctor', route: '/practitioners', resourceTypes: ['Practitioner', 'Organization', 'CareTeam'], count: 0},
+  {id: 'concerns', label: 'Medical Concerns', clinicalLabel: 'Active health problems', icon: 'fa-solid fa-heart-pulse', route: '/medical-history', resourceTypes: [], count: 0, color: 'red', unit: 'active', countKey: 'concerns'},
+  {id: 'patient-profile', label: 'Patient Profile', clinicalLabel: 'Personal & social info', icon: 'fa-solid fa-id-card', route: '/medical-history', resourceTypes: [], count: 0, color: 'gray', unit: 'items', countKey: 'profile'},
+  {id: 'medications', label: 'Medications', clinicalLabel: 'Prescriptions & medication statements', icon: 'fa-solid fa-pills', route: '/medications', resourceTypes: ['MedicationRequest', 'MedicationStatement', 'Medication', 'MedicationAdministration', 'MedicationDispense'], count: 0, color: 'amber', unit: 'records'},
+  {id: 'allergies', label: 'Allergies', clinicalLabel: 'Allergies & intolerances', icon: 'fa-solid fa-triangle-exclamation', route: '/medical-history', resourceTypes: ['AllergyIntolerance'], count: 0, color: 'pink', unit: 'recorded'},
+  {id: 'lab-results', label: 'Lab Results', clinicalLabel: 'Observations & diagnostic reports', icon: 'fa-solid fa-flask', route: '/labs', resourceTypes: ['Observation', 'DiagnosticReport'], count: 0, color: 'blue', unit: 'results'},
+  {id: 'immunizations', label: 'Immunizations', clinicalLabel: 'Vaccinations', icon: 'fa-solid fa-syringe', route: '/medical-history', resourceTypes: ['Immunization'], count: 0, color: 'green', unit: 'on file'},
+  {id: 'visits', label: 'Visits & Notes', clinicalLabel: 'Encounters', icon: 'fa-solid fa-notes-medical', route: '/medical-history', resourceTypes: ['Encounter'], count: 0, color: 'teal', unit: 'encounters'},
+  {id: 'procedures', label: 'Procedures', clinicalLabel: 'Procedures & surgeries', icon: 'fa-solid fa-user-nurse', route: '/medical-history', resourceTypes: ['Procedure'], count: 0, color: 'purple', unit: 'procedures'},
+  {id: 'documents', label: 'Documents', clinicalLabel: 'Clinical documents & files', icon: 'fa-solid fa-file-medical', route: '/medical-history', resourceTypes: ['DocumentReference', 'Media', 'Binary'], count: 0, color: 'gray', unit: 'documents'},
+  {id: 'care-team', label: 'Care Team', clinicalLabel: 'Practitioners & organizations', icon: 'fa-solid fa-user-doctor', route: '/practitioners', resourceTypes: ['Practitioner', 'Organization', 'CareTeam'], count: 0, color: 'teal', unit: 'practitioners'},
 ]
 
 @Component({
@@ -50,6 +59,8 @@ export class DashboardComponent implements OnInit {
   tiles: DashboardTile[] = []
   customizing = false
   hasCustomOrder = false
+  hasCustomColors = false
+  palette = TILE_PALETTE
 
   private userId: string = undefined
 
@@ -73,7 +84,9 @@ export class DashboardComponent implements OnInit {
       this.userId = undefined
     }).finally(() => {
       this.tiles = this.applySavedOrder(this.tiles)
+      this.applySavedColors(this.tiles)
       this.hasCustomOrder = this.dashboardPreferences.hasCustomTileOrder(this.userId)
+      this.hasCustomColors = this.dashboardPreferences.hasCustomTileColors(this.userId)
     })
 
     this.fastenApi.getSummary().subscribe({
@@ -134,6 +147,20 @@ export class DashboardComponent implements OnInit {
     return [...ordered, ...remaining]
   }
 
+  private applySavedColors(tiles: DashboardTile[]): void {
+    const savedColors = this.dashboardPreferences.getTileColors(this.userId)
+    for (const tile of tiles) {
+      const color = savedColors[tile.id]
+      if (color && this.palette.includes(color)) tile.color = color
+    }
+  }
+
+  setTileColor(tile: DashboardTile, color: string) {
+    tile.color = color
+    this.dashboardPreferences.setTileColor(tile.id, color, this.userId)
+    this.hasCustomColors = true
+  }
+
   openTile(tile: DashboardTile) {
     if (this.customizing) return
     this.router.navigate([tile.route])
@@ -151,7 +178,9 @@ export class DashboardComponent implements OnInit {
 
   resetTileOrder() {
     this.dashboardPreferences.resetTileOrder(this.userId)
+    this.dashboardPreferences.resetTileColors(this.userId)
     this.hasCustomOrder = false
+    this.hasCustomColors = false
     const countsById = new Map(this.tiles.map((tile) => [tile.id, tile.count]))
     this.tiles = DEFAULT_TILES.map((tile) => ({...tile, count: countsById.get(tile.id) ?? 0}))
   }
