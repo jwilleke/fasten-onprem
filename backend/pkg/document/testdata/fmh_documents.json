@@ -1,0 +1,57 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "id": "ccd-clinical",
+    "status": "current",
+    "identifier": [{"system": "https://fhir.followmyhealth.com/id/global", "value": "1:abc:Document,101"}],
+    "type": {"coding": [{"display": "SYNTHETIC HOSPITAL - Continuity of Care Document"}]},
+    "date": "2021-05-02",
+    "content": [{"attachment": {"contentType": "application/xml", "url": "https://example.test/ccd/101"}}]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "html-clinical",
+    "status": "current",
+    "type": {"coding": [{"display": "Health History"}]},
+    "content": [{"attachment": {"contentType": "text/html", "url": "https://example.test/doc/102"}}]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "exercise-note",
+    "status": "current",
+    "identifier": [{"system": "https://fhir.followmyhealth.com/id/interface", "value": "1:abc:Note,5001"}],
+    "type": {"coding": [{"display": "Exercise: Walking"}]},
+    "date": "2018-09-24",
+    "content": [{"attachment": {"contentType": "text/plain", "url": "https://example.test/note/5001"}}]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "sleep-note",
+    "status": "current",
+    "identifier": [{"system": "https://fhir.followmyhealth.com/id/interface", "value": "1:abc:Note,5002"}],
+    "type": {"coding": [{"display": "Sleep Session"}]},
+    "content": [{"attachment": {"contentType": "text/plain", "url": "https://example.test/note/5002"}}]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "ambiguous-plain",
+    "status": "current",
+    "type": {"text": "Some plain-text document"},
+    "content": [{"attachment": {"contentType": "text/plain", "url": "https://example.test/doc/103"}}]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "conformant-declared",
+    "status": "current",
+    "category": [{"coding": [{"system": "http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category", "code": "clinical-note"}]}],
+    "type": {"coding": [{"system": "http://loinc.org", "code": "34117-2", "display": "History and physical note"}]},
+    "content": [{"attachment": {"contentType": "text/plain", "url": "https://example.test/doc/104"}}]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "entered-in-error",
+    "status": "entered-in-error",
+    "type": {"coding": [{"display": "Continuity of Care Document"}]},
+    "content": [{"attachment": {"contentType": "application/xml", "url": "https://example.test/doc/105"}}]
+  }
+]
