@@ -36,21 +36,22 @@ type fhirPeriod struct {
 }
 
 type rawCondition struct {
-	ResourceType       string               `json:"resourceType"`
-	ID                 string               `json:"id"`
-	Identifier         []fhirIdentifier     `json:"identifier"`
-	ClinicalStatus     *fhirCodeableConcept `json:"clinicalStatus"`
-	VerificationStatus *fhirCodeableConcept `json:"verificationStatus"`
-	Code               *fhirCodeableConcept `json:"code"`
-	Recorder           *fhirReference       `json:"recorder"`
-	Asserter           *fhirReference       `json:"asserter"`
-	OnsetDateTime      string               `json:"onsetDateTime"`
-	OnsetPeriod        *fhirPeriod          `json:"onsetPeriod"`
-	RecordedDate       string               `json:"recordedDate"`
-	AbatementDateTime  string               `json:"abatementDateTime"`
-	AbatementPeriod    *fhirPeriod          `json:"abatementPeriod"`
-	AbatementString    string               `json:"abatementString"`
-	Note               []fhirAnnotation     `json:"note"`
+	ResourceType       string                `json:"resourceType"`
+	ID                 string                `json:"id"`
+	Identifier         []fhirIdentifier      `json:"identifier"`
+	Category           []fhirCodeableConcept `json:"category"`
+	ClinicalStatus     *fhirCodeableConcept  `json:"clinicalStatus"`
+	VerificationStatus *fhirCodeableConcept  `json:"verificationStatus"`
+	Code               *fhirCodeableConcept  `json:"code"`
+	Recorder           *fhirReference        `json:"recorder"`
+	Asserter           *fhirReference        `json:"asserter"`
+	OnsetDateTime      string                `json:"onsetDateTime"`
+	OnsetPeriod        *fhirPeriod           `json:"onsetPeriod"`
+	RecordedDate       string                `json:"recordedDate"`
+	AbatementDateTime  string                `json:"abatementDateTime"`
+	AbatementPeriod    *fhirPeriod           `json:"abatementPeriod"`
+	AbatementString    string                `json:"abatementString"`
+	Note               []fhirAnnotation      `json:"note"`
 }
 
 // conceptCode returns the first non-empty coding code of a CodeableConcept, lowercased
@@ -62,6 +63,26 @@ func conceptCode(cc *fhirCodeableConcept) string {
 	for _, c := range cc.Coding {
 		if c.Code != "" {
 			return strings.ToLower(c.Code)
+		}
+	}
+	return ""
+}
+
+// existingCategory returns the normalized category a source already declared on Condition.category,
+// or "" when none is recognized (e.g. FollowMyHealth, which omits category entirely). Matching by
+// code keeps it system-agnostic across the standard condition-category and US Core SDOH/health-concern
+// code systems. Honoring this is how Layer 1 never re-categorizes a conformant source.
+func existingCategory(cats []fhirCodeableConcept) string {
+	for _, cc := range cats {
+		for _, c := range cc.Coding {
+			switch strings.ToLower(c.Code) {
+			case "problem-list-item", "encounter-diagnosis":
+				return CategoryProblem
+			case "sdoh":
+				return CategorySDOH
+			case "health-concern":
+				return CategoryHealthConcern
+			}
 		}
 	}
 	return ""

@@ -49,8 +49,8 @@ func TestClassify(t *testing.T) {
 	if _, present := byID["entered-in-error"]; present {
 		t.Errorf("entered-in-error condition should be omitted from output")
 	}
-	if len(results) != 10 {
-		t.Errorf("expected 10 classified conditions (11 fixtures minus entered-in-error), got %d", len(results))
+	if len(results) != 12 {
+		t.Errorf("expected 12 classified conditions (13 fixtures minus entered-in-error), got %d", len(results))
 	}
 
 	type want struct {
@@ -68,6 +68,10 @@ func TestClassify(t *testing.T) {
 		"ambiguous":              {TierClinician, CategoryProblem, StateActive, false},
 		"unknown-status":         {TierClinician, CategoryProblem, StateUnknown, false},
 		"refuted":                {TierClinician, CategoryProblem, StateRuledOut, false},
+		// Conformant-source gate: a declared Condition.category is honored, never re-synthesized —
+		// the SNOMED-coded sdoh item stays Profile (naive synthesis would promote it to a problem).
+		"conformant-sdoh":                {TierProfile, CategorySDOH, StateActive, false},
+		"conformant-encounter-diagnosis": {TierClinician, CategoryProblem, StateActive, false},
 	}
 
 	for id, w := range cases {

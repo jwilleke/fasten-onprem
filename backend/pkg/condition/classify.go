@@ -118,10 +118,38 @@ func Classify(resources []InputResource, now time.Time) []ClassifiedCondition {
 	return out
 }
 
-// classify assigns the tier + synthesized category from explicit signals, first-match-wins, with a
-// default-to-health-item safety bias: only agreeing signals demote an item to the Patient Profile;
-// anything ambiguous stays a health problem (never bury a possible diagnosis).
+// classify assigns the tier + category. It first HONORS a category the source already declared —
+// Layer 1 never re-categorizes a conformant source (that would, e.g., relabel an Epic `sdoh` social
+// item as a health problem) — and only synthesizes one when the source omitted it (the FollowMyHealth
+// case). Tier (the self-reported vs clinician badge) is always derived from provenance signals.
 func classify(raw *rawCondition) (tier, category string, selfReported bool) {
+	if existing := existingCategory(raw.Category); existing != "" {
+		return tierForCategory(existing, raw)
+	}
+	return synthesize(raw)
+}
+
+// tierForCategory derives the display tier for a category the source already declared. A declared
+// social/profile category is authoritative (it lands in Patient Profile); a declared health-problem
+// category still distinguishes self-reported from clinician-coded for the badge.
+func tierForCategory(category string, raw *rawCondition) (tier, cat string, selfReported bool) {
+	switch category {
+	case CategorySDOH, CategoryHealthConcern:
+		return TierProfile, category, false
+	default: // problem-list-item / encounter-diagnosis -> a health problem
+		patientAsserted := refIsType(raw.Asserter, "Patient") || (raw.Asserter == nil && refIsType(raw.Recorder, "Patient"))
+		if patientAsserted && !hasStandardCode(raw.Code) {
+			return TierSelfReported, CategoryProblem, true
+		}
+		return TierClinician, CategoryProblem, false
+	}
+}
+
+// synthesize assigns the tier + synthesized category from explicit signals, first-match-wins, with a
+// default-to-health-item safety bias: only agreeing signals demote an item to the Patient Profile;
+// anything ambiguous stays a health problem (never bury a possible diagnosis). Used only when the
+// source did not declare a standard Condition.category.
+func synthesize(raw *rawCondition) (tier, category string, selfReported bool) {
 	tell := vendorTell(raw.Identifier)
 	stdCode := hasStandardCode(raw.Code)
 	anyCoding := hasAnyCoding(raw.Code)
