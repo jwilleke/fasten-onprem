@@ -1,8 +1,10 @@
 package models
 
 import (
-	"gorm.io/datatypes"
 	"time"
+
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/provenance"
+	"gorm.io/datatypes"
 )
 
 type ResourceBase struct {
@@ -14,6 +16,10 @@ type ResourceBase struct {
 
 	// The raw resource content in JSON format
 	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+
+	// Provenance ("who said this") — resolved at read time on the generic resource path. Not persisted
+	// (gorm:"-"); nil unless a handler attaches it.
+	Provenance *provenance.Provenance `json:"provenance,omitempty" gorm:"-"`
 
 	//relationships
 	RelatedResource []*ResourceBase `json:"related_resources" gorm:"many2many:related_resources;ForeignKey:user_id,source_id,source_resource_type,source_resource_id;references:user_id,source_id,source_resource_type,source_resource_id;"`

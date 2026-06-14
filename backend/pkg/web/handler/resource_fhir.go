@@ -11,11 +11,30 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/provenance"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
+
+// attachProvenance resolves and attaches "who said this" to each resource on the generic read path,
+// so every record type carries provenance (not just the bespoke classified/reconciled endpoints).
+// The supporting resources (Practitioner/Organization/Encounter/Provenance) and the source-name map
+// are loaded once per request; resolution is read-time only and never mutates the raw FHIR. A
+// best-effort enrichment — the resolver's floor guarantees a non-fabricated answer always exists.
+func attachProvenance(c *gin.Context, logger *logrus.Entry, repo database.DatabaseRepository, resources []*models.ResourceBase) {
+	if len(resources) == 0 {
+		return
+	}
+	resolver := provenance.NewResourceSet(loadProvenanceResources(c, logger, repo))
+	sourceLabel := sourceLabelFunc(c, logger, repo)
+	for _, r := range resources {
+		req := provenance.ExtractRequest(json.RawMessage(r.ResourceRaw), r.SourceResourceType, r.SourceResourceID, sourceLabel(r.SourceID.String()))
+		p := resolver.ResolveProvenance(req)
+		r.Provenance = &p
+	}
+}
 
 func QueryResourceFhir(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
@@ -78,6 +97,12 @@ func ListResourceFhir(c *gin.Context) {
 		return
 	}
 
+	ptrs := make([]*models.ResourceBase, len(wrappedResourceModels))
+	for i := range wrappedResourceModels {
+		ptrs[i] = &wrappedResourceModels[i]
+	}
+	attachProvenance(c, logger, databaseRepo, ptrs)
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModels})
 }
 
@@ -95,6 +120,8 @@ func GetResourceFhir(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
+
+	attachProvenance(c, logger, databaseRepo, []*models.ResourceBase{wrappedResourceModel})
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModel})
 }
