@@ -130,6 +130,16 @@ export class FastenApiService {
       );
   }
 
+  // Change the current user's password. The server verifies the current password before applying.
+  changePassword(currentPassword: string, newPassword: string): Observable<boolean> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/account/password`, {
+      current_password: currentPassword,
+      new_password: newPassword,
+    }).pipe(
+      map((response: ResponseWrapper) => response.success)
+    );
+  }
+
   //TODO: Any significant API changes here should also be reflected in EventBusService
 
   getDashboards(): Observable<DashboardConfig[]> {

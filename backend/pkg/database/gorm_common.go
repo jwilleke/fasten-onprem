@@ -122,6 +122,24 @@ func (gr *GormRepository) GetCurrentUser(ctx context.Context) (*models.User, err
 	return &currentUser, nil
 }
 
+// UpdateUserPassword sets a new (already-hashed) password for the current user. The caller (handler)
+// is responsible for verifying the existing password first. Only the password column is touched.
+func (gr *GormRepository) UpdateUserPassword(ctx context.Context, hashedPassword string) error {
+	currentUser, err := gr.GetCurrentUser(ctx)
+	if err != nil {
+		return err
+	}
+	result := gr.GormClient.
+		WithContext(ctx).
+		Model(&models.User{}).
+		Where("id = ?", currentUser.ID).
+		Update("password", hashedPassword)
+	if result.Error != nil {
+		return fmt.Errorf("could not update password: %v", result.Error)
+	}
+	return nil
+}
+
 // SECURITY: this should only be called after the user has confirmed they want to delete their account.
 func (gr *GormRepository) DeleteCurrentUser(ctx context.Context) error {
 	currentUser, err := gr.GetCurrentUser(ctx)

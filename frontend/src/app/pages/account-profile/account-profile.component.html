@@ -31,6 +31,33 @@
           </div>
         </div>
 
+        <!-- Change password -->
+        <div class="row mt-5">
+          <div class="col-md-6">
+            <h2 class="tx-indigo">Change password</h2>
+            <div *ngIf="pwSuccess" class="alert alert-success">Your password has been changed.</div>
+            <div *ngIf="pwError" class="alert alert-danger">{{ pwError }}</div>
+            <form (ngSubmit)="changePassword()" #pwForm="ngForm" autocomplete="off">
+              <div class="form-group mb-3">
+                <label for="pw-current">Current password</label>
+                <input id="pw-current" name="pw-current" type="password" class="form-control" [(ngModel)]="pw.current" autocomplete="current-password" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="pw-next">New password</label>
+                <input id="pw-next" name="pw-next" type="password" class="form-control" [(ngModel)]="pw.next" autocomplete="new-password" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="pw-confirm">Confirm new password</label>
+                <input id="pw-confirm" name="pw-confirm" type="password" class="form-control" [(ngModel)]="pw.confirm" autocomplete="new-password" required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm" [disabled]="pwSubmitting">
+                <span *ngIf="pwSubmitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Change password
+              </button>
+            </form>
+          </div>
+        </div>
+
         <!-- Connected devices (the existing /settings page — preserved, not orphaned) -->
         <div class="row mt-5">
           <div class="col-md-8">

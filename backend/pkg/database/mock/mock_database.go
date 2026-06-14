@@ -220,6 +220,20 @@ func (mr *MockDatabaseRepositoryMockRecorder) DeleteCurrentUser(ctx interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCurrentUser", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteCurrentUser), ctx)
 }
 
+// UpdateUserPassword mocks base method.
+func (m *MockDatabaseRepository) UpdateUserPassword(ctx context.Context, hashedPassword string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserPassword", ctx, hashedPassword)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserPassword indicates an expected call of UpdateUserPassword.
+func (mr *MockDatabaseRepositoryMockRecorder) UpdateUserPassword(ctx, hashedPassword interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserPassword", reflect.TypeOf((*MockDatabaseRepository)(nil).UpdateUserPassword), ctx, hashedPassword)
+}
+
 // DeleteResourceByTypeAndId mocks base method.
 func (m *MockDatabaseRepository) DeleteResourceByTypeAndId(ctx context.Context, sourceResourceType, sourceResourceId string) error {
 	m.ctrl.T.Helper()

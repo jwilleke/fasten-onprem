@@ -17,6 +17,12 @@ export class AccountProfileComponent implements OnInit {
   loading = {page: false, delete: false};
   user: AccountUser = {};
 
+  // Change-password form state.
+  pw = {current: '', next: '', confirm: ''};
+  pwError = '';
+  pwSuccess = false;
+  pwSubmitting = false;
+
   constructor(
     private fastenApi: FastenApiService,
     private modalService: NgbModal,
@@ -42,6 +48,31 @@ export class AccountProfileComponent implements OnInit {
     if (parts.length === 0) return '?';
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  changePassword(): void {
+    this.pwError = '';
+    this.pwSuccess = false;
+    if (!this.pw.current || !this.pw.next) {
+      this.pwError = 'Please fill in all fields.';
+      return;
+    }
+    if (this.pw.next !== this.pw.confirm) {
+      this.pwError = 'The new passwords do not match.';
+      return;
+    }
+    this.pwSubmitting = true;
+    this.fastenApi.changePassword(this.pw.current, this.pw.next).subscribe({
+      next: () => {
+        this.pwSubmitting = false;
+        this.pwSuccess = true;
+        this.pw = {current: '', next: '', confirm: ''};
+      },
+      error: (err) => {
+        this.pwSubmitting = false;
+        this.pwError = err?.error?.error || 'Could not change your password. Please try again.';
+      },
+    });
   }
 
   openDeleteModal(content: TemplateRef<any>): void {

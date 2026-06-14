@@ -36,6 +36,48 @@ func GetCurrentUser(c *gin.Context) {
 	})
 }
 
+// ChangePassword updates the current user's password after verifying their current one.
+func ChangePassword(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	var req struct {
+		CurrentPassword string `json:"current_password"`
+		NewPassword     string `json:"new_password"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid request"})
+		return
+	}
+
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+	if err != nil {
+		logger.Errorf("Failed to get current user: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to change password"})
+		return
+	}
+
+	// Verify the current password before allowing a change.
+	if err := currentUser.CheckPassword(req.CurrentPassword); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "current password is incorrect"})
+		return
+	}
+
+	// HashPassword also rejects an empty new password.
+	if err := currentUser.HashPassword(req.NewPassword); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	if err := databaseRepo.UpdateUserPassword(c, currentUser.Password); err != nil {
+		logger.Errorf("Failed to update password: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to change password"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
 // UX: this is a secure endpoint, and should only be called after a double confirmation
 func DeleteAccount(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)

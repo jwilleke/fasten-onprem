@@ -20,6 +20,7 @@ type DatabaseRepository interface {
 	GetUserByUsername(context.Context, string) (*models.User, error)
 	GetCurrentUser(ctx context.Context) (*models.User, error)
 	DeleteCurrentUser(ctx context.Context) error
+	UpdateUserPassword(ctx context.Context, hashedPassword string) error
 	GetUsers(ctx context.Context) ([]models.User, error)
 
 	//get a count of every resource type
