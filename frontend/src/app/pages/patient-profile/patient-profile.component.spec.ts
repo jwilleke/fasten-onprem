@@ -13,7 +13,7 @@ describe('PatientProfileComponent', () => {
   let mockedFastenApiService
 
   beforeEach(async () => {
-    mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources', 'getSummary'])
+    mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources', 'getSummary', 'getClassifiedConditions'])
     await TestBed.configureTestingModule({
       declarations: [ PatientProfileComponent, ReportHeaderComponent ],
       imports: [PipesModule, RouterTestingModule],
@@ -25,6 +25,7 @@ describe('PatientProfileComponent', () => {
     .compileComponents();
     mockedFastenApiService.getResources.and.returnValue(of([{}]));
     mockedFastenApiService.getSummary.and.returnValue(of({sources: []}));
+    mockedFastenApiService.getClassifiedConditions.and.returnValue(of([]));
     fixture = TestBed.createComponent(PatientProfileComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -32,5 +33,15 @@ describe('PatientProfileComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('loads only the SDOH / health-concern bucket into the Personal & social section', () => {
+    mockedFastenApiService.getClassifiedConditions.and.returnValue(of([
+      {title: 'Employment', category: 'sdoh', state: 'Active', selfReported: true},
+      {title: 'Diabetes', category: 'problem-list-item', state: 'Active', selfReported: false},
+      {title: 'Housing', category: 'health-concern', state: 'Unknown', selfReported: false},
+    ]));
+    component.ngOnInit();
+    expect(component.profileItems.map((p) => p.title)).toEqual(['Employment', 'Housing']);
   });
 });

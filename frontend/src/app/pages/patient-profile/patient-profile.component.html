@@ -174,6 +174,30 @@
           </div>
         </div>
 
+        <!-- Personal & social information (SDOH / health-concern) -->
+        <div class="row mt-5" *ngIf="profileItems.length > 0">
+          <div class="col-12">
+            <h2 class="tx-indigo">Personal &amp; social information</h2>
+            <p class="tx-gray-500">Personal, social, and lifestyle items from your records — separated from your active Medical Concerns.</p>
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead><tr><th>Item</th><th>Status</th><th>Reported by</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let item of profileItems">
+                    <td>
+                      <strong>{{ item.title }}</strong>
+                      <span *ngIf="item.selfReported" class="badge badge-info mg-l-5" title="You reported this; it was not stated by a clinician in your records.">Self-reported</span>
+                      <div *ngIf="item.note" class="tx-gray-500 tx-12 mg-t-3">{{ item.note }}</div>
+                    </td>
+                    <td>{{ item.state }}</td>
+                    <td>{{ item.provenance?.display || '—' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- Account Actions -->
         <hr/>
 
