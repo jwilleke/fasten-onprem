@@ -49,6 +49,12 @@ Then:
 
 <!-- What this repo is, how to build / run it, and the key decisions an agent must know. -->
 
+## Workflow conventions
+
+### Multi-phase work — one issue per phase, linked via GitHub relationships
+
+When work is broken into phases, create a **separate GitHub issue per phase** and link each to the parent feature/epic using GitHub's **sub-issue / tracked-by relationships**. Do **not** track phases only in commit messages or issue comments — phases tracked that way get lost. The parent issue holds the overview; each phase is its own independently labelable, prioritizable, and closeable issue. Reference the parent from each phase issue and close phase issues as they ship.
+
 ## Status
 
 - project_state: active
