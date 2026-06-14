@@ -43,6 +43,16 @@ func TestResolveProvenance_Ladder(t *testing.T) {
 			wantKind: KindProvenance, wantDisplay: "Audit System", wantLevel: 3,
 		},
 		{
+			name:     "PractitionerRole follows practitioner + organization links",
+			req:      Request{Authors: []Reference{{Reference: "PractitionerRole/role-1"}}, SourceLabel: "FollowMyHealth"},
+			wantKind: KindPractitioner, wantDisplay: "Dr. Jane Synthetic — Synthetic Clinic", wantLevel: 1,
+		},
+		{
+			name:     "PractitionerRole with only an organization link names the org",
+			req:      Request{Authors: []Reference{{Reference: "PractitionerRole/role-orgonly"}}, SourceLabel: "FollowMyHealth"},
+			wantKind: KindOrganization, wantDisplay: "Synthetic Clinic", wantLevel: 1,
+		},
+		{
 			name:     "floor when nothing resolves — never invents a clinician",
 			req:      Request{Authors: []Reference{{Reference: "Practitioner/ghost"}}, SourceLabel: "FollowMyHealth"},
 			wantKind: KindSource, wantDisplay: "Source: FollowMyHealth", wantLevel: 4,

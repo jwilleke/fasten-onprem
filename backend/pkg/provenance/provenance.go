@@ -91,6 +91,9 @@ func (s *ResourceSet) resolveAuthor(ref Reference) (Provenance, bool) {
 	if typ == "Patient" || typ == "RelatedPerson" {
 		return Provenance{Kind: KindSelfReported, Display: "Self-reported", Level: 1}, true
 	}
+	if typ == "PractitionerRole" {
+		return s.resolvePractitionerRole(ref)
+	}
 	name := ref.Display
 	if name == "" {
 		if r, ok := s.Resolve(ref.Reference); ok {
@@ -104,6 +107,54 @@ func (s *ResourceSet) resolveAuthor(ref Reference) (Provenance, bool) {
 		return Provenance{Kind: KindOrganization, Display: name, Level: 1}, true
 	}
 	return Provenance{Kind: KindPractitioner, Display: name, Level: 1}, true
+}
+
+// resolvePractitionerRole follows a PractitionerRole's practitioner + organization links (the role
+// carries no name of its own) to name the clinician, e.g. "Dr. Jane Smith — Synthetic Clinic". US Core
+// commonly references a role from asserter/recorder/requester/performer; without this it drops to the
+// floor. No fabrication — if neither link yields a name (nor the reference's own display), fall through.
+func (s *ResourceSet) resolvePractitionerRole(ref Reference) (Provenance, bool) {
+	r, ok := s.Resolve(ref.Reference)
+	if !ok {
+		if ref.Display != "" {
+			return Provenance{Kind: KindPractitioner, Display: ref.Display, Level: 1}, true
+		}
+		return Provenance{}, false
+	}
+	var role struct {
+		Practitioner *Reference `json:"practitioner"`
+		Organization *Reference `json:"organization"`
+	}
+	if json.Unmarshal(r.Raw, &role) != nil {
+		return Provenance{}, false
+	}
+	prac := s.refName(role.Practitioner)
+	org := s.refName(role.Organization)
+	switch {
+	case prac != "" && org != "":
+		return Provenance{Kind: KindPractitioner, Display: prac + " — " + org, Level: 1}, true
+	case prac != "":
+		return Provenance{Kind: KindPractitioner, Display: prac, Level: 1}, true
+	case org != "":
+		return Provenance{Kind: KindOrganization, Display: org, Level: 1}, true
+	case ref.Display != "":
+		return Provenance{Kind: KindPractitioner, Display: ref.Display, Level: 1}, true
+	}
+	return Provenance{}, false
+}
+
+// refName returns a display name for a reference: its inline display, else the resolved resource's name.
+func (s *ResourceSet) refName(ref *Reference) string {
+	if ref == nil {
+		return ""
+	}
+	if ref.Display != "" {
+		return ref.Display
+	}
+	if r, ok := s.Resolve(ref.Reference); ok {
+		return displayName(r.Raw)
+	}
+	return ""
 }
 
 // resolveEncounterProvider resolves Encounter → Encounter.serviceProvider (an Organization).

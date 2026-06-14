@@ -19,6 +19,9 @@ func testResources() []Resource {
 		// Encounter stored under its bare id; FMH references it as "Encounter/pat-1_enc-1".
 		res("Encounter", "enc-1", `{"resourceType":"Encounter","id":"enc-1","serviceProvider":{"reference":"Organization/org-1"}}`),
 		res("Provenance", "prov-1", `{"resourceType":"Provenance","id":"prov-1","target":[{"reference":"Condition/cond-prov"}],"agent":[{"who":{"display":"Audit System"}}]}`),
+		// PractitionerRole links a practitioner + organization (no name of its own).
+		res("PractitionerRole", "role-1", `{"resourceType":"PractitionerRole","id":"role-1","practitioner":{"reference":"Practitioner/dr-1"},"organization":{"reference":"Organization/org-1"}}`),
+		res("PractitionerRole", "role-orgonly", `{"resourceType":"PractitionerRole","id":"role-orgonly","organization":{"reference":"Organization/org-1"}}`),
 	}
 }
 
