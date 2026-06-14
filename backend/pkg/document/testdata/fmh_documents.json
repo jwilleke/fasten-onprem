@@ -53,5 +53,13 @@
     "status": "entered-in-error",
     "type": {"coding": [{"display": "Continuity of Care Document"}]},
     "content": [{"attachment": {"contentType": "application/xml", "url": "https://example.test/doc/105"}}]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "patient-upload",
+    "status": "current",
+    "identifier": [{"system": "https://yourphr.org/id/manual-upload", "value": "scan.pdf"}],
+    "type": {"text": "scan.pdf"},
+    "content": [{"attachment": {"contentType": "application/pdf", "url": "Binary/binary-abc"}}]
   }
 ]

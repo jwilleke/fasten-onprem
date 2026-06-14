@@ -373,6 +373,14 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
+	// If the upload is a raw binary (PDF/DICOM/image), wrap it as a DocumentReference + Binary so it
+	// is stored, viewable, and linkable without being interpreted (#255). FHIR/NDJSON pass through.
+	bundleFile, err = maybeWrapBinary(c, logger, bundleFile)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
 	// We cannot save the "SourceCredential" object yet, as we do not know the patientID
 
 	// create a "manual" client, which we can use to parse the

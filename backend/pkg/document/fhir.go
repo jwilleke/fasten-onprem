@@ -61,6 +61,16 @@ func existingDocCategory(cats []fhirCodeableConcept) string {
 	return CategoryClinical
 }
 
+// isManualUpload reports whether the resource carries the patient-upload marker identifier (#255).
+func isManualUpload(ids []fhirIdentifier) bool {
+	for _, id := range ids {
+		if id.System == ManualUploadIDSystem {
+			return true
+		}
+	}
+	return false
+}
+
 // isClinicalMIME reports whether a content type marks a genuine clinical document (C-CDA XML or HTML),
 // as opposed to the text/plain wearable "Notes".
 func isClinicalMIME(contentType string) bool {

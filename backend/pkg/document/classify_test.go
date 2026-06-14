@@ -52,17 +52,18 @@ func TestClassify_Categories(t *testing.T) {
 	if _, present := got["entered-in-error"]; present {
 		t.Errorf("entered-in-error document should be omitted from output")
 	}
-	if len(got) != 6 {
-		t.Errorf("expected 6 classified documents (7 fixtures minus entered-in-error), got %d", len(got))
+	if len(got) != 7 {
+		t.Errorf("expected 7 classified documents (8 fixtures minus entered-in-error), got %d", len(got))
 	}
 
 	cases := map[string]string{
-		"ccd-clinical":        CategoryClinical, // application/xml C-CDA
-		"html-clinical":       CategoryClinical, // text/html
-		"exercise-note":       CategoryActivity, // Note tell + text/plain
-		"sleep-note":          CategoryActivity, // Note tell + text/plain
-		"ambiguous-plain":     CategoryClinical, // text/plain but NO Note tell -> safety bias, not buried
-		"conformant-declared": CategoryClinical, // declared category honored, never re-synthesized to activity
+		"ccd-clinical":        CategoryClinical,     // application/xml C-CDA
+		"html-clinical":       CategoryClinical,     // text/html
+		"exercise-note":       CategoryActivity,     // Note tell + text/plain
+		"sleep-note":          CategoryActivity,     // Note tell + text/plain
+		"ambiguous-plain":     CategoryClinical,     // text/plain but NO Note tell -> safety bias, not buried
+		"conformant-declared": CategoryClinical,     // declared category honored, never re-synthesized to activity
+		"patient-upload":      CategoryManualUpload, // manual-upload marker -> never interpreted
 	}
 	for id, want := range cases {
 		d, ok := got[id]

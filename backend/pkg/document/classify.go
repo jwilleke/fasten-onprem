@@ -25,9 +25,15 @@ import (
 
 // Synthesized DocumentReference.category values.
 const (
-	CategoryClinical = "clinical-document" // a genuine clinical document -> Documents section
-	CategoryActivity = "activity"          // wearable / lifestyle note -> Activity (out of the clinical view)
+	CategoryClinical     = "clinical-document" // a genuine clinical document -> Documents section
+	CategoryActivity     = "activity"          // wearable / lifestyle note -> Activity (out of the clinical view)
+	CategoryManualUpload = "manual-upload"     // a raw file the patient uploaded -> not interpreted
 )
+
+// ManualUploadIDSystem marks a DocumentReference as a patient-uploaded file (#255). Such uploads are
+// arbitrary and not interpretable into clinical categories, so the classifier leaves them as
+// CategoryManualUpload rather than guessing at clinical-vs-activity.
+const ManualUploadIDSystem = "https://yourphr.org/id/manual-upload"
 
 // InputResource is one stored DocumentReference row: authoritative type/id/source from the DB row
 // plus the full FHIR JSON body.
@@ -82,7 +88,11 @@ func Classify(resources []InputResource) []ClassifiedDocument {
 
 // classify honors a category a conformant source already declared (Layer 1 never re-categorizes a
 // conformant source) and synthesizes one only when the source omitted it (the FollowMyHealth case).
+// A patient-uploaded file is never interpreted — it is left as CategoryManualUpload.
 func classify(raw *rawDocumentReference) string {
+	if isManualUpload(raw.Identifier) {
+		return CategoryManualUpload
+	}
 	if existing := existingDocCategory(raw.Category); existing != "" {
 		return existing
 	}
