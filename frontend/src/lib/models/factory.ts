@@ -207,6 +207,7 @@ export function fhirModelFactory(
   resourceModel.source_id = fhirResourceWrapper.source_id
   resourceModel.sort_title = fhirResourceWrapper.sort_title
   resourceModel.sort_date = fhirResourceWrapper.sort_date
+  resourceModel.provenance = fhirResourceWrapper.provenance  // "who said this" (#271), when the API supplies it
 
   return resourceModel
 }

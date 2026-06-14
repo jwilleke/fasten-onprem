@@ -1,3 +1,5 @@
+import {Provenance} from './provenance';
+
 export class ResourceFhir {
   user_id?: string
   source_id = ""
@@ -10,6 +12,8 @@ export class ResourceFhir {
 
   sort_title = ""
   sort_date: Date = null
+
+  provenance?: Provenance  // "who said this" — resolved on the generic read path (#271)
 
   constructor(object?: any) {
     return Object.assign(this, object)

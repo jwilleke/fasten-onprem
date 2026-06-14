@@ -1,1 +1,4 @@
 <ng-template fhirCardOutlet></ng-template>
+<div *ngIf="displayModel?.provenance as prov" class="fhir-card-provenance" title="Who said this">
+  <i class="fas fa-circle-info mg-r-3"></i>{{ prov.display }}
+</div>
